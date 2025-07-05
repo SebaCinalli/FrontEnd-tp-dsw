@@ -91,7 +91,7 @@ const MenuMain: React.FC<MenuMainProps> = ({
   );
 };
 
-export default MenuMain;
+export {MenuMain};
 
 
 
