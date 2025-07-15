@@ -3,9 +3,11 @@ import "./login.css";
 
 type LoginProps = {
   OnLogin: (mail: string, password: string) => void;
+  authError ?: string
+  OnCreateUser ?: () => void
 };
 
-const Login = ({ OnLogin }: LoginProps) => {
+const Login = ({ OnLogin, authError, OnCreateUser }: LoginProps) => {
   const [email, setMail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
@@ -73,7 +75,6 @@ const validateFormPass = (password: string) => {
     setPassError(validPassword ? "" : passError);
 
     if (validEmail && validPassword) {
-      console.log("Formulario válido");
       OnLogin(email, password);
     }
   };
@@ -86,7 +87,7 @@ const validateFormPass = (password: string) => {
         <form onSubmit={handleLogin}>
           <label htmlFor="usuario">Usuario</label>
           <input
-            type="text"
+            type="email"
             id="usuario"
             value={email}
             onChange={handleChangeMail}
@@ -106,9 +107,12 @@ const validateFormPass = (password: string) => {
             placeholder="Ingrese su contraseña"
           />
           {passError && <div className="error-text">{passError}</div>}
-
+          { authError &&
+          <div className="error-text">{authError}</div>  
+          }
           <button type="submit">Ingresar</button>
-        </form>
+          <button className="create-user-button" onClick={OnCreateUser}>Crear usuario</button>
+        </form> 
       </div>
     </div>
   );

@@ -1,0 +1,73 @@
+.container-createUser-form {
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 2rem;
+    border-radius: 12px;
+    color: white;
+    width: 500px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    box-shadow: 0 0 10px #1f8fff;
+}
+
+.container-createUser-form h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.container-createUser-form form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.container-createUser-form label {
+    font-weight: bold;
+    margin-bottom: 0.3rem;
+}
+
+.container-createUser-form input {
+    padding: 0.5rem;
+    border: none;
+    border-radius: 6px;
+    align-self: center;
+    background-color: #fff;
+    color: #000;
+    font-size: 1rem;
+    width: 100%;
+}
+
+.container-createUser-form button {
+    margin-top: 1rem;
+    padding: 0.7rem;
+    background-color: #1e90ff;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    font-weight: bold;
+    font-size: 1rem;
+    align-self: center;
+    cursor: pointer;
+    width: 50%;
+}
+
+.container-createUser-form button:hover {
+    background-color: #1c7ed6;
+}
+
+.container-createUser-form .return-login-button{
+    background-color: #24973f;
+    color: white;
+    padding: 0.7rem;
+    border-radius: 6px;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+    width: 50%;
+    align-self: center;
+    transition: background-color 0.3s ease;
+}
+
+.container-createUser-form .return-login-button:hover {
+  background-color: #1e8635;
+}
