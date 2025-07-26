@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "./signup.css"
+import {useNavigate} from "react-router-dom"
 
 
 type CreateUserProps = {
@@ -7,6 +8,8 @@ type CreateUserProps = {
 }
 
 const CreateUser = ({children}: CreateUserProps) =>{
+    const navigate = useNavigate();
+    const GoToLogin =() =>{navigate("/login")}
     return(
         <div className="container-createUser-form">
             <h2>Crear Usuario</h2>
@@ -39,6 +42,7 @@ const CreateUser = ({children}: CreateUserProps) =>{
 
 
                 <button>Crear Usuario</button>
+                <button onClick={GoToLogin}>Volver</button>
             </form>
             {children}
         </div>
