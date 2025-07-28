@@ -1,5 +1,6 @@
 import { useUser } from "../../context/usercontext";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import { useState } from "react";
 import "./login.css";
 
@@ -11,25 +12,6 @@ const Login = () => {
   const [emailError, setEmailError] = useState("");
   const [passError, setPassError] = useState("");
   const [authError, setAuthError] = useState("");
-
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const { isValid: validEmail, emailError } = validateFormMail(email);
-    const { isValid: validPassword, passError } = validateFormPass(password);
-
-    setEmailError(validEmail ? "" : emailError);
-    setPassError(validPassword ? "" : passError);
-
-    if (validEmail && validPassword) {
-      if (email === "abc@gmail.com" && password === "Abc123#") {
-        login(email);
-        navigate("/");
-      } else {
-        setAuthError("Email o contraseña incorrectos");
-      }
-    }
-  };
 
   const validateFormMail = (email: string) => {
     let isValid = true;
@@ -59,15 +41,56 @@ const Login = () => {
     } else {
       const tieneMayuscula = /[A-Z]/.test(password);
       const tieneNumero = /[0-9]/.test(password);
-      const tieneEspecial = /[^A-Za-z0-9]/.test(password);
 
-      if (!tieneMayuscula || !tieneNumero || !tieneEspecial) {
+      if (!tieneMayuscula || !tieneNumero) {
         isValid = false;
-        passError = "Debe incluir mayúscula, número y caracter especial";
+        passError = "Debe incluir mayúscula y un número";
       }
     }
 
     return { isValid, passError };
+  };
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.post("http://localhost:3000/api/cliente/login", {
+        email,
+        password,
+      });
+
+      const cliente = response.data;
+      
+      login({
+        email: cliente.email,
+        id: cliente.id,
+        username: cliente.username,
+        nombre: cliente.nombre,
+        apellido: cliente.apellido,
+      });
+
+      navigate("/");
+    } catch (error: any) {
+      console.error("Error al iniciar sesión:", error);
+
+      if (error.response) {
+        const status = error.response.status;
+        const message = error.response.data.message;
+
+        if (status === 400 && message === "Contraseña incorrecta") {
+          setAuthError("La contraseña es incorrecta.");
+        } else if (status === 404) {
+          setAuthError("El usuario no existe.");
+        } else if (status === 400 && message === "Email y contraseña son requeridos") {
+          setAuthError("Por favor completá ambos campos.");
+        } else {
+          setAuthError("Ocurrió un error al iniciar sesión.");
+        }
+      } else {
+        setAuthError("No se pudo conectar con el servidor.");
+      }
+    }
   };
 
   return (
@@ -80,7 +103,13 @@ const Login = () => {
             type="email"
             id="usuario"
             value={email}
-            onChange={(e) => setMail(e.target.value)}
+            onChange={(e) => {
+              const val = e.target.value;
+              setMail(val);
+              const { isValid, emailError } = validateFormMail(val);
+              setEmailError(isValid ? "" : emailError);
+              setAuthError("");
+            }}
             placeholder="Ingrese su correo"
           />
           {emailError && <div className="error-text">{emailError}</div>}
@@ -90,7 +119,13 @@ const Login = () => {
             type="password"
             id="clave"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {
+              const val = e.target.value;
+              setPassword(val);
+              const { isValid, passError } = validateFormPass(val);
+              setPassError(isValid ? "" : passError);
+              setAuthError("");
+            }}
             placeholder="Ingrese su contraseña"
           />
           {passError && <div className="error-text">{passError}</div>}
