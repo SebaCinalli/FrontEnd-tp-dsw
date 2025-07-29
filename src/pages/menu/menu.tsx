@@ -1,5 +1,6 @@
 import React from "react";
 import "./menu.css";
+import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCocktail,
@@ -33,37 +34,37 @@ const MenuMain: React.FC<MenuMainProps> = ({
 
     item.onClick();
   };
-
+const navigate = useNavigate();
   const menuItems: MenuItem[] = [
     {
       id: "barra",
       icon: faCocktail,
       tooltip: "Reservar servicio de coctelería",
-      onClick: () => console.log("Servicio de coctelería seleccionado"),
+      onClick: () => navigate("/barra")
     },
     {
       id: "gastronomico",
       icon: faUtensils,
       tooltip: "Reservar servicio Gastronómico",
-      onClick: () => console.log("Servicio gastronómico seleccionado"),
+      onClick: () => navigate("/gastronomico"),
     },
     {
       id: "dj",
       icon: faHeadphones,
       tooltip: "Reservar DJ",
-      onClick: () => console.log("DJ seleccionado"),
+      onClick: () => navigate("/dj"),
     },
     {
       id: "salon",
       icon: faCouch,
       tooltip: "Reservar Salón",
-      onClick: () => console.log("Salón seleccionado"),
+      onClick: () => navigate("/salon"),
     },
     {
       id: "carrito",
       icon: faShoppingCart, //codigo de biblioteca usada para el carrito
       tooltip: "Mi selección",
-      onClick: () => console.log("Mostrando carrito"),
+      onClick: () => navigate("/carrito"),
     },
   ];
 
