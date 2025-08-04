@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import "./signup.css";
 
 interface CreateUserProps {
   onReturnToLogin: () => void;
@@ -93,7 +94,7 @@ export const CreateUser: React.FC<CreateUserProps> = ({
       // Mostrar éxito por un momento antes de redirigir
       setTimeout(() => {
         onReturnToLogin();
-      }, 2000);
+      }, 1000);
     } catch (error) {
       console.error('Error al crear usuario:', error);
     } finally {
@@ -115,7 +116,7 @@ export const CreateUser: React.FC<CreateUserProps> = ({
         fontFamily:
           "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
         background: 'linear-gradient(135deg, #667eea 50%, #764ba2 100%)',
-        // minHeight: '100vh',
+        minHeight: '100vh',
         display: '100%',
         alignItems: 'center',
         justifyContent: 'center',
@@ -126,7 +127,7 @@ export const CreateUser: React.FC<CreateUserProps> = ({
         style={{
           background: 'rgba(255, 255, 255, 0.95)',
           backdropFilter: 'blur(10px)',
-          padding: '2.5rem',
+          padding: '0rem',
           borderRadius: '20px',
           color: '#333',
           width: '100%',
@@ -134,8 +135,7 @@ export const CreateUser: React.FC<CreateUserProps> = ({
           display: 'flex',
           flexDirection: 'column',
           gap: '1.5rem',
-          boxShadow:
-            '0 20px 40px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.2)',
+          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.2)',
           border: '1px solid rgba(255, 255, 255, 0.2)',
           position: 'relative',
           overflow: 'hidden',
@@ -149,10 +149,10 @@ export const CreateUser: React.FC<CreateUserProps> = ({
             top: 0,
             left: '-100%',
             width: '100%',
-            height: '2px',
+            height: '7px',
             background:
               'linear-gradient(90deg, transparent, #1e90ff, transparent)',
-            animation: 'loading 2s infinite',
+            animation: 'loading 1.5s infinite',
           }}
         />
 
