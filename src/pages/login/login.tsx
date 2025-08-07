@@ -72,6 +72,8 @@ const Login = () => {
         username: cliente.username,
         nombre: cliente.nombre,
         apellido: cliente.apellido,
+        rol: cliente.rol,
+        img: cliente.img || ''
       });
 
       navigate('/');
