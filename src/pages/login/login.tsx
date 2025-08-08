@@ -21,7 +21,17 @@ const Login = () => {
   const validateFormMail = (email: string) => {
     let isValid = true;
     let emailError = '';
+  const validateFormMail = (email: string) => {
+    let isValid = true;
+    let emailError = '';
 
+    if (email.trim() === '') {
+      isValid = false;
+      emailError = 'El email es obligatorio';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      isValid = false;
+      emailError = 'El email no es válido';
+    }
     if (email.trim() === '') {
       isValid = false;
       emailError = 'El email es obligatorio';
@@ -32,7 +42,12 @@ const Login = () => {
 
     return { isValid, emailError };
   };
+    return { isValid, emailError };
+  };
 
+  const validateFormPass = (password: string) => {
+    let isValid = true;
+    let passError = '';
   const validateFormPass = (password: string) => {
     let isValid = true;
     let passError = '';
