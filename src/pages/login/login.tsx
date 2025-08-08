@@ -1,7 +1,7 @@
+import { useState } from 'react';
 import { useUser } from '../../context/usercontext';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useState } from 'react';
 import './login.css';
 
 const Login = () => {
@@ -12,6 +12,11 @@ const Login = () => {
   const [emailError, setEmailError] = useState('');
   const [passError, setPassError] = useState('');
   const [authError, setAuthError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
 
   const validateFormMail = (email: string) => {
     let isValid = true;
@@ -44,7 +49,7 @@ const Login = () => {
 
       if (!tieneMayuscula || !tieneNumero) {
         isValid = false;
-        passError = 'Debe incluir mayúscula y un número';
+        passError = 'Debe incluir al menos una mayúscula y un número';
       }
     }
 
@@ -54,18 +59,21 @@ const Login = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const { isValid: validEmail, emailError } = validateFormMail(email);
+    const { isValid: validPassword, passError } = validateFormPass(password);
+
+    setEmailError(validEmail ? '' : emailError);
+    setPassError(validPassword ? '' : passError);
+    if (!validEmail || !validPassword) return;
+
     try {
       const response = await axios.post(
         'http://localhost:3000/api/cliente/login',
-        {
-          email,
-          password,
-        },
+        { email, password },
         { withCredentials: true }
       );
 
       const cliente = response.data;
-
       login({
         email: cliente.email,
         id: cliente.id,
@@ -78,19 +86,16 @@ const Login = () => {
 
       navigate('/');
     } catch (error: any) {
-      console.error('Error al iniciar sesión:', error);
-
       if (error.response) {
-        const status = error.response.status;
-        const message = error.response.data.message;
+        const { status, data } = error.response;
 
-        if (status === 400 && message === 'Contraseña incorrecta') {
+        if (status === 400 && data.message === 'Contraseña incorrecta') {
           setAuthError('La contraseña es incorrecta.');
         } else if (status === 404) {
           setAuthError('El usuario no existe.');
         } else if (
           status === 400 &&
-          message === 'Email y contraseña son requeridos'
+          data.message === 'Email y contraseña son requeridos'
         ) {
           setAuthError('Por favor completá ambos campos.');
         } else {
@@ -103,51 +108,85 @@ const Login = () => {
   };
 
   return (
-    <div className="menu-body">
-      <div className="container-login-form">
-        <h2>Iniciar Sesión</h2>
-        <form onSubmit={handleLogin}>
-          <label htmlFor="usuario">Usuario</label>
-          <input
-            type="email"
-            id="usuario"
-            value={email}
-            onChange={(e) => {
-              const val = e.target.value;
-              setMail(val);
-              const { isValid, emailError } = validateFormMail(val);
-              setEmailError(isValid ? '' : emailError);
-              setAuthError('');
-            }}
-            placeholder="Ingrese su correo"
-          />
-          {emailError && <div className="error-text">{emailError}</div>}
+    <div className="login-container">
+      <div className="login-card">
+        <div className="login-header">
+          <h2 className="login-title">Iniciar Sesión</h2>
+        </div>
+        <form className="login-form" onSubmit={handleLogin}>
+          <div className="form-group">
+            <label htmlFor="usuario" className="form-label">
+              Usuario
+            </label>
+            <div className="input-wrapper">
+              <span className="input-icon">@</span>
+              <input
+                type="email"
+                id="usuario"
+                value={email}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setMail(val);
+                  const { isValid, emailError } = validateFormMail(val);
+                  setEmailError(isValid ? '' : emailError);
+                  setAuthError('');
+                }}
+                className={`form-input ${emailError ? 'input-invalid' : email ? 'input-valid' : ''}`}
+                placeholder="Ingrese su correo"
+              />
+            </div>
+            {emailError && <div className="error-text">{emailError}</div>}
+          </div>
 
-          <label htmlFor="clave">Contraseña</label>
-          <input
-            type="password"
-            id="clave"
-            value={password}
-            onChange={(e) => {
-              const val = e.target.value;
-              setPassword(val);
-              const { isValid, passError } = validateFormPass(val);
-              setPassError(isValid ? '' : passError);
-              setAuthError('');
-            }}
-            placeholder="Ingrese su contraseña"
-          />
-          {passError && <div className="error-text">{passError}</div>}
+          <div className="form-group">
+            <label htmlFor="clave" className="form-label">
+              Contraseña
+            </label>
+            <div className="input-wrapper">
+              <span className="input-icon">🔒</span>
+              <input
+                type={showPassword ? 'text' : 'password'}
+                id="clave"
+                value={password}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setPassword(val);
+                  const { isValid, passError } = validateFormPass(val);
+                  setPassError(isValid ? '' : passError);
+                  setAuthError('');
+                }}
+                className={`form-input ${
+                  passError || authError === 'La contraseña es incorrecta.'
+                    ? 'input-invalid'
+                    : password ? 'input-valid' : ''
+                }`}
+                placeholder="Ingrese su contraseña"
+              />
+              <button
+                type="button"
+                className="toggle-password"
+                onClick={togglePasswordVisibility}
+              >
+                {showPassword ? '🙈' : '👁️'}
+              </button>
+            </div>
+            {passError && <div className="error-text">{passError}</div>}
+          </div>
+
           {authError && <div className="error-text">{authError}</div>}
 
-          <button type="submit">Ingresar</button>
-          <button
-            type="button"
-            className="create-user-button"
-            onClick={() => navigate('/signup')}
-          >
-            Crear usuario
-          </button>
+          <div className="button-group">
+            <button type="submit" className="login-button">
+              Ingresar
+            </button>
+            <button
+              type="button"
+              className="create-user-button"
+              onClick={() => navigate('/signup')}
+            >
+              Crear usuario
+            </button>
+          </div>
         </form>
       </div>
     </div>
