@@ -8,7 +8,7 @@
 
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-    background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+    background: linear-gradient(135deg, #22304a 0%, #2d3a53 100%);
     color: #ffffff;
     min-height: 100vh;
     width: 100%;
@@ -26,7 +26,7 @@ body {
 
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-    background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+    background: linear-gradient(135deg, #22304a 0%, #2d3a53 100%);
     color: #ffffff;
     min-height: 100vh;
     width: 100%;
@@ -44,16 +44,17 @@ body {
 }
 
 .signup-card {
-    background: rgba(31, 41, 55, 0.9);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(75, 85, 99, 0.3);
-    border-radius: 24px;
-    padding: 48px;
+    background: rgba(45, 58, 83, 0.95);
+    backdrop-filter: blur(16px);
+    border: 2px solid #0062ff;
+    border-radius: 20px;
+    padding: 50px 40px;
     width: 100%;
-    max-width: 480px;
+    max-width: 450px;
     box-shadow:
-        0 25px 50px -12px rgba(0, 0, 0, 0.5),
-        0 0 0 1px rgba(255, 255, 255, 0.05);
+        0 0 50px rgba(59, 83, 122, 0.3),
+        0 25px 50px -12px rgba(0, 0, 0, 0.6),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
     position: relative;
     overflow: hidden;
 }
@@ -67,7 +68,7 @@ body {
     height: 1px;
     background: linear-gradient(90deg,
             transparent,
-            rgba(59, 130, 246, 0.5),
+            #3b537a 60%,
             transparent);
 }
 
@@ -79,10 +80,7 @@ body {
 .signup-title {
     font-size: 2.5rem;
     font-weight: 700;
-    background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: #e3e8f4;
     margin-bottom: 12px;
     letter-spacing: -0.025em;
 }
@@ -108,7 +106,7 @@ body {
 .form-label {
     font-size: 0.875rem;
     font-weight: 500;
-    color: #d1d5db;
+    color: #e3e8f4;
     margin-bottom: 8px;
 }
 
@@ -138,10 +136,10 @@ body {
 .form-input {
     width: 100%;
     padding: 16px 16px 16px 52px;
-    background: rgba(55, 65, 81, 0.8);
-    border: 1px solid rgba(75, 85, 99, 0.6);
-    border-radius: 12px;
-    color: #ffffff;
+    background: rgba(34, 48, 74, 0.9);
+    border: 2px solid #3b537a;
+    border-radius: 15px;
+    color: #e3e8f4;
     font-size: 1rem;
     font-weight: 400;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -149,15 +147,16 @@ body {
 }
 
 .form-input:focus {
-    background: rgba(55, 65, 81, 1);
-    border-color: #3b82f6;
+    background: rgba(45, 58, 83, 1);
+    border-color: #3b537a;
     box-shadow:
-        0 0 0 4px rgba(59, 130, 246, 0.1),
-        0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        0 0 0 4px rgba(59, 83, 122, 0.15),
+        inset 0 2px 4px rgba(0, 0, 0, 0.05),
+        0 2px 8px rgba(59, 83, 122, 0.12);
 }
 
 .form-input::placeholder {
-    color: #6b7280;
+    color: #b0b8c9;
 }
 
 .toggle-password {
@@ -191,8 +190,7 @@ body {
 .submit-button {
     width: 100%;
     padding: 16px 24px;
-    background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
-    color: #ffffff;
+background: linear-gradient(135deg, #26ff72 0%, #3b537a 100%);    color: #ffffff;
     border: none;
     border-radius: 12px;
     font-size: 1.125rem;
@@ -206,7 +204,7 @@ body {
 }
 
 .submit-button:hover {
-    background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+    background: linear-gradient(135deg, #22304a 0%, #26ff72 100%);
     transform: translateY(-1px);
     box-shadow:
         0 8px 25px -8px rgba(59, 130, 246, 0.4),
