@@ -24,10 +24,13 @@ a:hover {
 
 body {
   margin: 0;
-  display: auto;
-  place-items: center;
-  min-width: auto;
-  min-height: auto;
+  padding: 0;
+  min-width: 100vw;
+  min-height: 100vh;
+  width: 100vw;
+  height: 100vh;
+  box-sizing: border-box;
+  display: block;
 }
 
 h1 {
