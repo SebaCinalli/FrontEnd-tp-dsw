@@ -129,3 +129,50 @@ html {
 .icon-item .tooltip {
   transition-delay: 0s;
 }
+
+.logout-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+  padding: 12px;
+  border-radius: 10px;
+  background: rgba(255, 0, 0, 0.1);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.logout-button:hover {
+  background: rgba(255, 0, 0, 0.2);
+  transform: translateY(-2px);
+}
+
+.logout-button svg {
+  color: #ffffff;
+  font-size: 20px;
+}
+
+.logout-button .tooltip {
+  position: absolute;
+  bottom: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.logout-button:hover .tooltip {
+  opacity: 1;
+  visibility: visible;
+  bottom: -35px;
+}

@@ -1,14 +1,16 @@
-import React from "react";
-import "./menu.css";
-import { useNavigate } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React from 'react';
+import './menu.css';
+import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faCocktail,
   faUtensils,
   faHeadphones,
   faCouch,
   faShoppingCart,
-} from "@fortawesome/free-solid-svg-icons";
+  faSignOutAlt,
+} from '@fortawesome/free-solid-svg-icons';
+import { useUser } from '../../context/usercontext';
 
 interface MenuItem {
   id: string;
@@ -23,48 +25,53 @@ interface MenuMainProps {
 }
 
 const MenuMain: React.FC<MenuMainProps> = ({
-  title = "Menú Principal",
+  title = 'Menú Principal',
   onItemClick,
 }) => {
+  const { logout } = useUser();
+  const navigate = useNavigate();
+
   const handleItemClick = (item: MenuItem) => {
-    
     if (onItemClick) {
       onItemClick(item);
     }
-
     item.onClick();
   };
-const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
   const menuItems: MenuItem[] = [
     {
-      id: "barra",
+      id: 'barra',
       icon: faCocktail,
-      tooltip: "Reservar servicio de coctelería",
-      onClick: () => navigate("/barra")
+      tooltip: 'Reservar servicio de coctelería',
+      onClick: () => navigate('/barra'),
     },
     {
-      id: "gastronomico",
+      id: 'gastronomico',
       icon: faUtensils,
-      tooltip: "Reservar servicio Gastronómico",
-      onClick: () => navigate("/gastronomico"),
+      tooltip: 'Reservar servicio Gastronómico',
+      onClick: () => navigate('/gastronomico'),
     },
     {
-      id: "dj",
+      id: 'dj',
       icon: faHeadphones,
-      tooltip: "Reservar DJ",
-      onClick: () => navigate("/dj"),
+      tooltip: 'Reservar DJ',
+      onClick: () => navigate('/dj'),
     },
     {
-      id: "salon",
+      id: 'salon',
       icon: faCouch,
-      tooltip: "Reservar Salón",
-      onClick: () => navigate("/salon"),
+      tooltip: 'Reservar Salón',
+      onClick: () => navigate('/salon'),
     },
     {
-      id: "carrito",
+      id: 'carrito',
       icon: faShoppingCart, //codigo de biblioteca usada para el carrito
-      tooltip: "Mi selección",
-      onClick: () => navigate("/carrito"),
+      tooltip: 'Mi selección',
+      onClick: () => navigate('/carrito'),
     },
   ];
 
@@ -78,7 +85,7 @@ const navigate = useNavigate();
             <div
               key={item.id}
               className={`icon-item ${
-                item.id === "carrito" ? "cart-item" : ""
+                item.id === 'carrito' ? 'cart-item' : ''
               }`}
               onClick={() => handleItemClick(item)}
             >
@@ -87,13 +94,16 @@ const navigate = useNavigate();
             </div>
           ))}
         </div>
+
+        <div className="logout-button" onClick={handleLogout}>
+          <FontAwesomeIcon icon={faSignOutAlt} />
+          <div className="tooltip">Cerrar sesión</div>
+        </div>
       </div>
     </div>
   );
 };
 
-export {MenuMain};
-
-
+export { MenuMain };
 
 //iconos pagina web https://fontawesome.com/search?ip=classic&s=solid&o=r
