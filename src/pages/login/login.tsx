@@ -3,6 +3,10 @@ import { useUser } from '../../context/usercontext';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './login.css';
+import { validateFormMail } from '../../validateFunctions/validateFormMail';
+import { validateFormPass} from '../../validateFunctions/validateFormPass';
+
+
 
 const Login = () => {
   const { login } = useUser();
@@ -18,44 +22,6 @@ const Login = () => {
     setShowPassword((prev) => !prev);
   };
 
-  const validateFormMail = (email: string) => {
-    let isValid = true;
-    let emailError = '';
-
-    if (email.trim() === '') {
-      isValid = false;
-      emailError = 'El email es obligatorio';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      isValid = false;
-      emailError = 'El email no es válido';
-    }
-
-    return { isValid, emailError };
-  };
-
-  const validateFormPass = (password: string) => {
-    let isValid = true;
-    let passError = '';
-
-    if (password.trim() === '') {
-      isValid = false;
-      passError = 'La contraseña es obligatoria';
-    } else if (password.length < 6) {
-      isValid = false;
-      passError = 'Debe tener más de 6 caracteres';
-    } else {
-      const tieneMayuscula = /[A-Z]/.test(password);
-      const tieneNumero = /[0-9]/.test(password);
-
-      if (!tieneMayuscula || !tieneNumero) {
-        isValid = false;
-        passError = 'Debe incluir al menos una mayúscula y un número ';
-      }
-    }
-
-    return { isValid, passError };
-  };
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -65,8 +31,9 @@ const Login = () => {
     setEmailError(validEmail ? '' : emailError);
     setPassError(validPassword ? '' : passError);
     if (!validEmail || !validPassword) return;
-
+    
     try {
+
       const response = await axios.post(
         'http://localhost:3000/api/cliente/login',
         { email, password },
@@ -121,7 +88,7 @@ const Login = () => {
             <div className="input-wrapper">
               <span className="input-icon">@</span>
               <input
-                type="email"
+                type="text"
                 id="usuario"
                 value={email}
                 onChange={(e) => {
