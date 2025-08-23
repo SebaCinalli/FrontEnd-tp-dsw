@@ -5,6 +5,7 @@ import { CreateUser } from "../pages/signup/signup";
 import { MenuMain } from "../pages/menu/menu";
 import { MenuAdmin } from "../pages/admin/menuAdmin";
 import { ProtectedRoutes } from "../components/protectedroutes";
+import {Salon} from "../pages/salon/salon";
 
 export default function AppRoutes() {
   const { user } = useUser();
@@ -44,6 +45,10 @@ export default function AppRoutes() {
 
       <Route
         path="/salon"
+        element={
+        <ProtectedRoutes>
+          <Salon/>
+        </ProtectedRoutes>}
       />
 
       <Route
