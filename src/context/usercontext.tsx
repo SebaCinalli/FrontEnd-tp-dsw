@@ -55,13 +55,13 @@ export const UserProvider = ({ children }: { children: ReactElement }) => {
     if (response.status === 200 && response.data) {
       setExistsToken(true);
       setUser({
-        email: response.data.email,
-        id: response.data.id,
-        username: response.data.username,
-        nombre: response.data.nombre,
-        apellido: response.data.apellido,
-        rol: response.data.rol,
-        img: response.data.img || '',
+        email: response.data.user.email,
+        id: response.data.user.id,
+        username: response.data.user.username,
+        nombre: response.data.user.nombre,
+        apellido: response.data.user.apellido,
+        rol: response.data.user.rol,
+        img: response.data.user.img || '',
       });
     }
   };
