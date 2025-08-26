@@ -11,6 +11,7 @@ import {
   faSignOutAlt,
 } from '@fortawesome/free-solid-svg-icons';
 import { useUser } from '../../context/usercontext';
+import { UserBadge } from '../../components/userbadge';
 
 interface MenuItem {
   id: string;
@@ -77,6 +78,7 @@ const MenuMain: React.FC<MenuMainProps> = ({
 
   return (
     <div className="menu-body">
+      <UserBadge />
       <div className="container">
         <h2>{title}</h2>
 

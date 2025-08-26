@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import './salon.css';
+import { UserBadge } from '../../components/userbadge';
 
 interface Salon {
   id: number;
@@ -34,6 +35,7 @@ export function Salon() {
 
   return (
     <div className="salon-container">
+      <UserBadge />
       {salones.map((salon) => (
         <div className="salon-card" key={salon.id}>
           <img src={salon.foto} alt={salon.nombre} className="salon-img" />

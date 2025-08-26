@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import './gastronomico.css';
+import { UserBadge } from '../../components/userbadge';
 
 interface Gastronomico {
   id: number;
@@ -35,6 +36,7 @@ export function Gastronomico() {
 
   return (
     <div className="gastronomico-container">
+      <UserBadge />
       {gastronomicos.map((gastronomico) => (
         <div className="gastronomico-card" key={gastronomico.id}>
           <img

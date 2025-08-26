@@ -12,6 +12,7 @@ import {
   faList,
 } from '@fortawesome/free-solid-svg-icons';
 import { useUser } from '../../context/usercontext';
+import { UserBadge } from '../../components/userbadge';
 
 interface MenuAdminItem {
   id: string;
@@ -84,6 +85,7 @@ const MenuAdmin: React.FC<MenuProps> = ({
 
   return (
     <div className="menu-body">
+      <UserBadge />
       <div className="container">
         <h2>{title}</h2>
 

@@ -29,8 +29,21 @@ export const UserProvider = ({ children }: { children: ReactElement }) => {
     setUser(userData);
   };
 
-  const logout = () => {
-    setUser(null);
+  const logout = async () => {
+    try {
+      // Llamar al endpoint de logout del servidor para limpiar las cookies
+      await axios.post(
+        'http://localhost:3000/api/usuario/logout',
+        {},
+        { withCredentials: true }
+      );
+    } catch (error) {
+      console.error('Error al hacer logout en el servidor:', error);
+    } finally {
+      // Siempre limpiar el estado local, incluso si falla la llamada al servidor
+      setUser(null);
+      setExistsToken(false);
+    }
   };
 
   const checkToken = async () => {

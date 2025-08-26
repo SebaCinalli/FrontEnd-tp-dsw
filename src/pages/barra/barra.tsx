@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import './barra.css';
+import { UserBadge } from '../../components/userbadge';
 
 interface Barra {
   id: number;
@@ -34,14 +35,13 @@ export function Barra() {
 
   return (
     <div className="barra-container">
+      <UserBadge />
       {barras.map((barra) => (
         <div className="barra-card" key={barra.id}>
           <img src={barra.foto} alt={barra.nombreB} className="barra-img" />
           <div className="barra-info">
             <h3 className="barra-name">{barra.nombreB}</h3>
-            <p className="barra-bebida">
-              Tipo Bebida: {barra.tipoBebida}
-            </p>
+            <p className="barra-bebida">Tipo Bebida: {barra.tipoBebida}</p>
             <p className="barra-montoB">
               ${barra.montoB.toLocaleString('es-AR')}
             </p>

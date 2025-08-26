@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import './dj.css';
+import { UserBadge } from '../../components/userbadge';
 
 interface Dj {
   id: number;
@@ -34,6 +35,7 @@ export function Dj() {
 
   return (
     <div className="dj-container">
+      <UserBadge />
       {djs.map((dj) => (
         <div className="dj-card" key={dj.id}>
           <img src={dj.foto} alt={dj.nombreArtistico} className="dj-img" />

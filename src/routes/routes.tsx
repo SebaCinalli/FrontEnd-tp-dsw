@@ -10,21 +10,20 @@ import { Barra } from '../pages/barra/barra';
 import { Dj } from '../pages/dj/dj';
 import { Gastronomico } from '../pages/gastronomico/gastronomico';
 
-
-
 export default function AppRoutes() {
   const { user } = useUser();
   const isAdmin = user?.rol === 'administrador';
 
   return (
-    // RUTAS PUBLICAS
     <Routes>
+      {/* RUTAS PUBLICAS */}
       <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
+      <Route path="/force-login" element={<Login />} />
       <Route
         path="/signup"
         element={user ? <Navigate to="/" /> : <CreateUser />}
       />
-      //MENU PRINCIPAL
+      {/* MENU PRINCIPAL */}
       <Route
         path="/"
         element={
@@ -33,7 +32,7 @@ export default function AppRoutes() {
           </ProtectedRoutes>
         }
       />
-      // RUTAS PROTEGIDAS PARA USUARIOS
+      {/* RUTAS PROTEGIDAS PARA USUARIOS */}
       <Route
         path="/barra"
         element={
@@ -68,7 +67,7 @@ export default function AppRoutes() {
       />
       <Route path="/solicitud" />
       <Route path="/carrito" />
-      //RUTAS PROTEGIDAS PARA ADMINISTRADORES
+      {/* RUTAS PROTEGIDAS PARA ADMINISTRADORES */}
       <Route path="/barraAdmin" />
       <Route path="/gastronomicoAdmin" />
       <Route path="/salonAdmin" />
