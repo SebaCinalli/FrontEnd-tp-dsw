@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import './signup.css';
 import { validateFormMail } from '../../validateFunctions/validateFormMail';
 import { validateFormPass } from '../../validateFunctions/validateFormPass';
 import { validateName } from '../../validateFunctions/validateName';
 import { validateApellido } from '../../validateFunctions/validateApellido';
-import axios from 'axios'
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const CreateUser = () => {
@@ -16,7 +16,7 @@ const CreateUser = () => {
     confirmPassword: '',
     nombre: '',
     apellido: '',
-    telefono: ''
+    telefono: '',
   });
 
   const [emailError, setEmailError] = useState('');
@@ -37,18 +37,27 @@ const CreateUser = () => {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    const { isValid: validEmail, emailError } = validateFormMail(formData.email);
-    const { isValid: validPassword, passError } = validateFormPass(formData.password);
+    const { isValid: validEmail, emailError } = validateFormMail(
+      formData.email
+    );
+    const { isValid: validPassword, passError } = validateFormPass(
+      formData.password
+    );
 
     setEmailError(validEmail ? '' : emailError);
     setPassError(validPassword ? '' : passError);
-    if ((!validEmail || !validPassword) && formData.password !== formData.confirmPassword) return;
+    if (
+      (!validEmail || !validPassword) &&
+      formData.password !== formData.confirmPassword
+    )
+      return;
     const { confirmPassword, ...userdata } = formData;
 
     console.log('Form submitted:', userdata);
-    await axios.post('http://localhost:3000/api/cliente/register', userdata, { withCredentials: true });
-    navigate('/login')
-    
+    await axios.post('http://localhost:3000/api/usuario/register', userdata, {
+      withCredentials: true,
+    });
+    navigate('/login');
   };
 
   const togglePasswordVisibility = () => {

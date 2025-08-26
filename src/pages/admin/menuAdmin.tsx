@@ -9,6 +9,7 @@ import {
   faCouch,
   faShoppingCart,
   faSignOutAlt,
+  faList,
 } from '@fortawesome/free-solid-svg-icons';
 import { useUser } from '../../context/usercontext';
 
@@ -47,25 +48,31 @@ const MenuAdmin: React.FC<MenuProps> = ({
       id: 'barra',
       icon: faCocktail,
       tooltip: 'Reservar servicio de coctelería',
-      onClick: () => navigate('/barra'),
+      onClick: () => navigate('/barraAdmin'),
     },
     {
       id: 'gastronomico',
       icon: faUtensils,
       tooltip: 'Reservar servicio Gastronómico',
-      onClick: () => navigate('/gastronomico'),
+      onClick: () => navigate('/gastronomicoAdmin'),
     },
     {
       id: 'dj',
       icon: faHeadphones,
       tooltip: 'Reservar DJ',
-      onClick: () => navigate('/dj'),
+      onClick: () => navigate('/djAdmin'),
     },
     {
       id: 'salon',
       icon: faCouch,
       tooltip: 'Reservar Salón',
-      onClick: () => navigate('/salon')
+      onClick: () => navigate('/salonAdmin'),
+    },
+    {
+      id: 'solicitud',
+      icon: faList,
+      tooltip: 'Ver Solicitudes',
+      onClick: () => navigate('/solicitudAdmin'),
     },
     {
       id: 'carrito',

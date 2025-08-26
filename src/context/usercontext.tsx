@@ -1,6 +1,5 @@
-import { createContext, useState, useContext, type ReactElement } from "react";
-import axios from "axios";
-
+import { createContext, useState, useContext, type ReactElement } from 'react';
+import axios from 'axios';
 
 type User = {
   email: string;
@@ -34,24 +33,30 @@ export const UserProvider = ({ children }: { children: ReactElement }) => {
     setUser(null);
   };
 
-  const checkToken = async () =>{
-    const response = await axios.post('http://localhost:3000/api/cliente/verify',{}, {withCredentials: true});
-      if(response.status === 200 && response.data){
-        setExistsToken(true);
-        setUser({
-          email: response.data.email,
-          id: response.data.id,
-          username: response.data.username,
-          nombre: response.data.nombre,
-          apellido: response.data.apellido,
-          rol: response.data.rol,
-          img: response.data.img || ''
-        });
-      }
+  const checkToken = async () => {
+    const response = await axios.post(
+      'http://localhost:3000/api/usuario/verify',
+      {},
+      { withCredentials: true }
+    );
+    if (response.status === 200 && response.data) {
+      setExistsToken(true);
+      setUser({
+        email: response.data.email,
+        id: response.data.id,
+        username: response.data.username,
+        nombre: response.data.nombre,
+        apellido: response.data.apellido,
+        rol: response.data.rol,
+        img: response.data.img || '',
+      });
     }
+  };
 
   return (
-    <UserContext.Provider value={{ user, login, logout, existsToken, checkToken }}>
+    <UserContext.Provider
+      value={{ user, login, logout, existsToken, checkToken }}
+    >
       {children}
     </UserContext.Provider>
   );
@@ -59,6 +64,6 @@ export const UserProvider = ({ children }: { children: ReactElement }) => {
 
 export const useUser = () => {
   const context = useContext(UserContext);
-  if (!context) throw new Error("useUser debe usarse dentro de UserProvider");
+  if (!context) throw new Error('useUser debe usarse dentro de UserProvider');
   return context;
 };
