@@ -4,9 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './login.css';
 import { validateFormMail } from '../../validateFunctions/validateFormMail';
-import { validateFormPass} from '../../validateFunctions/validateFormPass';
-
-
+import { validateFormPass } from '../../validateFunctions/validateFormPass';
 
 const Login = () => {
   const { login } = useUser();
@@ -31,24 +29,23 @@ const Login = () => {
     setEmailError(validEmail ? '' : emailError);
     setPassError(validPassword ? '' : passError);
     if (!validEmail || !validPassword) return;
-    
-    try {
 
+    try {
       const response = await axios.post(
-        'http://localhost:3000/api/cliente/login',
+        'http://localhost:3000/api/usuario/login',
         { email, password },
         { withCredentials: true }
       );
 
-      const cliente = response.data;
+      const usuario = response.data;
       login({
-        email: cliente.email,
-        id: cliente.id,
-        username: cliente.username,
-        nombre: cliente.nombre,
-        apellido: cliente.apellido,
-        rol: cliente.rol,
-        img: cliente.img || ''
+        email: usuario.email,
+        id: usuario.id,
+        username: usuario.username,
+        nombre: usuario.nombre,
+        apellido: usuario.apellido,
+        rol: usuario.rol,
+        img: usuario.img || '',
       });
 
       navigate('/');
@@ -98,7 +95,9 @@ const Login = () => {
                   setEmailError(isValid ? '' : emailError);
                   setAuthError('');
                 }}
-                className={`form-input ${emailError ? 'input-invalid' : email ? 'input-valid' : ''}`}
+                className={`form-input ${
+                  emailError ? 'input-invalid' : email ? 'input-valid' : ''
+                }`}
                 placeholder="Ingrese su correo"
               />
             </div>
@@ -125,7 +124,9 @@ const Login = () => {
                 className={`form-input ${
                   passError || authError === 'La contraseña es incorrecta.'
                     ? 'input-invalid'
-                    : password ? 'input-valid' : ''
+                    : password
+                    ? 'input-valid'
+                    : ''
                 }`}
                 placeholder="Ingrese su contraseña"
               />
@@ -161,4 +162,3 @@ const Login = () => {
 };
 
 export { Login };
-
