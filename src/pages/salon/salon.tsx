@@ -1,13 +1,16 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
-import "./salon.css";
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import './salon.css';
 
 interface Salon {
   id: number;
   nombre: string;
   capacidad: number;
   montoS: number;
-  zona: string;
+  zona: {
+    id: number;
+    nombre: string;
+  };
   foto: string;
 }
 
@@ -17,10 +20,12 @@ export function Salon() {
   useEffect(() => {
     const fetchSalones = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/api/salon", {withCredentials: true});
+        const response = await axios.get('http://localhost:3000/api/salon', {
+          withCredentials: true,
+        });
         setSalones(response.data.data);
       } catch (error) {
-        console.error("Error al cargar salones:", error);
+        console.error('Error al cargar salones:', error);
       }
     };
 
@@ -38,9 +43,9 @@ export function Salon() {
               Capacidad: {salon.capacidad} personas
             </p>
             <p className="salon-montoS">
-              ${salon.montoS.toLocaleString("es-AR")}
+              ${salon.montoS.toLocaleString('es-AR')}
             </p>
-            <p className="salon-zona">{salon.zona}</p>
+            <p className="salon-zona">{salon.zona.nombre}</p>
           </div>
         </div>
       ))}

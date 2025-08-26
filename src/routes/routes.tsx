@@ -6,6 +6,11 @@ import { MenuMain } from '../pages/menu/menu';
 import { MenuAdmin } from '../pages/admin/menuAdmin';
 import { ProtectedRoutes } from '../components/protectedroutes';
 import { Salon } from '../pages/salon/salon';
+import { Barra } from '../pages/barra/barra';
+import { Dj } from '../pages/dj/dj';
+import { Gastronomico } from '../pages/gastronomico/gastronomico';
+
+
 
 export default function AppRoutes() {
   const { user } = useUser();
@@ -29,8 +34,22 @@ export default function AppRoutes() {
         }
       />
       // RUTAS PROTEGIDAS PARA USUARIOS
-      <Route path="/barra" />
-      <Route path="/gastronomico" />
+      <Route
+        path="/barra"
+        element={
+          <ProtectedRoutes>
+            <Barra />
+          </ProtectedRoutes>
+        }
+      />
+      <Route
+        path="/gastronomico"
+        element={
+          <ProtectedRoutes>
+            <Gastronomico />
+          </ProtectedRoutes>
+        }
+      />
       <Route
         path="/salon"
         element={
@@ -39,7 +58,14 @@ export default function AppRoutes() {
           </ProtectedRoutes>
         }
       />
-      <Route path="/dj" />
+      <Route
+        path="/dj"
+        element={
+          <ProtectedRoutes>
+            <Dj />
+          </ProtectedRoutes>
+        }
+      />
       <Route path="/solicitud" />
       <Route path="/carrito" />
       //RUTAS PROTEGIDAS PARA ADMINISTRADORES
