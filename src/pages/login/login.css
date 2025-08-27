@@ -1,4 +1,3 @@
-
 /* login.css */
 
 * {
@@ -8,7 +7,8 @@
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
+    sans-serif;
   background: linear-gradient(135deg, #22304a 0%, #2d3a53 100%);
   color: #ffffff;
   min-height: 100vh;
@@ -34,8 +34,7 @@ body {
   padding: 50px 40px;
   width: 100%;
   max-width: 450px;
-  box-shadow:
-    0 0 50px rgba(59, 83, 122, 0.3),
+  box-shadow: 0 0 50px rgba(59, 83, 122, 0.3),
     0 25px 50px -12px rgba(0, 0, 0, 0.6),
     inset 0 1px 0 rgba(255, 255, 255, 0.08);
   position: relative;
@@ -49,10 +48,7 @@ body {
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg,
-      transparent,
-      #3b537a 60%,
-      transparent);
+  background: linear-gradient(90deg, transparent, #3b537a 60%, transparent);
   border-radius: 20px 20px 0 0;
 }
 
@@ -63,7 +59,12 @@ body {
   left: -50%;
   width: 200%;
   height: 200%;
-  background: conic-gradient(from 0deg, transparent, rgba(52, 152, 219, 0.1), transparent);
+  background: conic-gradient(
+    from 0deg,
+    transparent,
+    rgba(52, 152, 219, 0.1),
+    transparent
+  );
   animation: rotate 6s linear infinite;
   z-index: -1;
 }
@@ -117,18 +118,23 @@ body {
   position: relative;
   display: flex;
   align-items: center;
+  z-index: 1;
 }
 
 .input-icon {
   position: absolute;
-  left: 18px;
+  left: 20px;
   top: 50%;
   transform: translateY(-50%);
   width: 20px;
   height: 20px;
   color: #7f8c8d;
   pointer-events: none;
-  z-index: 2;
+  z-index: 1;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .toggle-icon {
@@ -138,7 +144,7 @@ body {
 
 .form-input {
   width: 100%;
-  padding: 18px 18px 18px 55px;
+  padding: 18px 60px 18px 70px !important;
   background: rgba(34, 48, 74, 0.9);
   border: 2px solid #3b537a;
   border-radius: 15px;
@@ -147,18 +153,14 @@ body {
   font-weight: 500;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   outline: none;
-  box-shadow:
-    inset 0 2px 4px rgba(0, 0, 0, 0.1),
-    0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .form-input:focus {
   background: rgba(45, 58, 83, 1);
   border-color: #3b537a;
-  box-shadow:
-    0 0 0 4px rgba(59, 83, 122, 0.15),
-    inset 0 2px 4px rgba(0, 0, 0, 0.05),
-    0 2px 8px rgba(59, 83, 122, 0.12);
+  box-shadow: 0 0 0 4px rgba(59, 83, 122, 0.15),
+    inset 0 2px 4px rgba(0, 0, 0, 0.05), 0 2px 8px rgba(59, 83, 122, 0.12);
   transform: translateY(-1px);
 }
 
@@ -182,7 +184,10 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2;
+  z-index: 10;
+  font-size: 16px;
+  width: 32px;
+  height: 32px;
 }
 
 .toggle-password:hover {
@@ -215,9 +220,7 @@ body {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow:
-    0 6px 20px rgba(52, 152, 219, 0.3),
-    0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6px 20px rgba(52, 152, 219, 0.3), 0 2px 4px rgba(0, 0, 0, 0.1);
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   position: relative;
   overflow: hidden;
@@ -241,15 +244,12 @@ body {
 .login-button:hover {
   background: linear-gradient(135deg, #22304a 0%, #1b58ff 100%);
   transform: translateY(-2px);
-  box-shadow:
-    0 8px 25px rgba(52, 152, 219, 0.4),
-    0 4px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 25px rgba(52, 152, 219, 0.4), 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .login-button:active {
   transform: translateY(-1px);
-  box-shadow:
-    0 4px 15px rgba(52, 152, 219, 0.3),
+  box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3),
     0 2px 4px rgba(19, 108, 251, 0.1);
 }
 
@@ -264,9 +264,7 @@ body {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow:
-    0 6px 20px rgba(39, 174, 96, 0.3),
-    0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6px 20px rgba(39, 174, 96, 0.3), 0 2px 4px rgba(0, 0, 0, 0.1);
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   position: relative;
   overflow: hidden;
@@ -279,7 +277,12 @@ body {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
   transition: left 0.5s;
 }
 
@@ -290,16 +293,12 @@ body {
 .create-user-button:hover {
   background: linear-gradient(135deg, #3b537a 0%, #26ff72 100%);
   transform: translateY(-2px);
-  box-shadow:
-    0 8px 25px rgba(39, 174, 96, 0.4),
-    0 4px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 25px rgba(39, 174, 96, 0.4), 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .create-user-button:active {
   transform: translateY(-1px);
-  box-shadow:
-    0 4px 15px rgba(39, 174, 96, 0.3),
-    0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3), 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Responsive */
@@ -319,7 +318,7 @@ body {
   }
 
   .form-input {
-    padding: 16px 16px 16px 50px;
+    padding: 16px 60px 16px 70px !important;
   }
 
   .login-button,
@@ -357,18 +356,15 @@ body {
 }
 
 @keyframes glow {
-
   0%,
   100% {
-    box-shadow:
-      0 0 50px rgba(52, 152, 219, 0.3),
+    box-shadow: 0 0 50px rgba(52, 152, 219, 0.3),
       0 25px 50px -12px rgba(0, 0, 0, 0.6),
       inset 0 1px 0 rgba(255, 255, 255, 0.1);
   }
 
   50% {
-    box-shadow:
-      0 0 60px rgba(52, 152, 219, 0.4),
+    box-shadow: 0 0 60px rgba(52, 152, 219, 0.4),
       0 25px 50px -12px rgba(0, 0, 0, 0.6),
       inset 0 1px 0 rgba(255, 255, 255, 0.1);
   }
@@ -396,36 +392,40 @@ body {
   animation-fill-mode: both;
 }
 
-/* Estados de validación */
+/* Estados de validación y mensajes de error */
+.error-text {
+  color: #e74c3c;
+  font-size: 0.875rem;
+  margin-top: 6px;
+  padding-left: 4px;
+  font-weight: 500;
+}
+
 .form-input:invalid:not(:focus):not(:placeholder-shown) {
   border-color: #e74c3c;
   background: rgba(231, 76, 60, 0.1);
-  box-shadow:
-    0 0 0 4px rgba(231, 76, 60, 0.2),
+  box-shadow: 0 0 0 4px rgba(231, 76, 60, 0.2),
     inset 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .form-input:valid:not(:focus):not(:placeholder-shown) {
   border-color: #e74c3c;
   background: rgba(231, 76, 60, 0.1);
-  box-shadow:
-    0 0 0 4px rgba(231, 76, 60, 0.2),
+  box-shadow: 0 0 0 4px rgba(231, 76, 60, 0.2),
     inset 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .input-valid {
   border-color: #2ecc71 !important;
   background: rgba(46, 204, 113, 0.1) !important;
-  box-shadow:
-    0 0 0 4px rgba(46, 204, 113, 0.2),
+  box-shadow: 0 0 0 4px rgba(46, 204, 113, 0.2),
     inset 0 2px 4px rgba(0, 0, 0, 0.05) !important;
 }
 
 .input-invalid {
   border-color: #e74c3c !important;
   background: rgba(231, 76, 60, 0.1) !important;
-  box-shadow:
-    0 0 0 4px rgba(231, 76, 60, 0.2),
+  box-shadow: 0 0 0 4px rgba(231, 76, 60, 0.2),
     inset 0 2px 4px rgba(0, 0, 0, 0.05) !important;
 }
 
@@ -433,8 +433,7 @@ body {
 .form-input.input-valid {
   border-color: #2ecc71 !important;
   background-color: rgba(46, 204, 113, 0.08) !important;
-  box-shadow:
-    0 0 0 4px rgba(46, 204, 113, 0.2),
+  box-shadow: 0 0 0 4px rgba(46, 204, 113, 0.2),
     inset 0 2px 4px rgba(0, 0, 0, 0.05) !important;
   color: #fff;
 }
@@ -443,11 +442,9 @@ body {
 .form-input.input-invalid {
   border-color: #e74c3c !important;
   background-color: rgba(231, 76, 60, 0.08) !important;
-  box-shadow:
-    0 0 0 4px rgba(231, 76, 60, 0.2),
+  box-shadow: 0 0 0 4px rgba(231, 76, 60, 0.2),
     inset 0 2px 4px rgba(0, 0, 0, 0.05) !important;
 }
-
 
 .input-wrapper .form-input.input-valid {
   background-color: rgba(46, 204, 113, 0.08) !important;
