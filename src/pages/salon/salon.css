@@ -1,6 +1,29 @@
+@media (min-width: 900px) {
+  .salon-container {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 32px;
+    padding-top: 40px;
+  }
+  .filtros-panel {
+    min-width: 320px;
+    max-width: 350px;
+    margin-top: 0;
+    margin-bottom: 0;
+    flex-shrink: 0;
+  }
+  .salones-grid {
+    width: 100%;
+    margin: 0;
+  }
+}
 .salon-container {
   padding: 20px;
   position: relative;
+  max-width: 100vw;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* Ajustar posición del UserBadge para evitar superposición */
@@ -126,10 +149,7 @@
   }
 
   /* Grid horizontal en desktop */
-  .salones-grid {
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) !important;
-    gap: 25px !important;
-  }
+  /* Eliminado para que el grid sea igual en todos los tamaños */
 }
 .filtros-grid {
   display: grid;
@@ -189,10 +209,14 @@
 }
 
 /* Grid para las tarjetas - base móvil */
+
 .salones-grid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 24px;
+  width: 100%;
+  margin: 0;
+  justify-items: center;
 }
 
 .salon-card {
@@ -202,6 +226,8 @@
   padding: 15px;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   cursor: pointer;
+  width: 100%;
+  max-width: 350px;
 }
 
 .salon-card:hover {
