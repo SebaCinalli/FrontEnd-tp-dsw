@@ -101,19 +101,31 @@ export function GastronomicoAdmin() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Preparar datos para envío - el backend espera 'zona' no 'zonaId'
+    const dataToSend = {
+      nombreG: formData.nombreG.trim(),
+      tipoComida: formData.tipoComida,
+      montoG: Number(formData.montoG),
+      zona: Number(formData.zonaId), // El backend espera 'zona' no 'zonaId'
+      foto: formData.foto.trim()
+    };
+    
+    console.log('Datos a enviar:', dataToSend);
+    
     try {
       if (editingGastronomico) {
         // Editar Gastronómico existente
         await axios.put(
           `http://localhost:3000/api/gastronomico/${editingGastronomico.id}`,
-          formData,
+          dataToSend,
           {
             withCredentials: true,
           }
         );
       } else {
         // Crear nuevo Gastronómico
-        await axios.post('http://localhost:3000/api/gastronomico', formData, {
+        await axios.post('http://localhost:3000/api/gastronomico', dataToSend, {
           withCredentials: true,
         });
       }
@@ -127,8 +139,13 @@ export function GastronomicoAdmin() {
       );
       setGastronomicos(response.data.data);
       closeModal();
-    } catch (error) {
+      
+      // Mostrar mensaje de éxito
+      alert(editingGastronomico ? 'Servicio gastronómico actualizado exitosamente!' : 'Servicio gastronómico creado exitosamente!');
+    } catch (error: any) {
       console.error('Error al guardar Gastronómico:', error);
+      const errorMessage = error.response?.data?.message || error.message || 'Error desconocido';
+      alert(`Error al ${editingGastronomico ? 'actualizar' : 'crear'} el servicio gastronómico: ${errorMessage}`);
     }
   };
 

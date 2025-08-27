@@ -99,19 +99,31 @@ export function DjAdmin() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Preparar datos para envío - el backend espera 'zona' no 'zonaId'
+    const dataToSend = {
+      nombreArtistico: formData.nombreArtistico.trim(),
+      estado: formData.estado,
+      montoDj: Number(formData.montoDj),
+      zona: Number(formData.zonaId), // El backend espera 'zona' no 'zonaId'
+      foto: formData.foto.trim()
+    };
+    
+    console.log('Datos a enviar:', dataToSend);
+    
     try {
       if (editingDj) {
         // Editar DJ existente
         await axios.put(
           `http://localhost:3000/api/dj/${editingDj.id}`,
-          formData,
+          dataToSend,
           {
             withCredentials: true,
           }
         );
       } else {
         // Crear nuevo DJ
-        await axios.post('http://localhost:3000/api/dj', formData, {
+        await axios.post('http://localhost:3000/api/dj', dataToSend, {
           withCredentials: true,
         });
       }
@@ -122,8 +134,13 @@ export function DjAdmin() {
       });
       setDjs(response.data.data);
       closeModal();
-    } catch (error) {
+      
+      // Mostrar mensaje de éxito
+      alert(editingDj ? 'DJ actualizado exitosamente!' : 'DJ creado exitosamente!');
+    } catch (error: any) {
       console.error('Error al guardar DJ:', error);
+      const errorMessage = error.response?.data?.message || error.message || 'Error desconocido';
+      alert(`Error al ${editingDj ? 'actualizar' : 'crear'} el DJ: ${errorMessage}`);
     }
   };
 

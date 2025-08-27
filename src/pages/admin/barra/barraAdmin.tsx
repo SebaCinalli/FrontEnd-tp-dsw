@@ -40,8 +40,11 @@ export function BarraAdmin() {
           withCredentials: true,
         });
         setBarras(response.data.data);
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error al cargar barras:', error);
+        if (error.response?.status === 401) {
+          alert('No estás autenticado. Por favor, inicia sesión nuevamente.');
+        }
       }
     };
 
@@ -51,7 +54,7 @@ export function BarraAdmin() {
           withCredentials: true,
         });
         setZonas(response.data.data);
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error al cargar zonas:', error);
       }
     };
@@ -61,23 +64,26 @@ export function BarraAdmin() {
   }, []);
 
   const openModal = (barra: Barra | null = null) => {
+    console.log('Abriendo modal:', barra ? 'editar' : 'crear');
     setEditingBarra(barra);
     if (barra) {
-      setFormData({
+      const newFormData = {
         nombreB: barra.nombreB,
         tipoBebida: barra.tipoBebida,
         montoB: barra.montoB,
         zonaId: barra.zona.id,
         foto: barra.foto,
-      });
+      };
+      setFormData(newFormData);
     } else {
-      setFormData({
+      const newFormData = {
         nombreB: '',
         tipoBebida: '',
         montoB: 0,
         zonaId: 0,
         foto: '',
-      });
+      };
+      setFormData(newFormData);
     }
     setIsModalOpen(true);
   };
@@ -91,39 +97,93 @@ export function BarraAdmin() {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
+    const newValue = name === 'montoB' || name === 'zonaId' ? parseInt(value) || 0 : value;
     setFormData((prev) => ({
       ...prev,
-      [name]: name === 'montoB' || name === 'zonaId' ? parseInt(value) : value,
+      [name]: newValue,
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Enviando datos del formulario:', formData);
+    
+    // Validaciones previas
+    if (!formData.nombreB.trim()) {
+      alert('El nombre de la barra es requerido');
+      return;
+    }
+    
+    if (!formData.tipoBebida) {
+      alert('El tipo de bebida es requerido');
+      return;
+    }
+    
+    if (formData.montoB <= 0) {
+      alert('El monto debe ser mayor a 0');
+      return;
+    }
+    
+    if (formData.zonaId <= 0) {
+      alert('Debe seleccionar una zona');
+      return;
+    }
+    
+    if (!formData.foto.trim()) {
+      alert('La URL de la foto es requerida');
+      return;
+    }
+    
+    // Preparar datos para envío - el backend espera 'zona' no 'zonaId'
+    const dataToSend = {
+      nombreB: formData.nombreB.trim(),
+      tipoBebida: formData.tipoBebida,
+      montoB: Number(formData.montoB),
+      zona: Number(formData.zonaId), // El backend espera 'zona' no 'zonaId'
+      foto: formData.foto.trim()
+    };
+    
+    console.log('Datos preparados para envío:', dataToSend);
+    
     try {
+      let response;
       if (editingBarra) {
         // Editar Barra existente
-        await axios.put(
+        console.log('Editando barra existente con ID:', editingBarra.id);
+        response = await axios.put(
           `http://localhost:3000/api/barra/${editingBarra.id}`,
-          formData,
+          dataToSend,
           {
             withCredentials: true,
           }
         );
+        console.log('Respuesta de edición:', response.data);
       } else {
         // Crear nueva Barra
-        await axios.post('http://localhost:3000/api/barra', formData, {
+        console.log('Creando nueva barra');
+        response = await axios.post('http://localhost:3000/api/barra', dataToSend, {
           withCredentials: true,
         });
+        console.log('Respuesta de creación:', response.data);
       }
 
       // Recargar la lista de Barras
-      const response = await axios.get('http://localhost:3000/api/barra', {
+      const listResponse = await axios.get('http://localhost:3000/api/barra', {
         withCredentials: true,
       });
-      setBarras(response.data.data);
+      setBarras(listResponse.data.data);
       closeModal();
-    } catch (error) {
+      
+      // Mostrar mensaje de éxito
+      alert(editingBarra ? 'Barra actualizada exitosamente!' : 'Barra creada exitosamente!');
+    } catch (error: any) {
       console.error('Error al guardar Barra:', error);
+      console.error('Detalles del error:', error.response?.data);
+      console.error('Estado del error:', error.response?.status);
+      
+      // Mostrar mensaje de error más específico
+      const errorMessage = error.response?.data?.message || error.message || 'Error desconocido';
+      alert(`Error al ${editingBarra ? 'actualizar' : 'crear'} la barra: ${errorMessage}`);
     }
   };
 
@@ -146,6 +206,7 @@ export function BarraAdmin() {
   };
 
   const handleEditClick = () => {
+    console.log('Abriendo modal para crear nueva barra');
     openModal();
   };
 

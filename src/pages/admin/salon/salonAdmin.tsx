@@ -13,6 +13,7 @@ interface Salon {
     nombre: string;
   };
   foto: string;
+  estado: string;
 }
 
 interface Zona {
@@ -31,6 +32,7 @@ export function SalonAdmin() {
     montoS: 0,
     zonaId: 0,
     foto: '',
+    estado: 'disponible',
   });
 
   useEffect(() => {
@@ -69,6 +71,7 @@ export function SalonAdmin() {
         montoS: salon.montoS,
         zonaId: salon.zona.id,
         foto: salon.foto,
+        estado: salon.estado,
       });
     } else {
       setFormData({
@@ -77,6 +80,7 @@ export function SalonAdmin() {
         montoS: 0,
         zonaId: 0,
         foto: '',
+        estado: 'disponible',
       });
     }
     setIsModalOpen(true);
@@ -95,26 +99,39 @@ export function SalonAdmin() {
       ...prev,
       [name]:
         name === 'capacidad' || name === 'montoS' || name === 'zonaId'
-          ? parseInt(value)
+          ? parseInt(value) || 0
           : value,
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Preparar datos para envío - el backend espera 'zona' no 'zonaId'
+    const dataToSend = {
+      nombre: formData.nombre.trim(),
+      capacidad: Number(formData.capacidad),
+      montoS: Number(formData.montoS),
+      zona: Number(formData.zonaId), // El backend espera 'zona' no 'zonaId'
+      foto: formData.foto.trim(),
+      estado: formData.estado
+    };
+    
+    console.log('Datos a enviar:', dataToSend);
+    
     try {
       if (editingSalon) {
         // Editar Salón existente
         await axios.put(
           `http://localhost:3000/api/salon/${editingSalon.id}`,
-          formData,
+          dataToSend,
           {
             withCredentials: true,
           }
         );
       } else {
         // Crear nuevo Salón
-        await axios.post('http://localhost:3000/api/salon', formData, {
+        await axios.post('http://localhost:3000/api/salon', dataToSend, {
           withCredentials: true,
         });
       }
@@ -125,8 +142,13 @@ export function SalonAdmin() {
       });
       setSalones(response.data.data);
       closeModal();
-    } catch (error) {
+      
+      // Mostrar mensaje de éxito
+      alert(editingSalon ? 'Salón actualizado exitosamente!' : 'Salón creado exitosamente!');
+    } catch (error: any) {
       console.error('Error al guardar Salón:', error);
+      const errorMessage = error.response?.data?.message || error.message || 'Error desconocido';
+      alert(`Error al ${editingSalon ? 'actualizar' : 'crear'} el salón: ${errorMessage}`);
     }
   };
 
@@ -166,6 +188,7 @@ export function SalonAdmin() {
             <p className="salon-montoS">
               ${salon.montoS.toLocaleString('es-AR')}
             </p>
+            <p className="salon-estado">Estado: {salon.estado}</p>
             <p className="salon-zona">{salon.zona.nombre}</p>
           </div>
           <div className="card-actions">
@@ -247,6 +270,22 @@ export function SalonAdmin() {
                       {zona.nombre}
                     </option>
                   ))}
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="estado">Estado:</label>
+                <select
+                  id="estado"
+                  name="estado"
+                  value={formData.estado}
+                  onChange={handleInputChange}
+                  required
+                >
+                  <option value="disponible">Disponible</option>
+                  <option value="ocupado">Ocupado</option>
+                  <option value="mantenimiento">Mantenimiento</option>
+                  <option value="inactivo">Inactivo</option>
                 </select>
               </div>
 
