@@ -1,7 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, memo } from 'react';
 import axios from 'axios';
 import './gastronomicoAdmin.css';
 import { UserBadge } from '../../../components/userbadge';
+import {
+  uploadGastronomicoImage,
+  isValidImageFile,
+  isValidFileSize,
+} from '../../../utils/imageUpload';
 
 interface Gastronomico {
   id: number;
@@ -20,6 +25,55 @@ interface Zona {
   nombre: string;
 }
 
+// Componente memoizado para las imágenes para evitar re-renders innecesarios
+const GastronomicoImage = memo(
+  ({ foto, nombreG }: { foto?: string; nombreG: string }) => {
+    const [imageUrl, setImageUrl] = useState('');
+    const [imageError, setImageError] = useState(false);
+
+    useEffect(() => {
+      if (foto) {
+        // Construir URL completa si es necesario
+        const fullUrl = foto.startsWith('http')
+          ? foto
+          : `http://localhost:3000/uploads/gastronomicos/${foto}`;
+
+        // Agregar timestamp para cache busting si la imagen ya estaba cargada
+        const urlWithTimestamp = `${fullUrl}?t=${Date.now()}`;
+        setImageUrl(urlWithTimestamp);
+        setImageError(false);
+      } else {
+        setImageUrl('https://via.placeholder.com/200x200?text=Sin+Imagen');
+      }
+    }, [foto]);
+
+    const handleImageError = useCallback(() => {
+      setImageError(true);
+      setImageUrl('https://via.placeholder.com/200x200?text=Error+Cargando');
+    }, []);
+
+    const handleImageLoad = useCallback(() => {
+      setImageError(false);
+    }, []);
+
+    return (
+      <img
+        src={imageUrl}
+        alt={nombreG}
+        className="gastronomico-img"
+        onError={handleImageError}
+        onLoad={handleImageLoad}
+        style={{
+          opacity: imageError ? 0.7 : 1,
+          transition: 'opacity 0.3s ease',
+        }}
+      />
+    );
+  }
+);
+
+GastronomicoImage.displayName = 'GastronomicoImage';
+
 export function GastronomicoAdmin() {
   const [gastronomicos, setGastronomicos] = useState<Gastronomico[]>([]);
   const [zonas, setZonas] = useState<Zona[]>([]);
@@ -33,6 +87,15 @@ export function GastronomicoAdmin() {
     zonaId: 0,
     foto: '',
   });
+
+  // Función helper para construir URLs de imagen (estable y memoizada)
+  const buildImageUrl = useCallback((fileName: string | undefined) => {
+    if (!fileName) return '';
+    // Si ya es una URL completa, devolverla tal como está
+    if (fileName.startsWith('http')) return fileName;
+    // Si es solo el nombre del archivo, construir la URL completa
+    return `http://localhost:3000/uploads/gastronomicos/${fileName}`;
+  }, []);
 
   useEffect(() => {
     const fetchGastronomicos = async () => {
@@ -62,7 +125,7 @@ export function GastronomicoAdmin() {
     fetchZonas();
   }, []);
 
-  const openModal = (gastronomico: Gastronomico | null = null) => {
+  const openModal = useCallback((gastronomico: Gastronomico | null = null) => {
     setEditingGastronomico(gastronomico);
     if (gastronomico) {
       setFormData({
@@ -82,37 +145,121 @@ export function GastronomicoAdmin() {
       });
     }
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const closeModal = () => {
+  const closeModal = useCallback(() => {
     setIsModalOpen(false);
     setEditingGastronomico(null);
-  };
+  }, []);
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: name === 'montoG' || name === 'zonaId' ? parseInt(value) : value,
-    }));
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+      const { name, value } = e.target;
+      setFormData((prev) => ({
+        ...prev,
+        [name]:
+          name === 'montoG' || name === 'zonaId' ? parseInt(value) : value,
+      }));
+    },
+    []
+  );
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    console.log('Archivo seleccionado:', file.name, file.size, file.type);
+
+    // Validaciones
+    if (!isValidImageFile(file)) {
+      alert(
+        'Por favor selecciona un archivo de imagen válido (JPEG, PNG, GIF, WebP)'
+      );
+      return;
+    }
+
+    if (!isValidFileSize(file, 5)) {
+      alert('El archivo es demasiado grande. Máximo 5MB permitido.');
+      return;
+    }
+
+    // Solo subir si estamos editando un Gastronómico existente
+    if (!editingGastronomico?.id) {
+      alert(
+        'Primero guarda el servicio gastronómico, luego podrás subir una imagen'
+      );
+      return;
+    }
+
+    try {
+      console.log(
+        'Iniciando subida de imagen para Gastronómico ID:',
+        editingGastronomico.id
+      );
+      const result = await uploadGastronomicoImage(
+        editingGastronomico.id,
+        file
+      );
+
+      console.log('Resultado de subida:', result);
+
+      if (result.success && result.imageUrl) {
+        console.log('✅ URL de imagen recibida:', result.imageUrl);
+
+        // Actualizar formData inmediatamente
+        setFormData((prev) => ({
+          ...prev,
+          foto: result.imageUrl || '',
+        }));
+
+        // Actualizar la lista de Gastronómicos para reflejar la nueva imagen
+        setGastronomicos((prevGastronomicos) =>
+          prevGastronomicos.map((gastronomico) =>
+            gastronomico.id === editingGastronomico.id
+              ? { ...gastronomico, foto: result.imageUrl || '' }
+              : gastronomico
+          )
+        );
+
+        alert('Imagen subida exitosamente!');
+      } else {
+        console.error('❌ Error en la subida:', result.message);
+        alert('Error al subir imagen: ' + result.message);
+      }
+    } catch (error) {
+      console.error('Error inesperado al subir imagen:', error);
+      alert('Error inesperado al subir imagen');
+    }
+
+    // Limpiar el input para poder seleccionar el mismo archivo de nuevo si es necesario
+    e.target.value = '';
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
+    // Función para extraer solo el nombre del archivo para el backend
+    const getFileName = (urlOrFileName: string) => {
+      if (!urlOrFileName) return '';
+      // Si es una URL completa, extraer solo el nombre del archivo
+      if (urlOrFileName.startsWith('http')) {
+        return urlOrFileName.split('/').pop() || '';
+      }
+      // Si ya es solo el nombre del archivo, devolverlo tal como está
+      return urlOrFileName;
+    };
+
     // Preparar datos para envío - el backend espera 'zona' no 'zonaId'
     const dataToSend = {
       nombreG: formData.nombreG.trim(),
       tipoComida: formData.tipoComida,
       montoG: Number(formData.montoG),
       zona: Number(formData.zonaId), // El backend espera 'zona' no 'zonaId'
-      foto: formData.foto.trim()
+      ...(formData.foto.trim() && { foto: getFileName(formData.foto.trim()) }), // Solo el nombre del archivo
     };
-    
+
     console.log('Datos a enviar:', dataToSend);
-    
+
     try {
       if (editingGastronomico) {
         // Editar Gastronómico existente
@@ -139,13 +286,22 @@ export function GastronomicoAdmin() {
       );
       setGastronomicos(response.data.data);
       closeModal();
-      
+
       // Mostrar mensaje de éxito
-      alert(editingGastronomico ? 'Servicio gastronómico actualizado exitosamente!' : 'Servicio gastronómico creado exitosamente!');
+      alert(
+        editingGastronomico
+          ? 'Servicio gastronómico actualizado exitosamente!'
+          : 'Servicio gastronómico creado exitosamente!'
+      );
     } catch (error: any) {
       console.error('Error al guardar Gastronómico:', error);
-      const errorMessage = error.response?.data?.message || error.message || 'Error desconocido';
-      alert(`Error al ${editingGastronomico ? 'actualizar' : 'crear'} el servicio gastronómico: ${errorMessage}`);
+      const errorMessage =
+        error.response?.data?.message || error.message || 'Error desconocido';
+      alert(
+        `Error al ${
+          editingGastronomico ? 'actualizar' : 'crear'
+        } el servicio gastronómico: ${errorMessage}`
+      );
     }
   };
 
@@ -183,10 +339,9 @@ export function GastronomicoAdmin() {
       <UserBadge />
       {gastronomicos.map((gastronomico) => (
         <div className="gastronomico-card" key={gastronomico.id}>
-          <img
-            src={gastronomico.foto}
-            alt={gastronomico.nombreG}
-            className="gastronomico-img"
+          <GastronomicoImage
+            foto={gastronomico.foto}
+            nombreG={gastronomico.nombreG}
           />
           <div className="gastronomico-info">
             <h3 className="gastronomico-name">{gastronomico.nombreG}</h3>
@@ -296,17 +451,67 @@ export function GastronomicoAdmin() {
                 </select>
               </div>
 
+              {/* Campo para subir archivo de imagen */}
               <div className="form-group">
-                <label htmlFor="foto">URL de la foto:</label>
+                <label htmlFor="imagen">Subir imagen:</label>
                 <input
-                  type="url"
-                  id="foto"
-                  name="foto"
-                  value={formData.foto}
-                  onChange={handleInputChange}
-                  required
+                  type="file"
+                  id="imagen"
+                  accept="image/jpeg,image/png,image/gif,image/webp"
+                  onChange={handleFileUpload}
                 />
+                <small style={{ color: '#999', fontSize: '12px' }}>
+                  {editingGastronomico
+                    ? 'Formatos: JPEG, PNG, GIF, WebP. Máximo 5MB'
+                    : 'Primero guarda el servicio gastronómico para poder subir imagen'}
+                </small>
               </div>
+
+              {/* Preview de la imagen si existe */}
+              {formData.foto && (
+                <div className="form-group">
+                  <label>Vista previa:</label>
+                  <div style={{ marginTop: '8px' }}>
+                    <img
+                      key={formData.foto} // Forzar re-render cuando cambia la foto
+                      src={`${buildImageUrl(formData.foto)}?t=${Date.now()}`} // Cache busting
+                      alt="Preview"
+                      style={{
+                        maxWidth: '200px',
+                        maxHeight: '200px',
+                        objectFit: 'cover',
+                        borderRadius: '8px',
+                        border: '1px solid #ddd',
+                        display: 'block',
+                      }}
+                      onLoad={() =>
+                        console.log(
+                          '✅ Preview cargado correctamente:',
+                          formData.foto
+                        )
+                      }
+                      onError={(e) => {
+                        console.log(
+                          '❌ Error cargando preview:',
+                          buildImageUrl(formData.foto)
+                        );
+                        // Imagen por defecto si falla
+                        e.currentTarget.src =
+                          'https://via.placeholder.com/200x200?text=Error+Cargando';
+                      }}
+                    />
+                    <p
+                      style={{
+                        fontSize: '12px',
+                        color: '#666',
+                        marginTop: '4px',
+                      }}
+                    >
+                      Archivo: {formData.foto}
+                    </p>
+                  </div>
+                </div>
+              )}
 
               <div className="modal-actions">
                 <button
