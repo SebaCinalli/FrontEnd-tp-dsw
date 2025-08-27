@@ -1,8 +1,198 @@
 .salon-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 20px;
   padding: 20px;
+  position: relative;
+}
+
+/* Ajustar posición del UserBadge para evitar superposición */
+.salon-container .user-badge {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  z-index: 10;
+}
+
+/* Estilos para el panel de filtros */
+.filtros-panel {
+  background: linear-gradient(135deg, #1e293b, #334155);
+  border-radius: 15px;
+  margin-bottom: 20px;
+  margin-top: 60px; /* Espacio para el UserBadge en móvil */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+.filtros-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  cursor: pointer;
+}
+
+.filtros-header h3 {
+  color: #e2e8f0;
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.filtros-toggle {
+  background: transparent;
+  border: none;
+  color: #e2e8f0;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.filtros-toggle:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.filtros-arrow {
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.filtros-arrow.rotated {
+  transform: rotate(180deg);
+}
+
+.filtros-content {
+  transition: max-height 0.3s ease, padding 0.3s ease;
+  overflow: hidden;
+}
+
+.filtros-content.visible {
+  max-height: 400px;
+  padding: 0 15px 15px 15px;
+}
+
+.filtros-content.hidden {
+  max-height: 0;
+  padding: 0 15px;
+}
+
+/* En escritorio, siempre mostrar filtros */
+@media (min-width: 768px) {
+  .salon-container {
+    padding-top: 80px; /* Más espacio para UserBadge en desktop */
+  }
+
+  .filtros-panel {
+    margin-top: 20px; /* Resetear margen en desktop */
+  }
+
+  .filtros-toggle {
+    display: none;
+  }
+
+  .filtros-content {
+    max-height: none !important;
+    padding: 0 20px 20px 20px !important;
+    overflow: visible;
+  }
+
+  .filtros-header {
+    cursor: default;
+    padding: 20px 20px 15px 20px;
+  }
+
+  .filtros-header h3 {
+    font-size: 1.2rem;
+  }
+
+  .filtros-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+  }
+
+  .filtro-item label {
+    font-size: 0.9rem;
+  }
+
+  .filtro-item select,
+  .filtro-item input {
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+  }
+
+  .limpiar-filtros-btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+  }
+
+  /* Grid horizontal en desktop */
+  .salones-grid {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) !important;
+    gap: 25px !important;
+  }
+}
+.filtros-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  align-items: end;
+}
+
+.filtro-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.filtro-item label {
+  color: #cbd5e1;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.filtro-item select,
+.filtro-item input {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #475569;
+  background: #334155;
+  color: #e2e8f0;
+  font-size: 0.85rem;
+}
+
+.filtro-item select:focus,
+.filtro-item input:focus {
+  outline: none;
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+}
+
+.limpiar-filtros-btn {
+  padding: 6px 12px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background 0.2s ease;
+}
+
+.limpiar-filtros-btn:hover {
+  background: #dc2626;
+}
+
+.resultados-count {
+  color: #94a3b8;
+  margin-bottom: 15px;
+  font-size: 0.9rem;
+}
+
+/* Grid para las tarjetas - base móvil */
+.salones-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
 }
 
 .salon-card {
@@ -47,6 +237,12 @@
   font-size: 1.2rem;
   font-weight: bold;
   color: #38bdf8; /* celeste */
+}
+
+.salon-zona {
+  font-size: 0.9rem;
+  color: #94a3b8;
+  margin-top: 5px;
 }
 
 .salon-discount {
