@@ -74,13 +74,7 @@ const MenuAdmin: React.FC<MenuProps> = ({
       icon: faList,
       tooltip: 'Ver Solicitudes',
       onClick: () => navigate('/solicitudAdmin'),
-    },
-    {
-      id: 'carrito',
-      icon: faShoppingCart, //codigo de biblioteca usada para el carrito
-      tooltip: 'Mi selección',
-      onClick: () => navigate('/carrito'),
-    },
+    }
   ];
 
   return (
@@ -104,10 +98,6 @@ const MenuAdmin: React.FC<MenuProps> = ({
           ))}
         </div>
 
-        <div className="logout-button" onClick={handleLogout}>
-          <FontAwesomeIcon icon={faSignOutAlt} />
-          <div className="tooltip">Cerrar sesión</div>
-        </div>
       </div>
     </div>
   );

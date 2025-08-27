@@ -96,11 +96,6 @@ const MenuMain: React.FC<MenuMainProps> = ({
             </div>
           ))}
         </div>
-
-        <div className="logout-button" onClick={handleLogout}>
-          <FontAwesomeIcon icon={faSignOutAlt} />
-          <div className="tooltip">Cerrar sesión</div>
-        </div>
       </div>
     </div>
   );
