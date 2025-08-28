@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback, memo } from 'react';
 import axios from 'axios';
 import './gastronomicoAdmin.css';
 import { UserBadge } from '../../../components/userbadge';
+import { BackToMenu } from '../../../components/BackToMenu';
 
 interface Gastronomico {
   id: number;
@@ -331,6 +332,7 @@ export function GastronomicoAdmin() {
 
   return (
     <div className="gastronomico-container">
+      <BackToMenu className="admin-style" />
       <UserBadge />
       {gastronomicos.map((gastronomico) => (
         <div className="gastronomico-card" key={gastronomico.id}>

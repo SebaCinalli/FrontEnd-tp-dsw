@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import './dj.css';
 import { UserBadge } from '../../components/userbadge';
+import { BackToMenu } from '../../components/BackToMenu';
+import { useCart } from '../../context/cartcontext';
+import { useUser } from '../../context/usercontext';
 
 interface Dj {
   id: number;
@@ -34,6 +37,25 @@ export function Dj() {
   const [zonas, setZonas] = useState<string[]>([]);
   const [estados, setEstados] = useState<string[]>([]);
   const [filtrosAbiertos, setFiltrosAbiertos] = useState(false);
+
+  const { addItem, isInCart } = useCart();
+  const { user } = useUser();
+
+  const handleAddToCart = (dj: Dj) => {
+    const cartItem = {
+      id: dj.id,
+      type: 'dj' as const,
+      name: dj.nombreArtistico,
+      price: dj.montoDj,
+      image: dj.foto,
+      details: {
+        estado: dj.estado,
+        zona: dj.zona.nombre,
+      },
+    };
+
+    addItem(cartItem);
+  };
 
   // Función helper para construir URLs de imagen
   const buildImageUrl = (fileName: string | undefined) => {
@@ -127,6 +149,7 @@ export function Dj() {
 
   return (
     <div className="dj-container">
+      <BackToMenu />
       <UserBadge />
 
       {/* Panel de filtros */}
@@ -242,6 +265,29 @@ export function Dj() {
               <p className="dj-montoS">${dj.montoDj.toLocaleString('es-AR')}</p>
               <p className="dj-zona">{dj.zona.nombre}</p>
             </div>
+
+            {/* Botón Agregar al carrito - solo para clientes */}
+            {user?.rol !== 'administrador' && (
+              <div className="dj-actions">
+                <button
+                  className={`add-to-cart-btn ${
+                    isInCart(dj.id, 'dj') ? 'added' : ''
+                  }`}
+                  onClick={() => handleAddToCart(dj)}
+                  disabled={isInCart(dj.id, 'dj')}
+                >
+                  {isInCart(dj.id, 'dj') ? (
+                    <>
+                      <span>✓</span> Agregado
+                    </>
+                  ) : (
+                    <>
+                      <span>🛒</span> Agregar al carrito
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
           </div>
         ))}
       </div>

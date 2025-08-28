@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import './gastronomico.css';
 import { UserBadge } from '../../components/userbadge';
+import { BackToMenu } from '../../components/BackToMenu';
+import { useCart } from '../../context/cartcontext';
+import { useUser } from '../../context/usercontext';
 
 interface Gastronomico {
   id: number;
@@ -36,6 +39,25 @@ export function Gastronomico() {
   const [zonas, setZonas] = useState<string[]>([]);
   const [tiposComida, setTiposComida] = useState<string[]>([]);
   const [filtrosAbiertos, setFiltrosAbiertos] = useState(false);
+
+  const { addItem, isInCart } = useCart();
+  const { user } = useUser();
+
+  const handleAddToCart = (gastronomico: Gastronomico) => {
+    const cartItem = {
+      id: gastronomico.id,
+      type: 'gastronomico' as const,
+      name: gastronomico.nombreG,
+      price: gastronomico.montoG,
+      image: gastronomico.foto,
+      details: {
+        tipoComida: gastronomico.tipoComida,
+        zona: gastronomico.zona.nombre,
+      },
+    };
+
+    addItem(cartItem);
+  };
 
   // Función helper para construir URLs de imagen
   const buildImageUrl = (fileName: string | undefined) => {
@@ -136,6 +158,7 @@ export function Gastronomico() {
 
   return (
     <div className="gastronomico-container">
+      <BackToMenu />
       <UserBadge />
 
       {/* Panel de filtros */}
@@ -257,6 +280,29 @@ export function Gastronomico() {
               </p>
               <p className="gastronomico-zona">{gastronomico.zona.nombre}</p>
             </div>
+
+            {/* Botón Agregar al carrito - solo para clientes */}
+            {user?.rol !== 'administrador' && (
+              <div className="gastronomico-actions">
+                <button
+                  className={`add-to-cart-btn ${
+                    isInCart(gastronomico.id, 'gastronomico') ? 'added' : ''
+                  }`}
+                  onClick={() => handleAddToCart(gastronomico)}
+                  disabled={isInCart(gastronomico.id, 'gastronomico')}
+                >
+                  {isInCart(gastronomico.id, 'gastronomico') ? (
+                    <>
+                      <span>✓</span> Agregado
+                    </>
+                  ) : (
+                    <>
+                      <span>🛒</span> Agregar al carrito
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
           </div>
         ))}
       </div>

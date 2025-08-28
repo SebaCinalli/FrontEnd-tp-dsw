@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import './barra.css';
 import { UserBadge } from '../../components/userbadge';
+import { BackToMenu } from '../../components/BackToMenu';
+import { useCart } from '../../context/cartcontext';
+import { useUser } from '../../context/usercontext';
 
 interface Barra {
   id: number;
@@ -34,6 +37,25 @@ export function Barra() {
   const [zonas, setZonas] = useState<string[]>([]);
   const [tiposBebida, setTiposBebida] = useState<string[]>([]);
   const [filtrosAbiertos, setFiltrosAbiertos] = useState(false);
+
+  const { addItem, isInCart } = useCart();
+  const { user } = useUser();
+
+  const handleAddToCart = (barra: Barra) => {
+    const cartItem = {
+      id: barra.id,
+      type: 'barra' as const,
+      name: barra.nombreB,
+      price: barra.montoB,
+      image: barra.foto,
+      details: {
+        tipoBebida: barra.tipoBebida,
+        zona: barra.zona.nombre,
+      },
+    };
+
+    addItem(cartItem);
+  };
 
   // Función helper para construir URLs de imagen
   const buildImageUrl = (fileName: string | undefined) => {
@@ -131,6 +153,7 @@ export function Barra() {
 
   return (
     <div className="barra-container">
+      <BackToMenu />
       <UserBadge />
 
       {/* Panel de filtros */}
@@ -250,6 +273,29 @@ export function Barra() {
               </p>
               <p className="barra-zona">{barra.zona.nombre}</p>
             </div>
+
+            {/* Botón Agregar al carrito - solo para clientes */}
+            {user?.rol !== 'administrador' && (
+              <div className="barra-actions">
+                <button
+                  className={`add-to-cart-btn ${
+                    isInCart(barra.id, 'barra') ? 'added' : ''
+                  }`}
+                  onClick={() => handleAddToCart(barra)}
+                  disabled={isInCart(barra.id, 'barra')}
+                >
+                  {isInCart(barra.id, 'barra') ? (
+                    <>
+                      <span>✓</span> Agregado
+                    </>
+                  ) : (
+                    <>
+                      <span>🛒</span> Agregar al carrito
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
           </div>
         ))}
       </div>

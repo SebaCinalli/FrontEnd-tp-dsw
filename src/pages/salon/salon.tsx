@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import './salon.css';
 import { UserBadge } from '../../components/userbadge';
+import { BackToMenu } from '../../components/BackToMenu';
+import { useCart } from '../../context/cartcontext';
+import { useUser } from '../../context/usercontext';
 
 interface Salon {
   id: number;
@@ -35,6 +38,25 @@ export function Salon() {
   });
   const [zonas, setZonas] = useState<string[]>([]);
   const [filtrosAbiertos, setFiltrosAbiertos] = useState(false);
+
+  const { addItem, isInCart } = useCart();
+  const { user } = useUser();
+
+  const handleAddToCart = (salon: Salon) => {
+    const cartItem = {
+      id: salon.id,
+      type: 'salon' as const,
+      name: salon.nombre,
+      price: salon.montoS,
+      image: salon.foto,
+      details: {
+        capacidad: salon.capacidad,
+        zona: salon.zona.nombre,
+      },
+    };
+
+    addItem(cartItem);
+  };
 
   // Función helper para construir URLs de imagen
   const buildImageUrl = (fileName: string | undefined) => {
@@ -133,6 +155,7 @@ export function Salon() {
 
   return (
     <div className="salon-container">
+      <BackToMenu />
       <UserBadge />
 
       {/* Panel de filtros */}
@@ -262,6 +285,29 @@ export function Salon() {
               </p>
               <p className="salon-zona">{salon.zona.nombre}</p>
             </div>
+
+            {/* Botón Agregar al carrito - solo para clientes */}
+            {user?.rol !== 'administrador' && (
+              <div className="salon-actions">
+                <button
+                  className={`add-to-cart-btn ${
+                    isInCart(salon.id, 'salon') ? 'added' : ''
+                  }`}
+                  onClick={() => handleAddToCart(salon)}
+                  disabled={isInCart(salon.id, 'salon')}
+                >
+                  {isInCart(salon.id, 'salon') ? (
+                    <>
+                      <span>✓</span> Agregado
+                    </>
+                  ) : (
+                    <>
+                      <span>🛒</span> Agregar al carrito
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
           </div>
         ))}
       </div>

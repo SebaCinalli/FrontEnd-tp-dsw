@@ -74,7 +74,7 @@ const MenuAdmin: React.FC<MenuProps> = ({
       icon: faList,
       tooltip: 'Ver Solicitudes',
       onClick: () => navigate('/solicitudAdmin'),
-    }
+    },
   ];
 
   return (
@@ -97,7 +97,6 @@ const MenuAdmin: React.FC<MenuProps> = ({
             </div>
           ))}
         </div>
-
       </div>
     </div>
   );

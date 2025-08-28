@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback, memo } from 'react';
 import axios from 'axios';
 import './salonAdmin.css';
 import { UserBadge } from '../../../components/userbadge';
+import { BackToMenu } from '../../../components/BackToMenu';
 
 interface Salon {
   id: number;
@@ -328,6 +329,7 @@ export function SalonAdmin() {
 
   return (
     <div className="salon-container">
+      <BackToMenu className="admin-style" />
       <UserBadge />
       {salones.map((salon) => (
         <div className="salon-card" key={salon.id}>

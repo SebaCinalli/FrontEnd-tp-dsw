@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback, memo } from 'react';
 import axios from 'axios';
 import './barraAdmin.css';
 import { UserBadge } from '../../../components/userbadge';
+import { BackToMenu } from '../../../components/BackToMenu';
 
 interface Barra {
   id: number;
@@ -327,6 +328,7 @@ export function BarraAdmin() {
 
   return (
     <div className="barra-container">
+      <BackToMenu className="admin-style" />
       <UserBadge />
       {barras.map((barra) => (
         <div className="barra-card" key={barra.id}>

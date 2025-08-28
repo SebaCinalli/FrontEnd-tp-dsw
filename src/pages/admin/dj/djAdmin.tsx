@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback, memo } from 'react';
 import axios from 'axios';
 import './djAdmin.css';
 import { UserBadge } from '../../../components/userbadge';
+import { BackToMenu } from '../../../components/BackToMenu';
 
 interface Dj {
   id: number;
@@ -315,6 +316,7 @@ export function DjAdmin() {
 
   return (
     <div className="dj-container">
+      <BackToMenu className="admin-style" />
       <UserBadge />
       {djs.map((dj) => (
         <div className="dj-card" key={dj.id}>

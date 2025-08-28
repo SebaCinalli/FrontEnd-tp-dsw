@@ -9,6 +9,7 @@ import { Salon } from '../pages/salon/salon';
 import { Barra } from '../pages/barra/barra';
 import { Dj } from '../pages/dj/dj';
 import { Gastronomico } from '../pages/gastronomico/gastronomico';
+import { Carrito } from '../pages/carrito/carrito';
 import { SalonAdmin } from '../pages/admin/salon/salonAdmin';
 import { BarraAdmin } from '../pages/admin/barra/barraAdmin';
 import { DjAdmin } from '../pages/admin/dj/djAdmin';
@@ -70,7 +71,14 @@ export default function AppRoutes() {
         }
       />
       <Route path="/solicitud" />
-      <Route path="/carrito" />
+      <Route
+        path="/carrito"
+        element={
+          <ProtectedRoutes>
+            <Carrito />
+          </ProtectedRoutes>
+        }
+      />
       {/* RUTAS PROTEGIDAS PARA ADMINISTRADORES */}
       <Route
         path="/barraAdmin"
