@@ -2,11 +2,6 @@ import { useEffect, useState, useCallback, memo } from 'react';
 import axios from 'axios';
 import './barraAdmin.css';
 import { UserBadge } from '../../../components/userbadge';
-import {
-  uploadBarraImage,
-  isValidImageFile,
-  isValidFileSize,
-} from '../../../utils/imageUpload';
 
 interface Barra {
   id: number;
@@ -85,6 +80,7 @@ export function BarraAdmin() {
     montoB: 0,
     zonaId: 0,
     foto: '',
+    imagen: null as File | null,
   });
 
   // Función helper para construir URLs de imagen (estable y memoizada)
@@ -136,6 +132,7 @@ export function BarraAdmin() {
         montoB: barra.montoB,
         zonaId: barra.zona.id,
         foto: barra.foto,
+        imagen: null as File | null,
       };
       setFormData(newFormData);
     } else {
@@ -145,6 +142,7 @@ export function BarraAdmin() {
         montoB: 0,
         zonaId: 0,
         foto: '',
+        imagen: null as File | null,
       };
       setFormData(newFormData);
     }
@@ -168,69 +166,6 @@ export function BarraAdmin() {
     },
     []
   );
-
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    console.log('Archivo seleccionado:', file.name, file.size, file.type);
-
-    // Validaciones
-    if (!isValidImageFile(file)) {
-      alert(
-        'Por favor selecciona un archivo de imagen válido (JPEG, PNG, GIF, WebP)'
-      );
-      return;
-    }
-
-    if (!isValidFileSize(file, 5)) {
-      alert('El archivo es demasiado grande. Máximo 5MB permitido.');
-      return;
-    }
-
-    // Solo subir si estamos editando una Barra existente
-    if (!editingBarra?.id) {
-      alert('Primero guarda la barra, luego podrás subir una imagen');
-      return;
-    }
-
-    try {
-      console.log('Iniciando subida de imagen para Barra ID:', editingBarra.id);
-      const result = await uploadBarraImage(editingBarra.id, file);
-
-      console.log('Resultado de subida:', result);
-
-      if (result.success && result.imageUrl) {
-        console.log('✅ URL de imagen recibida:', result.imageUrl);
-
-        // Actualizar formData inmediatamente
-        setFormData((prev) => ({
-          ...prev,
-          foto: result.imageUrl || '',
-        }));
-
-        // Actualizar la lista de Barras para reflejar la nueva imagen
-        setBarras((prevBarras) =>
-          prevBarras.map((barra) =>
-            barra.id === editingBarra.id
-              ? { ...barra, foto: result.imageUrl || '' }
-              : barra
-          )
-        );
-
-        alert('Imagen subida exitosamente!');
-      } else {
-        console.error('❌ Error en la subida:', result.message);
-        alert('Error al subir imagen: ' + result.message);
-      }
-    } catch (error) {
-      console.error('Error inesperado al subir imagen:', error);
-      alert('Error inesperado al subir imagen');
-    }
-
-    // Limpiar el input para poder seleccionar el mismo archivo de nuevo si es necesario
-    e.target.value = '';
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -257,52 +192,85 @@ export function BarraAdmin() {
       return;
     }
 
-    // Función para extraer solo el nombre del archivo para el backend
-    const getFileName = (urlOrFileName: string) => {
-      if (!urlOrFileName) return '';
-      // Si es una URL completa, extraer solo el nombre del archivo
-      if (urlOrFileName.startsWith('http')) {
-        return urlOrFileName.split('/').pop() || '';
-      }
-      // Si ya es solo el nombre del archivo, devolverlo tal como está
-      return urlOrFileName;
-    };
-
-    // Preparar datos para envío - el backend espera 'zona' no 'zonaId'
-    const dataToSend = {
-      nombreB: formData.nombreB.trim(),
-      tipoBebida: formData.tipoBebida,
-      montoB: Number(formData.montoB),
-      zona: Number(formData.zonaId), // El backend espera 'zona' no 'zonaId'
-      ...(formData.foto.trim() && { foto: getFileName(formData.foto.trim()) }), // Solo el nombre del archivo
-    };
-
-    console.log('Datos preparados para envío:', dataToSend);
-
     try {
       let response;
+
       if (editingBarra) {
-        // Editar Barra existente
-        console.log('Editando barra existente con ID:', editingBarra.id);
-        response = await axios.put(
-          `http://localhost:3000/api/barra/${editingBarra.id}`,
-          dataToSend,
-          {
-            withCredentials: true,
-          }
-        );
-        console.log('Respuesta de edición:', response.data);
+        // Para editar, usar el método anterior (JSON) si no hay nueva imagen
+        if (!formData.imagen) {
+          // Función para extraer solo el nombre del archivo para el backend
+          const getFileName = (urlOrFileName: string) => {
+            if (!urlOrFileName) return '';
+            // Si es una URL completa, extraer solo el nombre del archivo
+            if (urlOrFileName.startsWith('http')) {
+              return urlOrFileName.split('/').pop() || '';
+            }
+            // Si ya es solo el nombre del archivo, devolverlo tal como está
+            return urlOrFileName;
+          };
+
+          const dataToSend = {
+            nombreB: formData.nombreB.trim(),
+            tipoBebida: formData.tipoBebida,
+            montoB: Number(formData.montoB),
+            zona: Number(formData.zonaId),
+            ...(formData.foto.trim() && {
+              foto: getFileName(formData.foto.trim()),
+            }),
+          };
+
+          console.log('Editando sin nueva imagen:', dataToSend);
+          response = await axios.put(
+            `http://localhost:3000/api/barra/${editingBarra.id}`,
+            dataToSend,
+            {
+              withCredentials: true,
+            }
+          );
+        } else {
+          // Si hay nueva imagen, usar FormData
+          const data = new FormData();
+          data.append('nombreB', formData.nombreB.trim());
+          data.append('tipoBebida', formData.tipoBebida);
+          data.append('montoB', formData.montoB.toString());
+          data.append('zona', formData.zonaId.toString());
+          data.append('imagen', formData.imagen);
+
+          console.log('Editando con nueva imagen');
+          response = await axios.put(
+            `http://localhost:3000/api/barra/${editingBarra.id}`,
+            data,
+            {
+              withCredentials: true,
+            }
+          );
+        }
       } else {
-        // Crear nueva Barra
-        console.log('Creando nueva barra');
-        response = await axios.post(
-          'http://localhost:3000/api/barra',
-          dataToSend,
-          {
-            withCredentials: true,
-          }
-        );
-        console.log('Respuesta de creación:', response.data);
+        // Para crear nueva barra, usar FormData
+        const data = new FormData();
+        data.append('nombreB', formData.nombreB.trim());
+        data.append('tipoBebida', formData.tipoBebida);
+        data.append('montoB', formData.montoB.toString());
+        data.append('zona', formData.zonaId.toString());
+
+        // Importante: el nombre del campo debe ser 'imagen' (según el middleware)
+        if (formData.imagen) {
+          data.append('imagen', formData.imagen);
+        }
+
+        console.log('Creando nueva barra con FormData');
+        response = await fetch('http://localhost:3000/api/barra', {
+          method: 'POST',
+          credentials: 'include',
+          body: data,
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        console.log('Respuesta de creación:', result);
       }
 
       // Recargar la lista de Barras
@@ -463,20 +431,80 @@ export function BarraAdmin() {
                 <input
                   type="file"
                   id="imagen"
-                  accept="image/jpeg,image/png,image/gif,image/webp"
-                  onChange={handleFileUpload}
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+
+                    // Validaciones básicas
+                    const validTypes = [
+                      'image/jpeg',
+                      'image/png',
+                      'image/gif',
+                      'image/webp',
+                    ];
+                    if (!validTypes.includes(file.type)) {
+                      alert(
+                        'Por favor selecciona un archivo de imagen válido (JPEG, PNG, GIF, WebP)'
+                      );
+                      e.target.value = '';
+                      return;
+                    }
+
+                    if (file.size > 5 * 1024 * 1024) {
+                      // 5MB
+                      alert(
+                        'El archivo es demasiado grande. Máximo 5MB permitido.'
+                      );
+                      e.target.value = '';
+                      return;
+                    }
+
+                    setFormData({
+                      ...formData,
+                      imagen: file,
+                    });
+                  }}
                 />
                 <small style={{ color: '#999', fontSize: '12px' }}>
-                  {editingBarra
-                    ? 'Formatos: JPEG, PNG, GIF, WebP. Máximo 5MB'
-                    : 'Primero guarda la barra para poder subir imagen'}
+                  Formatos: JPEG, PNG, GIF, WebP. Máximo 5MB
                 </small>
               </div>
 
-              {/* Preview de la imagen si existe */}
-              {formData.foto && (
+              {/* Preview de la nueva imagen seleccionada */}
+              {formData.imagen && (
                 <div className="form-group">
-                  <label>Vista previa:</label>
+                  <label>Nueva imagen seleccionada:</label>
+                  <div style={{ marginTop: '8px' }}>
+                    <img
+                      src={URL.createObjectURL(formData.imagen)}
+                      alt="Nueva imagen"
+                      style={{
+                        maxWidth: '200px',
+                        maxHeight: '200px',
+                        objectFit: 'cover',
+                        borderRadius: '8px',
+                        border: '1px solid #ddd',
+                        display: 'block',
+                      }}
+                    />
+                    <p
+                      style={{
+                        fontSize: '12px',
+                        color: '#666',
+                        marginTop: '4px',
+                      }}
+                    >
+                      Archivo: {formData.imagen.name}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Preview de la imagen si existe */}
+              {formData.foto && !formData.imagen && (
+                <div className="form-group">
+                  <label>Imagen actual:</label>
                   <div style={{ marginTop: '8px' }}>
                     <img
                       key={formData.foto} // Forzar re-render cuando cambia la foto
