@@ -243,15 +243,14 @@ export function Barra() {
                 Limpiar filtros
               </button>
             </div>
+            {/* Resultados - se muestra después de los filtros */}
+            <div className="resultados-count">
+              {barrasFiltradas.length} resultado(s) encontrado(s)
+            </div>
           </div>
         </div>
       </div>
-
-      {/* Resultados - se muestra después de los filtros */}
-      <div className="resultados-count">
-        {barrasFiltradas.length} resultado(s) encontrado(s)
-      </div>
-
+      <div></div>
       <div className="barras-grid">
         {barrasFiltradas.map((barra) => (
           <div className="barra-card" key={barra.id}>

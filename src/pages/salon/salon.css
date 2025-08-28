@@ -212,16 +212,32 @@
   margin-bottom: 15px;
   font-size: 0.9rem;
 }
+.separacion {
+  width: 5px;
+  height: 1px;
+  display: inline-block;
+}
 
 /* Grid para las tarjetas - base móvil */
-
 .salones-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 24px;
-  width: 100%;
-  margin: 0;
-  justify-items: center;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+/* Responsive grid */
+@media (min-width: 640px) {
+  .salones-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .salones-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+  }
 }
 
 .salon-card {

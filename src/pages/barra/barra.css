@@ -129,12 +129,6 @@
     border-radius: 8px;
     font-size: 0.9rem;
   }
-
-  /* Grid horizontal en desktop */
-  .barras-grid {
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) !important;
-    gap: 25px !important;
-  }
 }
 .filtros-grid {
   display: grid;
@@ -192,12 +186,31 @@
   margin-bottom: 15px;
   font-size: 0.9rem;
 }
-
+.separacion {
+  width: 5px;
+  height: 1px;
+  display: inline-block;
+}
 /* Grid para las tarjetas - base móvil */
 .barras-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 20px;
+}
+
+/* Responsive grid */
+@media (min-width: 640px) {
+  .barras-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .barras-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+  }
 }
 
 .barra-card {

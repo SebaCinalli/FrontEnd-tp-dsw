@@ -237,15 +237,14 @@ export function Dj() {
                 Limpiar filtros
               </button>
             </div>
+            {/* Resultados - se muestra después de los filtros */}
+            <div className="resultados-count">
+              {djsFiltrados.length} resultado(s) encontrado(s)
+            </div>
           </div>
         </div>
       </div>
-
-      {/* Resultados - se muestra después de los filtros */}
-      <div className="resultados-count">
-        {djsFiltrados.length} resultado(s) encontrado(s)
-      </div>
-
+      <div></div>
       <div className="djs-grid">
         {djsFiltrados.map((dj) => (
           <div className="dj-card" key={dj.id}>

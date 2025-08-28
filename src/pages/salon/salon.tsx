@@ -253,15 +253,14 @@ export function Salon() {
                 Limpiar filtros
               </button>
             </div>
+            {/* Resultados - se muestra después de los filtros */}
+            <div className="resultados-count">
+              {salonesFiltrados.length} resultado(s) encontrado(s)
+            </div>
           </div>
         </div>
       </div>
-
-      {/* Resultados - se muestra después de los filtros */}
-      <div className="resultados-count">
-        {salonesFiltrados.length} resultado(s) encontrado(s)
-      </div>
-
+      <div></div>
       <div className="salones-grid">
         {salonesFiltrados.map((salon) => (
           <div className="salon-card" key={salon.id}>

@@ -248,15 +248,14 @@ export function Gastronomico() {
                 Limpiar filtros
               </button>
             </div>
+            {/* Resultados - se muestra después de los filtros */}
+            <div className="resultados-count">
+              {gastronomicosFiltrados.length} resultado(s) encontrado(s)
+            </div>
           </div>
         </div>
       </div>
-
-      {/* Resultados - se muestra después de los filtros */}
-      <div className="resultados-count">
-        {gastronomicosFiltrados.length} resultado(s) encontrado(s)
-      </div>
-
+      <div></div>
       <div className="gastronomicos-grid">
         {gastronomicosFiltrados.map((gastronomico) => (
           <div className="gastronomico-card" key={gastronomico.id}>
