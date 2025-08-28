@@ -253,18 +253,16 @@ export function DjAdmin() {
         }
 
         console.log('Creando nuevo DJ con FormData');
-        response = await fetch('http://localhost:3000/api/dj', {
-          method: 'POST',
-          credentials: 'include',
-          body: data,
-        });
+        response = await axios.post(
+          'http://localhost:3000/api/dj',
+          data,
+          {
+            withCredentials: true,
+            headers: { 'Content-Type': 'multipart/form-data' },
+          }
+        );
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const result = await response.json();
-        console.log('Respuesta de creación:', result);
+        console.log('Respuesta de creación:', response.data);
       }
 
       // Recargar la lista de DJs

@@ -262,18 +262,16 @@ export function SalonAdmin() {
         }
 
         console.log('Creando nuevo salón con FormData');
-        response = await fetch('http://localhost:3000/api/salon', {
-          method: 'POST',
-          credentials: 'include',
-          body: data,
-        });
+        response = await axios.post(
+          'http://localhost:3000/api/salon',
+          data,
+          {
+            withCredentials: true,
+            headers: { 'Content-Type': 'multipart/form-data' },
+          }
+        );
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const result = await response.json();
-        console.log('Respuesta de creación:', result);
+        console.log('Respuesta de creación:', response.data);
       }
 
       // Recargar la lista de Salones
