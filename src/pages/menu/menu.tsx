@@ -8,9 +8,7 @@ import {
   faHeadphones,
   faCouch,
   faShoppingCart,
-  faSignOutAlt,
 } from '@fortawesome/free-solid-svg-icons';
-import { useUser } from '../../context/usercontext';
 import { UserBadge } from '../../components/userbadge';
 
 interface MenuItem {
@@ -29,7 +27,6 @@ const MenuMain: React.FC<MenuMainProps> = ({
   title = 'Menú Principal',
   onItemClick,
 }) => {
-  const { logout } = useUser();
   const navigate = useNavigate();
 
   const handleItemClick = (item: MenuItem) => {
@@ -37,11 +34,6 @@ const MenuMain: React.FC<MenuMainProps> = ({
       onItemClick(item);
     }
     item.onClick();
-  };
-
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
   };
   const menuItems: MenuItem[] = [
     {

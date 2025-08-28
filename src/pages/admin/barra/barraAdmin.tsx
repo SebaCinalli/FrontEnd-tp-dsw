@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, memo } from 'react';
 import axios from 'axios';
 import './barraAdmin.css';
 import { UserBadge } from '../../../components/userbadge';
@@ -20,6 +20,55 @@ interface Zona {
   nombre: string;
 }
 
+// Componente memoizado para las imágenes para evitar re-renders innecesarios
+const BarraImage = memo(
+  ({ foto, nombreB }: { foto?: string; nombreB: string }) => {
+    const [imageUrl, setImageUrl] = useState('');
+    const [imageError, setImageError] = useState(false);
+
+    useEffect(() => {
+      if (foto) {
+        // Construir URL completa si es necesario
+        const fullUrl = foto.startsWith('http')
+          ? foto
+          : `http://localhost:3000/uploads/barras/${foto}`;
+
+        // Agregar timestamp para cache busting si la imagen ya estaba cargada
+        const urlWithTimestamp = `${fullUrl}?t=${Date.now()}`;
+        setImageUrl(urlWithTimestamp);
+        setImageError(false);
+      } else {
+        setImageUrl('https://via.placeholder.com/200x200?text=Sin+Imagen');
+      }
+    }, [foto]);
+
+    const handleImageError = useCallback(() => {
+      setImageError(true);
+      setImageUrl('https://via.placeholder.com/200x200?text=Error+Cargando');
+    }, []);
+
+    const handleImageLoad = useCallback(() => {
+      setImageError(false);
+    }, []);
+
+    return (
+      <img
+        src={imageUrl}
+        alt={nombreB}
+        className="barra-img"
+        onError={handleImageError}
+        onLoad={handleImageLoad}
+        style={{
+          opacity: imageError ? 0.7 : 1,
+          transition: 'opacity 0.3s ease',
+        }}
+      />
+    );
+  }
+);
+
+BarraImage.displayName = 'BarraImage';
+
 export function BarraAdmin() {
   const [barras, setBarras] = useState<Barra[]>([]);
   const [zonas, setZonas] = useState<Zona[]>([]);
@@ -31,7 +80,17 @@ export function BarraAdmin() {
     montoB: 0,
     zonaId: 0,
     foto: '',
+    imagen: null as File | null,
   });
+
+  // Función helper para construir URLs de imagen (estable y memoizada)
+  const buildImageUrl = useCallback((fileName: string | undefined) => {
+    if (!fileName) return '';
+    // Si ya es una URL completa, devolverla tal como está
+    if (fileName.startsWith('http')) return fileName;
+    // Si es solo el nombre del archivo, construir la URL completa
+    return `http://localhost:3000/uploads/barras/${fileName}`;
+  }, []);
 
   useEffect(() => {
     const fetchBarras = async () => {
@@ -63,7 +122,7 @@ export function BarraAdmin() {
     fetchZonas();
   }, []);
 
-  const openModal = (barra: Barra | null = null) => {
+  const openModal = useCallback((barra: Barra | null = null) => {
     console.log('Abriendo modal:', barra ? 'editar' : 'crear');
     setEditingBarra(barra);
     if (barra) {
@@ -73,6 +132,7 @@ export function BarraAdmin() {
         montoB: barra.montoB,
         zonaId: barra.zona.id,
         foto: barra.foto,
+        imagen: null as File | null,
       };
       setFormData(newFormData);
     } else {
@@ -82,89 +142,135 @@ export function BarraAdmin() {
         montoB: 0,
         zonaId: 0,
         foto: '',
+        imagen: null as File | null,
       };
       setFormData(newFormData);
     }
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const closeModal = () => {
+  const closeModal = useCallback(() => {
     setIsModalOpen(false);
     setEditingBarra(null);
-  };
+  }, []);
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    const newValue = name === 'montoB' || name === 'zonaId' ? parseInt(value) || 0 : value;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: newValue,
-    }));
-  };
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+      const { name, value } = e.target;
+      const newValue =
+        name === 'montoB' || name === 'zonaId' ? parseInt(value) || 0 : value;
+      setFormData((prev) => ({
+        ...prev,
+        [name]: newValue,
+      }));
+    },
+    []
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Enviando datos del formulario:', formData);
-    
+
     // Validaciones previas
     if (!formData.nombreB.trim()) {
       alert('El nombre de la barra es requerido');
       return;
     }
-    
+
     if (!formData.tipoBebida) {
       alert('El tipo de bebida es requerido');
       return;
     }
-    
+
     if (formData.montoB <= 0) {
       alert('El monto debe ser mayor a 0');
       return;
     }
-    
+
     if (formData.zonaId <= 0) {
       alert('Debe seleccionar una zona');
       return;
     }
-    
-    if (!formData.foto.trim()) {
-      alert('La URL de la foto es requerida');
-      return;
-    }
-    
-    // Preparar datos para envío - el backend espera 'zona' no 'zonaId'
-    const dataToSend = {
-      nombreB: formData.nombreB.trim(),
-      tipoBebida: formData.tipoBebida,
-      montoB: Number(formData.montoB),
-      zona: Number(formData.zonaId), // El backend espera 'zona' no 'zonaId'
-      foto: formData.foto.trim()
-    };
-    
-    console.log('Datos preparados para envío:', dataToSend);
-    
+
     try {
       let response;
+
       if (editingBarra) {
-        // Editar Barra existente
-        console.log('Editando barra existente con ID:', editingBarra.id);
-        response = await axios.put(
-          `http://localhost:3000/api/barra/${editingBarra.id}`,
-          dataToSend,
-          {
-            withCredentials: true,
-          }
-        );
-        console.log('Respuesta de edición:', response.data);
+        // Para editar, usar el método anterior (JSON) si no hay nueva imagen
+        if (!formData.imagen) {
+          // Función para extraer solo el nombre del archivo para el backend
+          const getFileName = (urlOrFileName: string) => {
+            if (!urlOrFileName) return '';
+            // Si es una URL completa, extraer solo el nombre del archivo
+            if (urlOrFileName.startsWith('http')) {
+              return urlOrFileName.split('/').pop() || '';
+            }
+            // Si ya es solo el nombre del archivo, devolverlo tal como está
+            return urlOrFileName;
+          };
+
+          const dataToSend = {
+            nombreB: formData.nombreB.trim(),
+            tipoBebida: formData.tipoBebida,
+            montoB: Number(formData.montoB),
+            zona: Number(formData.zonaId),
+            ...(formData.foto.trim() && {
+              foto: getFileName(formData.foto.trim()),
+            }),
+          };
+
+          console.log('Editando sin nueva imagen:', dataToSend);
+          response = await axios.put(
+            `http://localhost:3000/api/barra/${editingBarra.id}`,
+            dataToSend,
+            {
+              withCredentials: true,
+            }
+          );
+        } else {
+          // Si hay nueva imagen, usar FormData
+          const data = new FormData();
+          data.append('nombreB', formData.nombreB.trim());
+          data.append('tipoBebida', formData.tipoBebida);
+          data.append('montoB', formData.montoB.toString());
+          data.append('zona', formData.zonaId.toString());
+          data.append('imagen', formData.imagen);
+
+          console.log('Editando con nueva imagen');
+          response = await axios.put(
+            `http://localhost:3000/api/barra/${editingBarra.id}`,
+            data,
+            {
+              withCredentials: true,
+            }
+          );
+        }
       } else {
-        // Crear nueva Barra
-        console.log('Creando nueva barra');
-        response = await axios.post('http://localhost:3000/api/barra', dataToSend, {
-          withCredentials: true,
+        // Para crear nueva barra, usar FormData
+        const data = new FormData();
+        data.append('nombreB', formData.nombreB.trim());
+        data.append('tipoBebida', formData.tipoBebida);
+        data.append('montoB', formData.montoB.toString());
+        data.append('zona', formData.zonaId.toString());
+
+        // Importante: el nombre del campo debe ser 'imagen' (según el middleware)
+        if (formData.imagen) {
+          data.append('imagen', formData.imagen);
+        }
+
+        console.log('Creando nueva barra con FormData');
+        response = await fetch('http://localhost:3000/api/barra', {
+          method: 'POST',
+          credentials: 'include',
+          body: data,
         });
-        console.log('Respuesta de creación:', response.data);
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        console.log('Respuesta de creación:', result);
       }
 
       // Recargar la lista de Barras
@@ -173,17 +279,26 @@ export function BarraAdmin() {
       });
       setBarras(listResponse.data.data);
       closeModal();
-      
+
       // Mostrar mensaje de éxito
-      alert(editingBarra ? 'Barra actualizada exitosamente!' : 'Barra creada exitosamente!');
+      alert(
+        editingBarra
+          ? 'Barra actualizada exitosamente!'
+          : 'Barra creada exitosamente!'
+      );
     } catch (error: any) {
       console.error('Error al guardar Barra:', error);
       console.error('Detalles del error:', error.response?.data);
       console.error('Estado del error:', error.response?.status);
-      
+
       // Mostrar mensaje de error más específico
-      const errorMessage = error.response?.data?.message || error.message || 'Error desconocido';
-      alert(`Error al ${editingBarra ? 'actualizar' : 'crear'} la barra: ${errorMessage}`);
+      const errorMessage =
+        error.response?.data?.message || error.message || 'Error desconocido';
+      alert(
+        `Error al ${
+          editingBarra ? 'actualizar' : 'crear'
+        } la barra: ${errorMessage}`
+      );
     }
   };
 
@@ -215,7 +330,7 @@ export function BarraAdmin() {
       <UserBadge />
       {barras.map((barra) => (
         <div className="barra-card" key={barra.id}>
-          <img src={barra.foto} alt={barra.nombreB} className="barra-img" />
+          <BarraImage foto={barra.foto} nombreB={barra.nombreB} />
           <div className="barra-info">
             <h3 className="barra-name">{barra.nombreB}</h3>
             <p className="barra-bebida">Tipo Bebida: {barra.tipoBebida}</p>
@@ -310,17 +425,127 @@ export function BarraAdmin() {
                 </select>
               </div>
 
+              {/* Campo para subir archivo de imagen */}
               <div className="form-group">
-                <label htmlFor="foto">URL de la foto:</label>
+                <label htmlFor="imagen">Subir imagen:</label>
                 <input
-                  type="url"
-                  id="foto"
-                  name="foto"
-                  value={formData.foto}
-                  onChange={handleInputChange}
-                  required
+                  type="file"
+                  id="imagen"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+
+                    // Validaciones básicas
+                    const validTypes = [
+                      'image/jpeg',
+                      'image/png',
+                      'image/gif',
+                      'image/webp',
+                    ];
+                    if (!validTypes.includes(file.type)) {
+                      alert(
+                        'Por favor selecciona un archivo de imagen válido (JPEG, PNG, GIF, WebP)'
+                      );
+                      e.target.value = '';
+                      return;
+                    }
+
+                    if (file.size > 5 * 1024 * 1024) {
+                      // 5MB
+                      alert(
+                        'El archivo es demasiado grande. Máximo 5MB permitido.'
+                      );
+                      e.target.value = '';
+                      return;
+                    }
+
+                    setFormData({
+                      ...formData,
+                      imagen: file,
+                    });
+                  }}
                 />
+                <small style={{ color: '#999', fontSize: '12px' }}>
+                  Formatos: JPEG, PNG, GIF, WebP. Máximo 5MB
+                </small>
               </div>
+
+              {/* Preview de la nueva imagen seleccionada */}
+              {formData.imagen && (
+                <div className="form-group">
+                  <label>Nueva imagen seleccionada:</label>
+                  <div style={{ marginTop: '8px' }}>
+                    <img
+                      src={URL.createObjectURL(formData.imagen)}
+                      alt="Nueva imagen"
+                      style={{
+                        maxWidth: '200px',
+                        maxHeight: '200px',
+                        objectFit: 'cover',
+                        borderRadius: '8px',
+                        border: '1px solid #ddd',
+                        display: 'block',
+                      }}
+                    />
+                    <p
+                      style={{
+                        fontSize: '12px',
+                        color: '#666',
+                        marginTop: '4px',
+                      }}
+                    >
+                      Archivo: {formData.imagen.name}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Preview de la imagen si existe */}
+              {formData.foto && !formData.imagen && (
+                <div className="form-group">
+                  <label>Imagen actual:</label>
+                  <div style={{ marginTop: '8px' }}>
+                    <img
+                      key={formData.foto} // Forzar re-render cuando cambia la foto
+                      src={`${buildImageUrl(formData.foto)}?t=${Date.now()}`} // Cache busting
+                      alt="Preview"
+                      style={{
+                        maxWidth: '200px',
+                        maxHeight: '200px',
+                        objectFit: 'cover',
+                        borderRadius: '8px',
+                        border: '1px solid #ddd',
+                        display: 'block',
+                      }}
+                      onLoad={() =>
+                        console.log(
+                          '✅ Preview cargado correctamente:',
+                          formData.foto
+                        )
+                      }
+                      onError={(e) => {
+                        console.log(
+                          '❌ Error cargando preview:',
+                          buildImageUrl(formData.foto)
+                        );
+                        // Imagen por defecto si falla
+                        e.currentTarget.src =
+                          'https://via.placeholder.com/200x200?text=Error+Cargando';
+                      }}
+                    />
+                    <p
+                      style={{
+                        fontSize: '12px',
+                        color: '#666',
+                        marginTop: '4px',
+                      }}
+                    >
+                      Archivo: {formData.foto}
+                    </p>
+                  </div>
+                </div>
+              )}
 
               <div className="modal-actions">
                 <button
