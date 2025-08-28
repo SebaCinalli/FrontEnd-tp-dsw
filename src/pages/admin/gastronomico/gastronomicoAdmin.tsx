@@ -21,7 +21,7 @@ interface Zona {
   nombre: string;
 }
 
-// Componente memoizado para las imágenes para evitar re-renders innecesarios
+// Componente memoizado para las imágenes
 const GastronomicoImage = memo(
   ({ foto, nombreG }: { foto?: string; nombreG: string }) => {
     const [imageUrl, setImageUrl] = useState('');
@@ -29,12 +29,9 @@ const GastronomicoImage = memo(
 
     useEffect(() => {
       if (foto) {
-        // Construir URL completa si es necesario
         const fullUrl = foto.startsWith('http')
           ? foto
           : `http://localhost:3000/uploads/gastronomicos/${foto}`;
-
-        // Agregar timestamp para cache busting si la imagen ya estaba cargada
         const urlWithTimestamp = `${fullUrl}?t=${Date.now()}`;
         setImageUrl(urlWithTimestamp);
         setImageError(false);
@@ -85,12 +82,9 @@ export function GastronomicoAdmin() {
     imagen: null as File | null,
   });
 
-  // Función helper para construir URLs de imagen (estable y memoizada)
   const buildImageUrl = useCallback((fileName: string | undefined) => {
     if (!fileName) return '';
-    // Si ya es una URL completa, devolverla tal como está
     if (fileName.startsWith('http')) return fileName;
-    // Si es solo el nombre del archivo, construir la URL completa
     return `http://localhost:3000/uploads/gastronomicos/${fileName}`;
   }, []);
 
@@ -167,7 +161,6 @@ export function GastronomicoAdmin() {
     e.preventDefault();
     console.log('Enviando datos del formulario:', formData);
 
-    // Validaciones previas
     if (!formData.nombreG.trim()) {
       alert('El nombre del servicio gastronómico es requerido');
       return;
@@ -192,16 +185,12 @@ export function GastronomicoAdmin() {
       let response;
 
       if (editingGastronomico) {
-        // Para editar, usar el método anterior (JSON) si no hay nueva imagen
         if (!formData.imagen) {
-          // Función para extraer solo el nombre del archivo para el backend
           const getFileName = (urlOrFileName: string) => {
             if (!urlOrFileName) return '';
-            // Si es una URL completa, extraer solo el nombre del archivo
             if (urlOrFileName.startsWith('http')) {
               return urlOrFileName.split('/').pop() || '';
             }
-            // Si ya es solo el nombre del archivo, devolverlo tal como está
             return urlOrFileName;
           };
 
@@ -219,12 +208,9 @@ export function GastronomicoAdmin() {
           response = await axios.put(
             `http://localhost:3000/api/gastronomico/${editingGastronomico.id}`,
             dataToSend,
-            {
-              withCredentials: true,
-            }
+            { withCredentials: true }
           );
         } else {
-          // Si hay nueva imagen, usar FormData
           const data = new FormData();
           data.append('nombreG', formData.nombreG.trim());
           data.append('tipoComida', formData.tipoComida);
@@ -238,48 +224,41 @@ export function GastronomicoAdmin() {
             data,
             {
               withCredentials: true,
+              headers: { 'Content-Type': 'multipart/form-data' },
             }
           );
         }
       } else {
-        // Para crear nuevo gastronómico, usar FormData
         const data = new FormData();
         data.append('nombreG', formData.nombreG.trim());
         data.append('tipoComida', formData.tipoComida);
         data.append('montoG', formData.montoG.toString());
         data.append('zona', formData.zonaId.toString());
 
-        // Importante: el nombre del campo debe ser 'imagen' (según el middleware)
         if (formData.imagen) {
           data.append('imagen', formData.imagen);
         }
 
         console.log('Creando nuevo gastronómico con FormData');
-        response = await fetch('http://localhost:3000/api/gastronomico', {
-          method: 'POST',
-          credentials: 'include',
-          body: data,
-        });
+        response = await axios.post(
+          'http://localhost:3000/api/gastronomico',
+          data,
+          {
+            withCredentials: true,
+            headers: { 'Content-Type': 'multipart/form-data' },
+          }
+        );
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const result = await response.json();
-        console.log('Respuesta de creación:', result);
+        console.log('Respuesta de creación:', response.data);
       }
 
-      // Recargar la lista de Gastronómicos
       const listResponse = await axios.get(
         'http://localhost:3000/api/gastronomico',
-        {
-          withCredentials: true,
-        }
+        { withCredentials: true }
       );
       setGastronomicos(listResponse.data.data);
       closeModal();
 
-      // Mostrar mensaje de éxito
       alert(
         editingGastronomico
           ? 'Servicio gastronómico actualizado exitosamente!'
@@ -290,7 +269,6 @@ export function GastronomicoAdmin() {
       console.error('Detalles del error:', error.response?.data);
       console.error('Estado del error:', error.response?.status);
 
-      // Mostrar mensaje de error más específico
       const errorMessage =
         error.response?.data?.message || error.message || 'Error desconocido';
       alert(
@@ -312,12 +290,9 @@ export function GastronomicoAdmin() {
           withCredentials: true,
         });
 
-        // Recargar la lista de Gastronómicos
         const response = await axios.get(
           'http://localhost:3000/api/gastronomico',
-          {
-            withCredentials: true,
-          }
+          { withCredentials: true }
         );
         setGastronomicos(response.data.data);
       } catch (error) {
@@ -376,7 +351,6 @@ export function GastronomicoAdmin() {
         </div>
       </div>
 
-      {/* Modal de edición */}
       {isModalOpen && (
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -448,7 +422,6 @@ export function GastronomicoAdmin() {
                 </select>
               </div>
 
-              {/* Campo para subir archivo de imagen */}
               <div className="form-group">
                 <label htmlFor="imagen">Subir imagen:</label>
                 <input
@@ -459,7 +432,6 @@ export function GastronomicoAdmin() {
                     const file = e.target.files?.[0];
                     if (!file) return;
 
-                    // Validaciones básicas
                     const validTypes = [
                       'image/jpeg',
                       'image/png',
@@ -475,18 +447,12 @@ export function GastronomicoAdmin() {
                     }
 
                     if (file.size > 5 * 1024 * 1024) {
-                      // 5MB
-                      alert(
-                        'El archivo es demasiado grande. Máximo 5MB permitido.'
-                      );
+                      alert('El archivo es demasiado grande. Máximo 5MB');
                       e.target.value = '';
                       return;
                     }
 
-                    setFormData({
-                      ...formData,
-                      imagen: file,
-                    });
+                    setFormData({ ...formData, imagen: file });
                   }}
                 />
                 <small style={{ color: '#999', fontSize: '12px' }}>
@@ -494,7 +460,6 @@ export function GastronomicoAdmin() {
                 </small>
               </div>
 
-              {/* Preview de la nueva imagen seleccionada */}
               {formData.imagen && (
                 <div className="form-group">
                   <label>Nueva imagen seleccionada:</label>
@@ -524,14 +489,13 @@ export function GastronomicoAdmin() {
                 </div>
               )}
 
-              {/* Preview de la imagen si existe */}
               {formData.foto && !formData.imagen && (
                 <div className="form-group">
                   <label>Imagen actual:</label>
                   <div style={{ marginTop: '8px' }}>
                     <img
-                      key={formData.foto} // Forzar re-render cuando cambia la foto
-                      src={`${buildImageUrl(formData.foto)}?t=${Date.now()}`} // Cache busting
+                      key={formData.foto}
+                      src={`${buildImageUrl(formData.foto)}?t=${Date.now()}`}
                       alt="Preview"
                       style={{
                         maxWidth: '200px',
@@ -541,18 +505,11 @@ export function GastronomicoAdmin() {
                         border: '1px solid #ddd',
                         display: 'block',
                       }}
-                      onLoad={() =>
-                        console.log(
-                          '✅ Preview cargado correctamente:',
-                          formData.foto
-                        )
-                      }
                       onError={(e) => {
                         console.log(
                           '❌ Error cargando preview:',
                           buildImageUrl(formData.foto)
                         );
-                        // Imagen por defecto si falla
                         e.currentTarget.src =
                           'https://via.placeholder.com/200x200?text=Error+Cargando';
                       }}
