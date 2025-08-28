@@ -1,4 +1,6 @@
-// Utilidad para subir imágenes al backend
+import axios from 'axios';
+
+// Utilidad para subir imágenes al backend usando axios
 export const uploadImage = async (
   entityType: string,
   entityId: number,
@@ -13,67 +15,56 @@ export const uploadImage = async (
     );
     console.log('Archivo:', file.name, file.size, file.type);
 
-    const response = await fetch(
+    const response = await axios.post(
       `http://localhost:3000/api/${entityType}/${entityId}/upload-image`,
+      formData,
       {
-        method: 'POST',
-        body: formData,
-        credentials: 'include', // Usa cookies de sesión como el resto de tu app
+        withCredentials: true, // Enviar cookies de sesión
+        headers: {
+          'Content-Type': 'multipart/form-data', // importante para FormData
+        },
       }
     );
 
-    console.log('Response status:', response.status);
-    const result = await response.json();
+    const result = response.data;
     console.log('Response data completa:', result);
-    console.log('Posibles URLs de imagen:');
-    console.log('- result.imageUrl:', result.imageUrl);
-    console.log('- result.foto:', result.foto);
-    console.log('- result.data?.foto:', result.data?.foto);
-    console.log('- result.url:', result.url);
 
-    if (response.ok) {
-      // Obtener el nombre del archivo desde la respuesta
-      const fileName =
-        result.data?.foto || result.foto || result.imageUrl || result.url;
-      console.log('Nombre del archivo:', fileName);
+    const fileName =
+      result.data?.foto || result.foto || result.imageUrl || result.url;
+    console.log('Nombre del archivo:', fileName);
 
-      // Construir la URL completa según el tipo de entidad
-      let finalImageUrl = '';
-      if (fileName) {
-        const baseUrls: { [key: string]: string } = {
-          usuario: 'http://localhost:3000/uploads/usuarios/',
-          dj: 'http://localhost:3000/uploads/djs/',
-          barra: 'http://localhost:3000/uploads/barras/',
-          salon: 'http://localhost:3000/uploads/salones/',
-          gastronomico: 'http://localhost:3000/uploads/gastronomicos/',
-        };
-
-        const baseUrl = baseUrls[entityType];
-        if (baseUrl) {
-          finalImageUrl = `${baseUrl}${fileName}`;
-          console.log('URL completa construida:', finalImageUrl);
-        } else {
-          console.error('Tipo de entidad no reconocido:', entityType);
-          finalImageUrl = fileName;
-        }
-      }
-
-      return {
-        success: true,
-        imageUrl: finalImageUrl,
-        message: result.message || 'Imagen subida exitosamente',
+    let finalImageUrl = '';
+    if (fileName) {
+      const baseUrls: { [key: string]: string } = {
+        usuario: 'http://localhost:3000/uploads/usuarios/',
+        dj: 'http://localhost:3000/uploads/djs/',
+        barra: 'http://localhost:3000/uploads/barras/',
+        salon: 'http://localhost:3000/uploads/salones/',
+        gastronomico: 'http://localhost:3000/uploads/gastronomicos/',
       };
-    } else {
-      return {
-        success: false,
-        message: result.message || 'Error al subir la imagen',
-      };
+
+      const baseUrl = baseUrls[entityType];
+      finalImageUrl = baseUrl ? `${baseUrl}${fileName}` : fileName;
+      console.log('URL completa construida:', finalImageUrl);
     }
-  } catch (error) {
+
+    return {
+      success: true,
+      imageUrl: finalImageUrl,
+      message: result.message || 'Imagen subida exitosamente',
+    };
+  } catch (error: any) {
     console.error('Error al subir imagen:', error);
+
+    // axios tiene estructura distinta para errores
+    const message =
+      error.response?.data?.message ||
+      error.message ||
+      'Error de conexión al subir la imagen';
+
     return {
       success: false,
-      message: 'Error de conexión al subir la imagen',
+      message,
     };
   }
 };
