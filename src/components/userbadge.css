@@ -165,6 +165,68 @@
 }
 
 /* Responsive */
+@media (min-width: 1024px) {
+  .user-badge {
+    top: 20px;
+    right: 20px;
+  }
+
+  .user-badge-content {
+    padding: 14px 18px;
+    gap: 14px;
+  }
+
+  .user-avatar-small {
+    width: 44px;
+    height: 44px;
+  }
+
+  .avatar-placeholder-small svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .user-name-small {
+    font-size: 15px;
+    max-width: 130px;
+  }
+
+  .user-role-small {
+    font-size: 12px;
+    padding: 3px 9px;
+  }
+
+  .logout-btn-small {
+    width: 32px;
+    height: 32px;
+    padding: 8px;
+  }
+
+  .logout-btn-small svg {
+    width: 17px;
+    height: 17px;
+  }
+
+  .cart-btn-small {
+    width: 32px;
+    height: 32px;
+    padding: 8px;
+  }
+
+  .cart-btn-small svg {
+    width: 19px;
+    height: 19px;
+  }
+
+  .cart-count {
+    font-size: 10px;
+    min-width: 17px;
+    height: 17px;
+    top: -3px;
+    right: -3px;
+  }
+}
+
 @media (max-width: 768px) {
   .user-badge {
     top: 15px;
