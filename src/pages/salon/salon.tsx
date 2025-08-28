@@ -36,6 +36,15 @@ export function Salon() {
   const [zonas, setZonas] = useState<string[]>([]);
   const [filtrosAbiertos, setFiltrosAbiertos] = useState(false);
 
+  // Función helper para construir URLs de imagen
+  const buildImageUrl = (fileName: string | undefined) => {
+    if (!fileName) return '/placeholder-image.svg';
+    // Si ya es una URL completa, devolverla tal como está
+    if (fileName.startsWith('http')) return fileName;
+    // Si es solo el nombre del archivo, construir la URL completa
+    return `http://localhost:3000/uploads/salones/${fileName}`;
+  };
+
   useEffect(() => {
     const fetchSalones = async () => {
       try {
@@ -233,7 +242,16 @@ export function Salon() {
       <div className="salones-grid">
         {salonesFiltrados.map((salon) => (
           <div className="salon-card" key={salon.id}>
-            <img src={salon.foto} alt={salon.nombre} className="salon-img" />
+            <div className="salon-img-container">
+              <img
+                src={buildImageUrl(salon.foto)}
+                alt={salon.nombre}
+                className="salon-img"
+                onError={(e) => {
+                  e.currentTarget.src = '/placeholder-image.svg';
+                }}
+              />
+            </div>
             <div className="salon-info">
               <h3 className="salon-name">{salon.nombre}</h3>
               <p className="salon-capacidad">

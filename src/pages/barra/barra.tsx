@@ -35,6 +35,15 @@ export function Barra() {
   const [tiposBebida, setTiposBebida] = useState<string[]>([]);
   const [filtrosAbiertos, setFiltrosAbiertos] = useState(false);
 
+  // Función helper para construir URLs de imagen
+  const buildImageUrl = (fileName: string | undefined) => {
+    if (!fileName) return '/placeholder-image.svg';
+    // Si ya es una URL completa, devolverla tal como está
+    if (fileName.startsWith('http')) return fileName;
+    // Si es solo el nombre del archivo, construir la URL completa
+    return `http://localhost:3000/uploads/barras/${fileName}`;
+  };
+
   useEffect(() => {
     const fetchBarras = async () => {
       try {
@@ -223,7 +232,16 @@ export function Barra() {
       <div className="barras-grid">
         {barrasFiltradas.map((barra) => (
           <div className="barra-card" key={barra.id}>
-            <img src={barra.foto} alt={barra.nombreB} className="barra-img" />
+            <div className="barra-img-container">
+              <img
+                src={buildImageUrl(barra.foto)}
+                alt={barra.nombreB}
+                className="barra-img"
+                onError={(e) => {
+                  e.currentTarget.src = '/placeholder-image.svg';
+                }}
+              />
+            </div>
             <div className="barra-info">
               <h3 className="barra-name">{barra.nombreB}</h3>
               <p className="barra-bebida">Tipo Bebida: {barra.tipoBebida}</p>

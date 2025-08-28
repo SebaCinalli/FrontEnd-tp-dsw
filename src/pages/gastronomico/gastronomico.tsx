@@ -37,6 +37,15 @@ export function Gastronomico() {
   const [tiposComida, setTiposComida] = useState<string[]>([]);
   const [filtrosAbiertos, setFiltrosAbiertos] = useState(false);
 
+  // Función helper para construir URLs de imagen
+  const buildImageUrl = (fileName: string | undefined) => {
+    if (!fileName) return '/placeholder-image.svg';
+    // Si ya es una URL completa, devolverla tal como está
+    if (fileName.startsWith('http')) return fileName;
+    // Si es solo el nombre del archivo, construir la URL completa
+    return `http://localhost:3000/uploads/gastronomicos/${fileName}`;
+  };
+
   useEffect(() => {
     const fetchGastronomicos = async () => {
       try {
@@ -228,11 +237,16 @@ export function Gastronomico() {
       <div className="gastronomicos-grid">
         {gastronomicosFiltrados.map((gastronomico) => (
           <div className="gastronomico-card" key={gastronomico.id}>
-            <img
-              src={gastronomico.foto}
-              alt={gastronomico.nombreG}
-              className="gastronomico-img"
-            />
+            <div className="gastronomico-img-container">
+              <img
+                src={buildImageUrl(gastronomico.foto)}
+                alt={gastronomico.nombreG}
+                className="gastronomico-img"
+                onError={(e) => {
+                  e.currentTarget.src = '/placeholder-image.svg';
+                }}
+              />
+            </div>
             <div className="gastronomico-info">
               <h3 className="gastronomico-name">{gastronomico.nombreG}</h3>
               <p className="gastronomico-tipoComida">

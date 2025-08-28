@@ -35,6 +35,15 @@ export function Dj() {
   const [estados, setEstados] = useState<string[]>([]);
   const [filtrosAbiertos, setFiltrosAbiertos] = useState(false);
 
+  // Función helper para construir URLs de imagen
+  const buildImageUrl = (fileName: string | undefined) => {
+    if (!fileName) return '/placeholder-image.svg';
+    // Si ya es una URL completa, devolverla tal como está
+    if (fileName.startsWith('http')) return fileName;
+    // Si es solo el nombre del archivo, construir la URL completa
+    return `http://localhost:3000/uploads/djs/${fileName}`;
+  };
+
   useEffect(() => {
     const fetchDjs = async () => {
       try {
@@ -217,7 +226,16 @@ export function Dj() {
       <div className="djs-grid">
         {djsFiltrados.map((dj) => (
           <div className="dj-card" key={dj.id}>
-            <img src={dj.foto} alt={dj.nombreArtistico} className="dj-img" />
+            <div className="dj-img-container">
+              <img
+                src={buildImageUrl(dj.foto)}
+                alt={dj.nombreArtistico}
+                className="dj-img"
+                onError={(e) => {
+                  e.currentTarget.src = '/placeholder-image.svg';
+                }}
+              />
+            </div>
             <div className="dj-info">
               <h3 className="dj-name">{dj.nombreArtistico}</h3>
               <p className="dj-estado">Estado: {dj.estado}</p>
