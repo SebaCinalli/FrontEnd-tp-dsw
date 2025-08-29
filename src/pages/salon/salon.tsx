@@ -55,6 +55,32 @@ export function Salon() {
       },
     };
 
+    // Despachar evento para animación: intentamos obtener la imagen del card
+    try {
+      const imgEl = document.querySelector(
+        `.salon-card[key="${salon.id}"] img`
+      ) as HTMLImageElement | null;
+      // fallback: buscar imagen por alt
+      const img =
+        imgEl ||
+        (document.querySelector(
+          `img[alt="${salon.nombre}"]`
+        ) as HTMLImageElement | null);
+      const rect = img
+        ? img.getBoundingClientRect()
+        : { left: 0, top: 0, width: 40, height: 40 };
+      const detail = {
+        src: img?.src || '/placeholder-image.svg',
+        x: rect.left,
+        y: rect.top,
+        width: rect.width,
+        height: rect.height,
+      };
+      window.dispatchEvent(new CustomEvent('fly-to-cart', { detail }));
+    } catch (e) {
+      // ignore
+    }
+
     addItem(cartItem);
   };
 

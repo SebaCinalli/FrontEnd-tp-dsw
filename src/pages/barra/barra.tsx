@@ -54,6 +54,30 @@ export function Barra() {
       },
     };
 
+    try {
+      const imgEl = document.querySelector(
+        `.barra-card img[alt="${barra.nombreB}"]`
+      ) as HTMLImageElement | null;
+      const img =
+        imgEl ||
+        (document.querySelector(
+          `img[alt="${barra.nombreB}"]`
+        ) as HTMLImageElement | null);
+      const rect = img
+        ? img.getBoundingClientRect()
+        : { left: 0, top: 0, width: 40, height: 40 };
+      const detail = {
+        src: img?.src || '/placeholder-image.svg',
+        x: rect.left,
+        y: rect.top,
+        width: rect.width,
+        height: rect.height,
+      };
+      window.dispatchEvent(new CustomEvent('fly-to-cart', { detail }));
+    } catch (e) {
+      // ignore
+    }
+
     addItem(cartItem);
   };
 
