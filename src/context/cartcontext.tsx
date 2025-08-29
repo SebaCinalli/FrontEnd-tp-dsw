@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useRef,
+  useEffect,
+} from 'react';
 import type { ReactNode } from 'react';
 
 // Tipos para los elementos del carrito
@@ -37,21 +43,41 @@ interface CartProviderProps {
 
 export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   const [items, setItems] = useState<CartItem[]>([]);
+  // Ref para leer el estado actual sin depender de closures (evita race conditions)
+  const itemsRef = useRef<CartItem[]>(items);
+  useEffect(() => {
+    itemsRef.current = items;
+  }, [items]);
+
+  // Ref para evitar mostrar el mismo alert varias veces en llamadas rápidas
+  const lastAlertRef = useRef<{ type?: string; time: number }>({
+    type: undefined,
+    time: 0,
+  });
 
   const addItem = (item: CartItem) => {
-    setItems((prevItems) => {
-      // Verificar si el elemento ya está en el carrito
-      const existingItem = prevItems.find(
-        (cartItem) => cartItem.type === item.type
-      );
-
-      if (existingItem) {
-        // Si ya existe, no lo agregamos de nuevo
-        alert('tipo de servicio ya agregado')
-        return prevItems;
+    // Primera verificación rápida contra el estado actual (sin entrar al updater)
+    const existsNow = itemsRef.current.find(
+      (cartItem) => cartItem.type === item.type
+    );
+    if (existsNow) {
+      const now = Date.now();
+      // Evitar alert duplicado en llamadas inmediatas (p. ej. StrictMode double-invoke)
+      if (
+        lastAlertRef.current.type === item.type &&
+        now - lastAlertRef.current.time < 800
+      ) {
+        return;
       }
+      lastAlertRef.current = { type: item.type, time: now };
+      alert('tipo de servicio ya agregado');
+      return;
+    }
 
-      // Si no existe, lo agregamos
+    // Hacemos la actualización usando la función con prev para prevenir duplicados por race
+    setItems((prevItems) => {
+      const already = prevItems.find((cartItem) => cartItem.type === item.type);
+      if (already) return prevItems;
       return [...prevItems, item];
     });
   };
