@@ -47,7 +47,8 @@ html {
 
 .icons-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  /* Responsive grid: fit as many columns as possible with a sensible min width */
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 15px;
   margin-bottom: 20px;
 }
@@ -72,7 +73,9 @@ html {
 .cart-item {
   grid-column: 1 / -1;
   justify-self: center;
-  width: 40%;
+  /* Make cart item adapt to available space while keeping a readable max width */
+  width: 100%;
+  max-width: 360px;
   padding: 20px 8px;
 }
 

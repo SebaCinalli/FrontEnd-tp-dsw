@@ -7,11 +7,9 @@ import {
   faUtensils,
   faHeadphones,
   faCouch,
-  faShoppingCart,
-  faSignOutAlt,
   faList,
 } from '@fortawesome/free-solid-svg-icons';
-import { useUser } from '../../context/usercontext';
+
 import { UserBadge } from '../../components/userbadge';
 
 interface MenuAdminItem {
@@ -30,7 +28,6 @@ const MenuAdmin: React.FC<MenuProps> = ({
   title = 'Menú Principal',
   onItemClick,
 }) => {
-  const { logout } = useUser();
   const navigate = useNavigate();
 
   const handleItemClick = (item: MenuAdminItem) => {
@@ -40,10 +37,6 @@ const MenuAdmin: React.FC<MenuProps> = ({
     item.onClick();
   };
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
   const menuItems: MenuAdminItem[] = [
     {
       id: 'barra',
@@ -89,7 +82,7 @@ const MenuAdmin: React.FC<MenuProps> = ({
               key={item.id}
               className={`icon-item ${
                 item.id === 'carrito' ? 'cart-item' : ''
-              }`}
+              } ${item.id === 'solicitud' ? 'solicitud-item' : ''}`}
               onClick={() => handleItemClick(item)}
             >
               <FontAwesomeIcon icon={item.icon} />

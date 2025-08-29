@@ -161,149 +161,154 @@ export function Gastronomico() {
       <BackToMenu />
       <UserBadge />
 
-      {/* Panel de filtros */}
-      <div className={`filtros-panel ${filtrosAbiertos ? 'abierto' : ''}`}>
-        <div className="filtros-header">
-          <h3>Filtros</h3>
-          <button
-            className="filtros-toggle"
-            onClick={() => setFiltrosAbiertos(!filtrosAbiertos)}
-            aria-label="Toggle filtros"
-          >
-            <span
-              className={`filtros-arrow ${filtrosAbiertos ? 'rotated' : ''}`}
+      {/* Contenedor layout: filtros + resultados */}
+      <div className="gastronomico-layout">
+        {/* Panel de filtros */}
+        <div className={`filtros-panel ${filtrosAbiertos ? 'abierto' : ''}`}>
+          <div className="filtros-header">
+            <h3>Filtros</h3>
+            <button
+              className="filtros-toggle"
+              onClick={() => setFiltrosAbiertos(!filtrosAbiertos)}
+              aria-label="Toggle filtros"
             >
-              ▼
-            </span>
-          </button>
-        </div>
-        <div
-          className={`filtros-content ${
-            filtrosAbiertos ? 'visible' : 'hidden'
-          }`}
-        >
-          <div className="filtros-grid">
-            <div className="filtro-item">
-              <label htmlFor="zona-filter">Zona:</label>
-              <select
-                id="zona-filter"
-                value={filtros.zona}
-                onChange={(e) => handleFiltroChange('zona', e.target.value)}
+              <span
+                className={`filtros-arrow ${filtrosAbiertos ? 'rotated' : ''}`}
               >
-                <option value="">Todas las zonas</option>
-                {zonas.map((zona) => (
-                  <option key={zona} value={zona}>
-                    {zona}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="filtro-item">
-              <label htmlFor="tipo-comida-filter">Tipo de Comida:</label>
-              <select
-                id="tipo-comida-filter"
-                value={filtros.tipoComida}
-                onChange={(e) =>
-                  handleFiltroChange('tipoComida', e.target.value)
-                }
-              >
-                <option value="">Todos los tipos</option>
-                {tiposComida.map((tipo) => (
-                  <option key={tipo} value={tipo}>
-                    {tipo}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="filtro-item">
-              <label htmlFor="precio-min">Precio mínimo:</label>
-              <input
-                type="number"
-                id="precio-min"
-                value={filtros.precioMin}
-                onChange={(e) =>
-                  handleFiltroChange('precioMin', e.target.value)
-                }
-                placeholder="0"
-              />
-            </div>
-
-            <div className="filtro-item">
-              <label htmlFor="precio-max">Precio máximo:</label>
-              <input
-                type="number"
-                id="precio-max"
-                value={filtros.precioMax}
-                onChange={(e) =>
-                  handleFiltroChange('precioMax', e.target.value)
-                }
-                placeholder="Sin límite"
-              />
-            </div>
-
-            <div className="filtro-item">
-              <button onClick={limpiarFiltros} className="limpiar-filtros-btn">
-                Limpiar filtros
-              </button>
-            </div>
-            {/* Resultados - se muestra después de los filtros */}
-            <div className="resultados-count">
-              {gastronomicosFiltrados.length} resultado(s) encontrado(s)
-            </div>
+                ▼
+              </span>
+            </button>
           </div>
-        </div>
-      </div>
-      <div></div>
-      <div className="gastronomicos-grid">
-        {gastronomicosFiltrados.map((gastronomico) => (
-          <div className="gastronomico-card" key={gastronomico.id}>
-            <div className="gastronomico-img-container">
-              <img
-                src={buildImageUrl(gastronomico.foto)}
-                alt={gastronomico.nombreG}
-                className="gastronomico-img"
-                onError={(e) => {
-                  e.currentTarget.src = '/placeholder-image.svg';
-                }}
-              />
-            </div>
-            <div className="gastronomico-info">
-              <h3 className="gastronomico-name">{gastronomico.nombreG}</h3>
-              <p className="gastronomico-tipoComida">
-                Tipo de comida: {gastronomico.tipoComida}
-              </p>
-              <p className="gastronomico-montoS">
-                ${gastronomico.montoG.toLocaleString('es-AR')}
-              </p>
-              <p className="gastronomico-zona">{gastronomico.zona.nombre}</p>
-            </div>
-
-            {/* Botón Agregar al carrito - solo para clientes */}
-            {user?.rol !== 'administrador' && (
-              <div className="gastronomico-actions">
-                <button
-                  className={`add-to-cart-btn ${
-                    isInCart(gastronomico.id, 'gastronomico') ? 'added' : ''
-                  }`}
-                  onClick={() => handleAddToCart(gastronomico)}
-                  disabled={isInCart(gastronomico.id, 'gastronomico')}
+          <div
+            className={`filtros-content ${
+              filtrosAbiertos ? 'visible' : 'hidden'
+            }`}
+          >
+            <div className="filtros-grid">
+              <div className="filtro-item">
+                <label htmlFor="zona-filter">Zona:</label>
+                <select
+                  id="zona-filter"
+                  value={filtros.zona}
+                  onChange={(e) => handleFiltroChange('zona', e.target.value)}
                 >
-                  {isInCart(gastronomico.id, 'gastronomico') ? (
-                    <>
-                      <span>✓</span> Agregado
-                    </>
-                  ) : (
-                    <>
-                      <span>🛒</span> Agregar al carrito
-                    </>
-                  )}
+                  <option value="">Todas las zonas</option>
+                  {zonas.map((zona) => (
+                    <option key={zona} value={zona}>
+                      {zona}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="filtro-item">
+                <label htmlFor="tipo-comida-filter">Tipo de Comida:</label>
+                <select
+                  id="tipo-comida-filter"
+                  value={filtros.tipoComida}
+                  onChange={(e) =>
+                    handleFiltroChange('tipoComida', e.target.value)
+                  }
+                >
+                  <option value="">Todos los tipos</option>
+                  {tiposComida.map((tipo) => (
+                    <option key={tipo} value={tipo}>
+                      {tipo}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="filtro-item">
+                <label htmlFor="precio-min">Precio mínimo:</label>
+                <input
+                  type="number"
+                  id="precio-min"
+                  value={filtros.precioMin}
+                  onChange={(e) =>
+                    handleFiltroChange('precioMin', e.target.value)
+                  }
+                  placeholder="0"
+                />
+              </div>
+
+              <div className="filtro-item">
+                <label htmlFor="precio-max">Precio máximo:</label>
+                <input
+                  type="number"
+                  id="precio-max"
+                  value={filtros.precioMax}
+                  onChange={(e) =>
+                    handleFiltroChange('precioMax', e.target.value)
+                  }
+                  placeholder="Sin límite"
+                />
+              </div>
+
+              <div className="filtro-item">
+                <button
+                  onClick={limpiarFiltros}
+                  className="limpiar-filtros-btn"
+                >
+                  Limpiar filtros
                 </button>
               </div>
-            )}
+              {/* Resultados - se muestra después de los filtros */}
+              <div className="resultados-count">
+                {gastronomicosFiltrados.length} resultado(s) encontrado(s)
+              </div>
+            </div>
           </div>
-        ))}
+        </div>
+        <div className="gastronomicos-grid">
+          {gastronomicosFiltrados.map((gastronomico) => (
+            <div className="gastronomico-card" key={gastronomico.id}>
+              <div className="gastronomico-img-container">
+                <img
+                  src={buildImageUrl(gastronomico.foto)}
+                  alt={gastronomico.nombreG}
+                  className="gastronomico-img"
+                  onError={(e) => {
+                    e.currentTarget.src = '/placeholder-image.svg';
+                  }}
+                />
+              </div>
+              <div className="gastronomico-info">
+                <h3 className="gastronomico-name">{gastronomico.nombreG}</h3>
+                <p className="gastronomico-tipoComida">
+                  Tipo de comida: {gastronomico.tipoComida}
+                </p>
+                <p className="gastronomico-montoS">
+                  ${gastronomico.montoG.toLocaleString('es-AR')}
+                </p>
+                <p className="gastronomico-zona">{gastronomico.zona.nombre}</p>
+              </div>
+
+              {/* Botón Agregar al carrito - solo para clientes */}
+              {user?.rol !== 'administrador' && (
+                <div className="gastronomico-actions">
+                  <button
+                    className={`add-to-cart-btn ${
+                      isInCart(gastronomico.id, 'gastronomico') ? 'added' : ''
+                    }`}
+                    onClick={() => handleAddToCart(gastronomico)}
+                    disabled={isInCart(gastronomico.id, 'gastronomico')}
+                  >
+                    {isInCart(gastronomico.id, 'gastronomico') ? (
+                      <>
+                        <span>✓</span> Agregado
+                      </>
+                    ) : (
+                      <>
+                        <span>🛒</span> Agregar al carrito
+                      </>
+                    )}
+                  </button>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

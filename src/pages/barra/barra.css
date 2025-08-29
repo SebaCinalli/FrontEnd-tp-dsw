@@ -7,6 +7,14 @@
   position: relative;
 }
 
+/* Layout que contiene el panel de filtros y el grid de tarjetas */
+.barra-layout {
+  display: grid;
+  grid-template-columns: 1fr; /* mobile: stack */
+  gap: 20px;
+  align-items: start;
+}
+
 /* Ajustar posición del UserBadge para evitar superposición */
 .barra-container .user-badge {
   position: absolute;
@@ -20,10 +28,32 @@
   background: #252541;
   border: 1px solid #3a3a5c;
   border-radius: 15px;
-  margin-bottom: 20px;
+  /* quitar espacio inferior para que el grid de tarjetas quede pegado al panel de filtros */
+  margin-bottom: 0;
   margin-top: 60px; /* Espacio para el UserBadge en móvil */
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   overflow: hidden;
+}
+
+/* En desktop mostramos filtros a la izquierda y tarjetas a la derecha */
+@media (min-width: 768px) {
+  .barra-layout {
+    grid-template-columns: 320px 1fr; /* panel fijo + contenido flexible */
+    gap: 24px;
+  }
+
+  .filtros-panel {
+    margin-top: 20px; /* mantener separación del UserBadge */
+    margin-bottom: 0; /* no crear espacio extra */
+    position: sticky;
+    top: 100px; /* se queda visible al hacer scroll */
+    height: fit-content;
+    z-index: 1;
+  }
+
+  .barras-grid {
+    margin-top: 20px; /* dejar un pequeño respiradero con el header si aplica */
+  }
 }
 
 .filtros-header {
@@ -71,7 +101,7 @@
 
 .filtros-content.visible {
   max-height: 400px;
-  padding: 0 15px 15px 15px;
+  padding: 0 15px 8px 15px; /* reducir padding-bottom para acercar resultados */
 }
 
 .filtros-content.hidden {
@@ -183,7 +213,7 @@
 
 .resultados-count {
   color: #94a3b8;
-  margin-bottom: 15px;
+  margin-bottom: 6px; /* reducir espacio */
   font-size: 0.9rem;
 }
 .separacion {

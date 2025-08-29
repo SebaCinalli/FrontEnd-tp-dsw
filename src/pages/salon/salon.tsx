@@ -158,157 +158,162 @@ export function Salon() {
       <BackToMenu />
       <UserBadge />
 
-      {/* Panel de filtros */}
-      <div className={`filtros-panel ${filtrosAbiertos ? 'abierto' : ''}`}>
-        <div className="filtros-header">
-          <h3>Filtros</h3>
-          <button
-            className="filtros-toggle"
-            onClick={() => setFiltrosAbiertos(!filtrosAbiertos)}
-            aria-label="Toggle filtros"
-          >
-            <span
-              className={`filtros-arrow ${filtrosAbiertos ? 'rotated' : ''}`}
+      {/* Contenedor layout: filtros + resultados */}
+      <div className="salon-layout">
+        {/* Panel de filtros */}
+        <div className={`filtros-panel ${filtrosAbiertos ? 'abierto' : ''}`}>
+          <div className="filtros-header">
+            <h3>Filtros</h3>
+            <button
+              className="filtros-toggle"
+              onClick={() => setFiltrosAbiertos(!filtrosAbiertos)}
+              aria-label="Toggle filtros"
             >
-              ▼
-            </span>
-          </button>
-        </div>
-        <div
-          className={`filtros-content ${
-            filtrosAbiertos ? 'visible' : 'hidden'
-          }`}
-        >
-          <div className="filtros-grid">
-            <div className="filtro-item">
-              <label htmlFor="zona-filter">Zona:</label>
-              <select
-                id="zona-filter"
-                value={filtros.zona}
-                onChange={(e) => handleFiltroChange('zona', e.target.value)}
+              <span
+                className={`filtros-arrow ${filtrosAbiertos ? 'rotated' : ''}`}
               >
-                <option value="">Todas las zonas</option>
-                {zonas.map((zona) => (
-                  <option key={zona} value={zona}>
-                    {zona}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="filtro-item">
-              <label htmlFor="capacidad-min">Capacidad mínima:</label>
-              <input
-                type="number"
-                id="capacidad-min"
-                value={filtros.capacidadMin}
-                onChange={(e) =>
-                  handleFiltroChange('capacidadMin', e.target.value)
-                }
-                placeholder="0"
-              />
-            </div>
-
-            <div className="filtro-item">
-              <label htmlFor="capacidad-max">Capacidad máxima:</label>
-              <input
-                type="number"
-                id="capacidad-max"
-                value={filtros.capacidadMax}
-                onChange={(e) =>
-                  handleFiltroChange('capacidadMax', e.target.value)
-                }
-                placeholder="Sin límite"
-              />
-            </div>
-
-            <div className="filtro-item">
-              <label htmlFor="precio-min">Precio mínimo:</label>
-              <input
-                type="number"
-                id="precio-min"
-                value={filtros.precioMin}
-                onChange={(e) =>
-                  handleFiltroChange('precioMin', e.target.value)
-                }
-                placeholder="0"
-              />
-            </div>
-
-            <div className="filtro-item">
-              <label htmlFor="precio-max">Precio máximo:</label>
-              <input
-                type="number"
-                id="precio-max"
-                value={filtros.precioMax}
-                onChange={(e) =>
-                  handleFiltroChange('precioMax', e.target.value)
-                }
-                placeholder="Sin límite"
-              />
-            </div>
-
-            <div className="filtro-item">
-              <button onClick={limpiarFiltros} className="limpiar-filtros-btn">
-                Limpiar filtros
-              </button>
-            </div>
-            {/* Resultados - se muestra después de los filtros */}
-            <div className="resultados-count">
-              {salonesFiltrados.length} resultado(s) encontrado(s)
-            </div>
+                ▼
+              </span>
+            </button>
           </div>
-        </div>
-      </div>
-      <div></div>
-      <div className="salones-grid">
-        {salonesFiltrados.map((salon) => (
-          <div className="salon-card" key={salon.id}>
-            <div className="salon-img-container">
-              <img
-                src={buildImageUrl(salon.foto)}
-                alt={salon.nombre}
-                className="salon-img"
-                onError={(e) => {
-                  e.currentTarget.src = '/placeholder-image.svg';
-                }}
-              />
-            </div>
-            <div className="salon-info">
-              <h3 className="salon-name">{salon.nombre}</h3>
-              <p className="salon-capacidad">
-                Capacidad: {salon.capacidad} personas
-              </p>
-              <p className="salon-montoS">
-                ${salon.montoS.toLocaleString('es-AR')}
-              </p>
-              <p className="salon-zona">{salon.zona.nombre}</p>
-            </div>
-
-            {/* Botón Agregar al carrito - solo para clientes */}
-            {user?.rol !== 'administrador' && (
-              <div className="salon-actions">
-                <button
-                  className={`add-to-cart-btn ${
-                    isInCart(salon.id, 'salon') ? 'added' : ''
-                  }`}
-                  onClick={() => handleAddToCart(salon)}
-                  disabled={isInCart(salon.id, 'salon')}
+          <div
+            className={`filtros-content ${
+              filtrosAbiertos ? 'visible' : 'hidden'
+            }`}
+          >
+            <div className="filtros-grid">
+              <div className="filtro-item">
+                <label htmlFor="zona-filter">Zona:</label>
+                <select
+                  id="zona-filter"
+                  value={filtros.zona}
+                  onChange={(e) => handleFiltroChange('zona', e.target.value)}
                 >
-                  {isInCart(salon.id, 'salon') ? (
-                    <>
-                      <span>✓</span> Agregado
-                    </>
-                  ) : (
-                    <>
-                      <span>🛒</span> Agregar al carrito
-                    </>
-                  )}
+                  <option value="">Todas las zonas</option>
+                  {zonas.map((zona) => (
+                    <option key={zona} value={zona}>
+                      {zona}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="filtro-item">
+                <label htmlFor="capacidad-min">Capacidad mínima:</label>
+                <input
+                  type="number"
+                  id="capacidad-min"
+                  value={filtros.capacidadMin}
+                  onChange={(e) =>
+                    handleFiltroChange('capacidadMin', e.target.value)
+                  }
+                  placeholder="0"
+                />
+              </div>
+
+              <div className="filtro-item">
+                <label htmlFor="capacidad-max">Capacidad máxima:</label>
+                <input
+                  type="number"
+                  id="capacidad-max"
+                  value={filtros.capacidadMax}
+                  onChange={(e) =>
+                    handleFiltroChange('capacidadMax', e.target.value)
+                  }
+                  placeholder="Sin límite"
+                />
+              </div>
+
+              <div className="filtro-item">
+                <label htmlFor="precio-min">Precio mínimo:</label>
+                <input
+                  type="number"
+                  id="precio-min"
+                  value={filtros.precioMin}
+                  onChange={(e) =>
+                    handleFiltroChange('precioMin', e.target.value)
+                  }
+                  placeholder="0"
+                />
+              </div>
+
+              <div className="filtro-item">
+                <label htmlFor="precio-max">Precio máximo:</label>
+                <input
+                  type="number"
+                  id="precio-max"
+                  value={filtros.precioMax}
+                  onChange={(e) =>
+                    handleFiltroChange('precioMax', e.target.value)
+                  }
+                  placeholder="Sin límite"
+                />
+              </div>
+
+              <div className="filtro-item">
+                <button
+                  onClick={limpiarFiltros}
+                  className="limpiar-filtros-btn"
+                >
+                  Limpiar filtros
                 </button>
               </div>
-            )}
+              {/* Resultados - se muestra después de los filtros */}
+              <div className="resultados-count">
+                {salonesFiltrados.length} resultado(s) encontrado(s)
+              </div>
+            </div>
           </div>
-        ))}
+        </div>
+        <div className="salones-grid">
+          {salonesFiltrados.map((salon) => (
+            <div className="salon-card" key={salon.id}>
+              <div className="salon-img-container">
+                <img
+                  src={buildImageUrl(salon.foto)}
+                  alt={salon.nombre}
+                  className="salon-img"
+                  onError={(e) => {
+                    e.currentTarget.src = '/placeholder-image.svg';
+                  }}
+                />
+              </div>
+              <div className="salon-info">
+                <h3 className="salon-name">{salon.nombre}</h3>
+                <p className="salon-capacidad">
+                  Capacidad: {salon.capacidad} personas
+                </p>
+                <p className="salon-montoS">
+                  ${salon.montoS.toLocaleString('es-AR')}
+                </p>
+                <p className="salon-zona">{salon.zona.nombre}</p>
+              </div>
+
+              {/* Botón Agregar al carrito - solo para clientes */}
+              {user?.rol !== 'administrador' && (
+                <div className="salon-actions">
+                  <button
+                    className={`add-to-cart-btn ${
+                      isInCart(salon.id, 'salon') ? 'added' : ''
+                    }`}
+                    onClick={() => handleAddToCart(salon)}
+                    disabled={isInCart(salon.id, 'salon')}
+                  >
+                    {isInCart(salon.id, 'salon') ? (
+                      <>
+                        <span>✓</span> Agregado
+                      </>
+                    ) : (
+                      <>
+                        <span>🛒</span> Agregar al carrito
+                      </>
+                    )}
+                  </button>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

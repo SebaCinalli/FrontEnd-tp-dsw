@@ -7,6 +7,14 @@
   position: relative;
 }
 
+/* Layout que contiene el panel de filtros y el grid de tarjetas */
+.gastronomico-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
 /* Ajustar posición del UserBadge para evitar superposición */
 .gastronomico-container .user-badge {
   position: absolute;
@@ -83,6 +91,22 @@
 @media (min-width: 768px) {
   .gastronomico-container {
     padding-top: 80px; /* Más espacio para UserBadge en desktop */
+  }
+
+  .gastronomico-layout {
+    grid-template-columns: 320px 1fr;
+    gap: 24px;
+  }
+
+  .filtros-panel {
+    position: sticky;
+    top: 100px;
+    height: fit-content;
+    z-index: 1;
+  }
+
+  .gastronomicos-grid {
+    margin-top: 20px;
   }
 
   .filtros-panel {

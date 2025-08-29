@@ -10,6 +10,7 @@ import { Barra } from '../pages/barra/barra';
 import { Dj } from '../pages/dj/dj';
 import { Gastronomico } from '../pages/gastronomico/gastronomico';
 import { Carrito } from '../pages/carrito/carrito';
+import { SolicitudAdmin } from '../pages/admin/solicitud/solicitudAdmin';
 import { SalonAdmin } from '../pages/admin/salon/salonAdmin';
 import { BarraAdmin } from '../pages/admin/barra/barraAdmin';
 import { DjAdmin } from '../pages/admin/dj/djAdmin';
@@ -70,7 +71,7 @@ export default function AppRoutes() {
           </ProtectedRoutes>
         }
       />
-      <Route path="/solicitud" />
+  {/* /solicitud no es pública; ruta admin abajo */}
       <Route
         path="/carrito"
         element={
@@ -112,7 +113,14 @@ export default function AppRoutes() {
           </ProtectedRoutes>
         }
       />
-      <Route path="/solicitudAdmin" />
+      <Route
+        path="/solicitudAdmin"
+        element={
+          <ProtectedRoutes>
+            {isAdmin ? <SolicitudAdmin /> : <Navigate to="/" />}
+          </ProtectedRoutes>
+        }
+      />
       {/* Ruta comodín */}
       <Route path="*" element={<Navigate to={user ? '/' : '/login'} />} />
     </Routes>

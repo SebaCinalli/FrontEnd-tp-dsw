@@ -30,6 +30,14 @@
   box-sizing: border-box;
 }
 
+/* Layout que contiene el panel de filtros y el grid de tarjetas */
+.salon-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
 /* Ajustar posición del UserBadge para evitar superposición */
 .salon-container .user-badge {
   position: absolute;
@@ -106,6 +114,23 @@
 @media (min-width: 768px) {
   .salon-container {
     padding-top: 80px; /* Más espacio para UserBadge en desktop */
+  }
+
+  .salon-layout {
+    grid-template-columns: 320px 1fr;
+    gap: 24px;
+  }
+
+  .filtros-panel {
+    position: sticky;
+    top: 100px;
+    height: fit-content;
+    z-index: 1;
+  }
+
+  /* Alinear verticalmente el grid de tarjetas con el panel de filtros */
+  .salones-grid {
+    margin-top: 20px;
   }
 
   .filtros-panel {
