@@ -2,11 +2,14 @@ import React from 'react';
 import { useCart } from '../../context/cartcontext';
 import { UserBadge } from '../../components/userbadge';
 import { useNavigate } from 'react-router-dom';
+import { useUser } from '../../context/usercontext';
+import axios from 'axios';
 import './carrito.css';
 
 export const Carrito: React.FC = () => {
   const { items, removeItem, clearCart, getTotalPrice, getItemCount } =
     useCart();
+  const { user } = useUser();
   const navigate = useNavigate();
 
   const buildImageUrl = (fileName: string | undefined, type: string) => {
@@ -30,14 +33,71 @@ export const Carrito: React.FC = () => {
     }
   };
 
-  const handleProceedToCheckout = () => {
+  const handleProceedToCheckout = async () => {
     if (items.length === 0) {
       alert('Tu carrito está vacío');
       return;
     }
 
-    // Aquí puedes implementar la lógica para proceder con la solicitud
-    alert('Funcionalidad de solicitud en desarrollo');
+    if (!user) {
+      alert('Debes estar logueado para realizar una solicitud');
+      return;
+    }
+
+    try {
+      // Separar servicios por tipo
+      const serviciosPorTipo = {
+        dj: items.find((item) => item.type === 'dj'),
+        salon: items.find((item) => item.type === 'salon'),
+        barra: items.find((item) => item.type === 'barra'),
+        gastronomico: items.find((item) => item.type === 'gastronomico'),
+      };
+
+      // Preparar los datos de la solicitud - solo incluir servicios que estén en el carrito
+      const solicitudData: any = {
+        usuario: user.id,
+        estado: 'pendiente de pago',
+        fechaSolicitud: new Date().toLocaleDateString('es-ES'), // Formato DD/MM/YYYY para el backend
+      };
+
+      // Agregar solo los servicios que están en el carrito
+      if (serviciosPorTipo.dj) {
+        solicitudData.dj = serviciosPorTipo.dj.id;
+      }
+      if (serviciosPorTipo.salon) {
+        solicitudData.salon = serviciosPorTipo.salon.id;
+      }
+      if (serviciosPorTipo.barra) {
+        solicitudData.barra = serviciosPorTipo.barra.id;
+      }
+      if (serviciosPorTipo.gastronomico) {
+        solicitudData.gastronomico = serviciosPorTipo.gastronomico.id;
+      }
+
+      console.log('Enviando solicitud:', solicitudData);
+
+      // Enviar la solicitud al backend
+      const response = await axios.post(
+        'http://localhost:3000/api/solicitud',
+        solicitudData,
+        { withCredentials: true }
+      );
+
+      if (response.status === 201 || response.status === 200) {
+        alert('¡Solicitud creada exitosamente! Estado: Pendiente de pago');
+        clearCart(); // Limpiar el carrito después de crear la solicitud
+        navigate('/'); // Redirigir al menú principal
+      }
+    } catch (error: any) {
+      console.error('Error al crear la solicitud:', error);
+
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        'Error al crear la solicitud';
+
+      alert(`Error: ${errorMessage}`);
+    }
   };
 
   return (
