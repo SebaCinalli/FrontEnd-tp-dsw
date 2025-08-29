@@ -59,33 +59,30 @@ export function Solicitud() {
   }>({});
   const { user } = useUser();
 
-  useEffect(() => {
-    const fetchSolicitudes = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get(
-          'http://localhost:3000/api/solicitud',
-          {
-            withCredentials: true,
-          }
-        );
-        // Filtrar solo las solicitudes del usuario actual
-        const todasLasSolicitudes = response.data.data || [];
-        const solicitudesDelUsuario = todasLasSolicitudes.filter(
-          (solicitud: Solicitud) => solicitud.usuario.id === user?.id
-        );
-        setSolicitudes(solicitudesDelUsuario);
-        setError(null);
-      } catch (error: any) {
-        console.error('Error al cargar solicitudes:', error);
-        setError(
-          error.response?.data?.message || 'Error al cargar las solicitudes'
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchSolicitudes = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get('http://localhost:3000/api/solicitud', {
+        withCredentials: true,
+      });
+      // Filtrar solo las solicitudes del usuario actual
+      const todasLasSolicitudes = response.data.data || [];
+      const solicitudesDelUsuario = todasLasSolicitudes.filter(
+        (solicitud: Solicitud) => solicitud.usuario.id === user?.id
+      );
+      setSolicitudes(solicitudesDelUsuario);
+      setError(null);
+    } catch (error: any) {
+      console.error('Error al cargar solicitudes:', error);
+      setError(
+        error.response?.data?.message || 'Error al cargar las solicitudes'
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     if (user?.id) {
       fetchSolicitudes();
     } else {
@@ -96,29 +93,40 @@ export function Solicitud() {
 
   const fetchServiciosDisponibles = async () => {
     try {
-      const token = localStorage.getItem('token');
+      console.log('Iniciando fetchServiciosDisponibles...');
       const [djResponse, salonResponse, barraResponse, gastronomicoResponse] =
         await Promise.all([
           axios.get('http://localhost:3000/api/dj', {
-            headers: { Authorization: `Bearer ${token}` },
+            withCredentials: true,
           }),
           axios.get('http://localhost:3000/api/salon', {
-            headers: { Authorization: `Bearer ${token}` },
+            withCredentials: true,
           }),
           axios.get('http://localhost:3000/api/barra', {
-            headers: { Authorization: `Bearer ${token}` },
+            withCredentials: true,
           }),
           axios.get('http://localhost:3000/api/gastronomico', {
-            headers: { Authorization: `Bearer ${token}` },
+            withCredentials: true,
           }),
         ]);
 
-      setServiciosDisponibles({
+      console.log('Respuestas recibidas:', {
         djs: djResponse.data,
         salones: salonResponse.data,
         barras: barraResponse.data,
         gastronomicos: gastronomicoResponse.data,
       });
+
+      const servicios = {
+        djs: djResponse.data.data || djResponse.data,
+        salones: salonResponse.data.data || salonResponse.data,
+        barras: barraResponse.data.data || barraResponse.data,
+        gastronomicos:
+          gastronomicoResponse.data.data || gastronomicoResponse.data,
+      };
+
+      console.log('Servicios procesados:', servicios);
+      setServiciosDisponibles(servicios);
     } catch (error) {
       console.error('Error al cargar servicios disponibles:', error);
     }
@@ -199,12 +207,20 @@ export function Solicitud() {
   const handleEditarServicios = async (solicitudId: number) => {
     console.log('handleEditarServicios ejecutado para solicitud:', solicitudId);
     setSolicitudEditandoServicios(solicitudId);
+
+    console.log('Llamando a fetchServiciosDisponibles...');
     await fetchServiciosDisponibles();
 
     // Encontrar la solicitud actual y establecer los servicios seleccionados
     const solicitudActual = solicitudes.find((s) => s.id === solicitudId);
     if (solicitudActual) {
       setServiciosSeleccionados({
+        djId: solicitudActual.dj?.id || null,
+        salonId: solicitudActual.salon?.id || null,
+        barraId: solicitudActual.barra?.id || null,
+        gastronomicoId: solicitudActual.gastronomico?.id || null,
+      });
+      console.log('Servicios seleccionados establecidos:', {
         djId: solicitudActual.dj?.id || null,
         salonId: solicitudActual.salon?.id || null,
         barraId: solicitudActual.barra?.id || null,
@@ -230,21 +246,18 @@ export function Solicitud() {
         updateData.gastronomicoId = serviciosSeleccionados.gastronomicoId;
       }
 
-      await axios.put(
+      console.log('Datos a actualizar:', updateData);
+
+      const updateResponse = await axios.put(
         `http://localhost:3000/api/solicitud/${solicitudId}`,
         updateData,
         { withCredentials: true }
       );
 
+      console.log('Respuesta de actualización:', updateResponse.data);
+
       // Recargar las solicitudes para mostrar los cambios
-      const response = await axios.get('http://localhost:3000/api/solicitud', {
-        withCredentials: true,
-      });
-      const todasLasSolicitudes = response.data.data || [];
-      const solicitudesDelUsuario = todasLasSolicitudes.filter(
-        (solicitud: Solicitud) => solicitud.usuario.id === user?.id
-      );
-      setSolicitudes(solicitudesDelUsuario);
+      await fetchSolicitudes();
 
       setSolicitudEditandoServicios(null);
       setServiciosSeleccionados({});
@@ -462,7 +475,10 @@ export function Solicitud() {
                               <option value="">Sin DJ</option>
                               {serviciosDisponibles.djs.map((dj: any) => (
                                 <option key={dj.id} value={dj.id}>
-                                  {dj.nombreArtistico} - ${dj.precio}
+                                  {dj.nombreArtistico} - $
+                                  {dj.montoDj
+                                    ? dj.montoDj.toLocaleString('es-AR')
+                                    : 'Sin precio'}
                                 </option>
                               ))}
                             </select>
@@ -485,7 +501,10 @@ export function Solicitud() {
                               {serviciosDisponibles.salones.map(
                                 (salon: any) => (
                                   <option key={salon.id} value={salon.id}>
-                                    {salon.nombre} - ${salon.precio}
+                                    {salon.nombre} - $
+                                    {salon.montoS
+                                      ? salon.montoS.toLocaleString('es-AR')
+                                      : 'Sin precio'}
                                   </option>
                                 )
                               )}
@@ -508,7 +527,10 @@ export function Solicitud() {
                               <option value="">Sin Barra</option>
                               {serviciosDisponibles.barras.map((barra: any) => (
                                 <option key={barra.id} value={barra.id}>
-                                  {barra.nombreB} - ${barra.precio}
+                                  {barra.nombreB} - $
+                                  {barra.montoB
+                                    ? barra.montoB.toLocaleString('es-AR')
+                                    : 'Sin precio'}
                                 </option>
                               ))}
                             </select>
@@ -533,7 +555,10 @@ export function Solicitud() {
                               {serviciosDisponibles.gastronomicos.map(
                                 (gastro: any) => (
                                   <option key={gastro.id} value={gastro.id}>
-                                    {gastro.nombreG} - ${gastro.precio}
+                                    {gastro.nombreG} - $
+                                    {gastro.montoG
+                                      ? gastro.montoG.toLocaleString('es-AR')
+                                      : 'Sin precio'}
                                   </option>
                                 )
                               )}

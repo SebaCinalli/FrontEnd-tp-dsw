@@ -428,9 +428,9 @@
 }
 
 .btn-editar-servicios {
-  background: #2d1b2d;
-  color: #c084fc;
-  border: 1px solid #4a244a;
+  background: #012746;
+  color: #70bfff;
+  border: 1px solid #006cc5;
   padding: 8px 16px;
   border-radius: 20px;
   font-size: 0.9rem;
@@ -442,8 +442,8 @@
 }
 
 .btn-editar-servicios:hover:not(.disabled) {
-  background: #4a244a;
-  color: #d8b4fe;
+  background: #142d6d;
+  color: #a8d8ff;
   transform: translateY(-1px);
 }
 
