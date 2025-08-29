@@ -1,3 +1,5 @@
+@import '../../styles/darkTheme.css';
+
 @media (min-width: 900px) {
   .salon-container {
     display: flex;
@@ -19,11 +21,21 @@
   }
 }
 .salon-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
   padding: 20px;
   position: relative;
   max-width: 100vw;
   width: 100%;
   box-sizing: border-box;
+}
+
+/* Layout que contiene el panel de filtros y el grid de tarjetas */
+.salon-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  align-items: start;
 }
 
 /* Ajustar posición del UserBadge para evitar superposición */
@@ -36,11 +48,12 @@
 
 /* Estilos para el panel de filtros */
 .filtros-panel {
-  background: linear-gradient(135deg, #1e293b, #334155);
+  background: #252541;
+  border: 1px solid #3a3a5c;
   border-radius: 15px;
   margin-bottom: 20px;
   margin-top: 60px; /* Espacio para el UserBadge en móvil */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   overflow: hidden;
 }
 
@@ -101,6 +114,23 @@
 @media (min-width: 768px) {
   .salon-container {
     padding-top: 80px; /* Más espacio para UserBadge en desktop */
+  }
+
+  .salon-layout {
+    grid-template-columns: 320px 1fr;
+    gap: 24px;
+  }
+
+  .filtros-panel {
+    position: sticky;
+    top: 100px;
+    height: fit-content;
+    z-index: 1;
+  }
+
+  /* Alinear verticalmente el grid de tarjetas con el panel de filtros */
+  .salones-grid {
+    margin-top: 20px;
   }
 
   .filtros-panel {
@@ -207,16 +237,32 @@
   margin-bottom: 15px;
   font-size: 0.9rem;
 }
+.separacion {
+  width: 5px;
+  height: 1px;
+  display: inline-block;
+}
 
 /* Grid para las tarjetas - base móvil */
-
 .salones-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 24px;
-  width: 100%;
-  margin: 0;
-  justify-items: center;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+/* Responsive grid */
+@media (min-width: 640px) {
+  .salones-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .salones-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+  }
 }
 
 .salon-card {
@@ -294,4 +340,74 @@
   padding: 4px 8px;
   border-radius: 12px;
   margin-left: 8px;
+}
+
+/* Estilos para acciones del carrito */
+.salon-actions {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+}
+
+.add-to-cart-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 25px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  white-space: nowrap;
+  width: 100%;
+  justify-content: center;
+}
+
+.add-to-cart-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.add-to-cart-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.add-to-cart-btn.added {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  cursor: default;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+}
+
+.add-to-cart-btn:disabled {
+  opacity: 0.8;
+  cursor: not-allowed;
+}
+
+.add-to-cart-btn span {
+  font-size: 1rem;
+}
+
+/* Estilos para cuando el item ya está en el carrito: mostrar botón eliminar al lado */
+.in-cart-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.remove-from-cart-btn {
+  background: transparent;
+  border: 1px solid #e74c3c;
+  color: #e74c3c;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.remove-from-cart-btn:hover {
+  background: rgba(231, 76, 60, 0.06);
 }

@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import './salon.css';
 import { UserBadge } from '../../components/userbadge';
+import { BackToMenu } from '../../components/BackToMenu';
+import { useCart } from '../../context/cartcontext';
+import { useUser } from '../../context/usercontext';
 
 interface Salon {
   id: number;
@@ -35,6 +38,53 @@ export function Salon() {
   });
   const [zonas, setZonas] = useState<string[]>([]);
   const [filtrosAbiertos, setFiltrosAbiertos] = useState(false);
+
+  const { addItem, isInCart, removeItem } = useCart();
+  const { user } = useUser();
+
+  const handleAddToCart = (salon: Salon) => {
+    const cartItem = {
+      id: salon.id,
+      type: 'salon' as const,
+      name: salon.nombre,
+      price: salon.montoS,
+      image: salon.foto,
+      details: {
+        capacidad: salon.capacidad,
+        zona: salon.zona.nombre,
+      },
+    };
+
+    const added = addItem(cartItem);
+
+    if (!added) return;
+
+    // Despachar evento para animación: intentamos obtener la imagen del card
+    try {
+      const imgEl = document.querySelector(
+        `.salon-card[key="${salon.id}"] img`
+      ) as HTMLImageElement | null;
+      // fallback: buscar imagen por alt
+      const img =
+        imgEl ||
+        (document.querySelector(
+          `img[alt="${salon.nombre}"]`
+        ) as HTMLImageElement | null);
+      const rect = img
+        ? img.getBoundingClientRect()
+        : { left: 0, top: 0, width: 40, height: 40 };
+      const detail = {
+        src: img?.src || '/placeholder-image.svg',
+        x: rect.left,
+        y: rect.top,
+        width: rect.width,
+        height: rect.height,
+      };
+      window.dispatchEvent(new CustomEvent('fly-to-cart', { detail }));
+    } catch (e) {
+      // ignore
+    }
+  };
 
   // Función helper para construir URLs de imagen
   const buildImageUrl = (fileName: string | undefined) => {
@@ -133,137 +183,174 @@ export function Salon() {
 
   return (
     <div className="salon-container">
+      <BackToMenu />
       <UserBadge />
 
-      {/* Panel de filtros */}
-      <div className={`filtros-panel ${filtrosAbiertos ? 'abierto' : ''}`}>
-        <div className="filtros-header">
-          <h3>Filtros</h3>
-          <button
-            className="filtros-toggle"
-            onClick={() => setFiltrosAbiertos(!filtrosAbiertos)}
-            aria-label="Toggle filtros"
-          >
-            <span
-              className={`filtros-arrow ${filtrosAbiertos ? 'rotated' : ''}`}
+      {/* Contenedor layout: filtros + resultados */}
+      <div className="salon-layout">
+        {/* Panel de filtros */}
+        <div className={`filtros-panel ${filtrosAbiertos ? 'abierto' : ''}`}>
+          <div className="filtros-header">
+            <h3>Filtros</h3>
+            <button
+              className="filtros-toggle"
+              onClick={() => setFiltrosAbiertos(!filtrosAbiertos)}
+              aria-label="Toggle filtros"
             >
-              ▼
-            </span>
-          </button>
-        </div>
-        <div
-          className={`filtros-content ${
-            filtrosAbiertos ? 'visible' : 'hidden'
-          }`}
-        >
-          <div className="filtros-grid">
-            <div className="filtro-item">
-              <label htmlFor="zona-filter">Zona:</label>
-              <select
-                id="zona-filter"
-                value={filtros.zona}
-                onChange={(e) => handleFiltroChange('zona', e.target.value)}
+              <span
+                className={`filtros-arrow ${filtrosAbiertos ? 'rotated' : ''}`}
               >
-                <option value="">Todas las zonas</option>
-                {zonas.map((zona) => (
-                  <option key={zona} value={zona}>
-                    {zona}
-                  </option>
-                ))}
-              </select>
-            </div>
+                ▼
+              </span>
+            </button>
+          </div>
+          <div
+            className={`filtros-content ${
+              filtrosAbiertos ? 'visible' : 'hidden'
+            }`}
+          >
+            <div className="filtros-grid">
+              <div className="filtro-item">
+                <label htmlFor="zona-filter">Zona:</label>
+                <select
+                  id="zona-filter"
+                  value={filtros.zona}
+                  onChange={(e) => handleFiltroChange('zona', e.target.value)}
+                >
+                  <option value="">Todas las zonas</option>
+                  {zonas.map((zona) => (
+                    <option key={zona} value={zona}>
+                      {zona}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-            <div className="filtro-item">
-              <label htmlFor="capacidad-min">Capacidad mínima:</label>
-              <input
-                type="number"
-                id="capacidad-min"
-                value={filtros.capacidadMin}
-                onChange={(e) =>
-                  handleFiltroChange('capacidadMin', e.target.value)
-                }
-                placeholder="0"
-              />
-            </div>
+              <div className="filtro-item">
+                <label htmlFor="capacidad-min">Capacidad mínima:</label>
+                <input
+                  type="number"
+                  id="capacidad-min"
+                  value={filtros.capacidadMin}
+                  onChange={(e) =>
+                    handleFiltroChange('capacidadMin', e.target.value)
+                  }
+                  placeholder="0"
+                />
+              </div>
 
-            <div className="filtro-item">
-              <label htmlFor="capacidad-max">Capacidad máxima:</label>
-              <input
-                type="number"
-                id="capacidad-max"
-                value={filtros.capacidadMax}
-                onChange={(e) =>
-                  handleFiltroChange('capacidadMax', e.target.value)
-                }
-                placeholder="Sin límite"
-              />
-            </div>
+              <div className="filtro-item">
+                <label htmlFor="capacidad-max">Capacidad máxima:</label>
+                <input
+                  type="number"
+                  id="capacidad-max"
+                  value={filtros.capacidadMax}
+                  onChange={(e) =>
+                    handleFiltroChange('capacidadMax', e.target.value)
+                  }
+                  placeholder="Sin límite"
+                />
+              </div>
 
-            <div className="filtro-item">
-              <label htmlFor="precio-min">Precio mínimo:</label>
-              <input
-                type="number"
-                id="precio-min"
-                value={filtros.precioMin}
-                onChange={(e) =>
-                  handleFiltroChange('precioMin', e.target.value)
-                }
-                placeholder="0"
-              />
-            </div>
+              <div className="filtro-item">
+                <label htmlFor="precio-min">Precio mínimo:</label>
+                <input
+                  type="number"
+                  id="precio-min"
+                  value={filtros.precioMin}
+                  onChange={(e) =>
+                    handleFiltroChange('precioMin', e.target.value)
+                  }
+                  placeholder="0"
+                />
+              </div>
 
-            <div className="filtro-item">
-              <label htmlFor="precio-max">Precio máximo:</label>
-              <input
-                type="number"
-                id="precio-max"
-                value={filtros.precioMax}
-                onChange={(e) =>
-                  handleFiltroChange('precioMax', e.target.value)
-                }
-                placeholder="Sin límite"
-              />
-            </div>
+              <div className="filtro-item">
+                <label htmlFor="precio-max">Precio máximo:</label>
+                <input
+                  type="number"
+                  id="precio-max"
+                  value={filtros.precioMax}
+                  onChange={(e) =>
+                    handleFiltroChange('precioMax', e.target.value)
+                  }
+                  placeholder="Sin límite"
+                />
+              </div>
 
-            <div className="filtro-item">
-              <button onClick={limpiarFiltros} className="limpiar-filtros-btn">
-                Limpiar filtros
-              </button>
+              <div className="filtro-item">
+                <button
+                  onClick={limpiarFiltros}
+                  className="limpiar-filtros-btn"
+                >
+                  Limpiar filtros
+                </button>
+              </div>
+              {/* Resultados - se muestra después de los filtros */}
+              <div className="resultados-count">
+                {salonesFiltrados.length} resultado(s) encontrado(s)
+              </div>
             </div>
           </div>
         </div>
-      </div>
+        <div className="salones-grid">
+          {salonesFiltrados.map((salon) => (
+            <div className="salon-card" key={salon.id}>
+              <div className="salon-img-container">
+                <img
+                  src={buildImageUrl(salon.foto)}
+                  alt={salon.nombre}
+                  className="salon-img"
+                  onError={(e) => {
+                    e.currentTarget.src = '/placeholder-image.svg';
+                  }}
+                />
+              </div>
+              <div className="salon-info">
+                <h3 className="salon-name">{salon.nombre}</h3>
+                <p className="salon-capacidad">
+                  Capacidad: {salon.capacidad} personas
+                </p>
+                <p className="salon-montoS">
+                  ${salon.montoS.toLocaleString('es-AR')}
+                </p>
+                <p className="salon-zona">{salon.zona.nombre}</p>
+              </div>
 
-      {/* Resultados - se muestra después de los filtros */}
-      <div className="resultados-count">
-        {salonesFiltrados.length} resultado(s) encontrado(s)
-      </div>
-
-      <div className="salones-grid">
-        {salonesFiltrados.map((salon) => (
-          <div className="salon-card" key={salon.id}>
-            <div className="salon-img-container">
-              <img
-                src={buildImageUrl(salon.foto)}
-                alt={salon.nombre}
-                className="salon-img"
-                onError={(e) => {
-                  e.currentTarget.src = '/placeholder-image.svg';
-                }}
-              />
+              {/* Botón Agregar al carrito - solo para clientes */}
+              {user?.rol !== 'administrador' && (
+                <div className="salon-actions">
+                  {isInCart(salon.id, 'salon') ? (
+                    <div className="in-cart-actions">
+                      <button className={`add-to-cart-btn added`} disabled>
+                        <span>✓</span> Agregado
+                      </button>
+                      <button
+                        className="remove-from-cart-btn"
+                        onClick={() => removeItem(salon.id, 'salon')}
+                        aria-label={`Eliminar ${salon.nombre} del carrito`}
+                      >
+                        🗑️ Eliminar
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      className={`add-to-cart-btn ${
+                        isInCart(salon.id, 'salon') ? 'added' : ''
+                      }`}
+                      onClick={() => handleAddToCart(salon)}
+                      disabled={isInCart(salon.id, 'salon')}
+                    >
+                      <>
+                        <span>🛒</span> Agregar al carrito
+                      </>
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
-            <div className="salon-info">
-              <h3 className="salon-name">{salon.nombre}</h3>
-              <p className="salon-capacidad">
-                Capacidad: {salon.capacidad} personas
-              </p>
-              <p className="salon-montoS">
-                ${salon.montoS.toLocaleString('es-AR')}
-              </p>
-              <p className="salon-zona">{salon.zona.nombre}</p>
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );

@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback, memo } from 'react';
 import axios from 'axios';
 import './djAdmin.css';
 import { UserBadge } from '../../../components/userbadge';
+import { BackToMenu } from '../../../components/BackToMenu';
 
 interface Dj {
   id: number;
@@ -76,8 +77,8 @@ export function DjAdmin() {
   const [editingDj, setEditingDj] = useState<Dj | null>(null);
   const [formData, setFormData] = useState({
     nombreArtistico: '',
-    estado: '',
-    montoDj: 0,
+    estado: 'disponible',
+    montoDj: '',
     zonaId: 0,
     foto: '',
     imagen: null as File | null,
@@ -125,7 +126,7 @@ export function DjAdmin() {
       setFormData({
         nombreArtistico: dj.nombreArtistico,
         estado: dj.estado,
-        montoDj: dj.montoDj,
+        montoDj: dj.montoDj.toString(),
         zonaId: dj.zona.id,
         foto: dj.foto || '',
         imagen: null as File | null,
@@ -133,8 +134,8 @@ export function DjAdmin() {
     } else {
       setFormData({
         nombreArtistico: '',
-        estado: '',
-        montoDj: 0,
+        estado: 'disponible',
+        montoDj: '',
         zonaId: 0,
         foto: '',
         imagen: null as File | null,
@@ -153,8 +154,7 @@ export function DjAdmin() {
       const { name, value } = e.target;
       setFormData((prev) => ({
         ...prev,
-        [name]:
-          name === 'montoDj' || name === 'zonaId' ? parseInt(value) : value,
+        [name]: name === 'zonaId' ? parseInt(value) : value,
       }));
     },
     []
@@ -170,13 +170,15 @@ export function DjAdmin() {
       return;
     }
 
-    if (!formData.estado) {
+    // Si estamos creando, no requerimos selección del estado en UI; por defecto será 'disponible'
+    if (editingDj && !formData.estado) {
       alert('El estado es requerido');
       return;
     }
 
-    if (formData.montoDj <= 0) {
-      alert('El monto debe ser mayor a 0');
+    const montoNumber = Number(formData.montoDj);
+    if (isNaN(montoNumber) || montoNumber <= 0) {
+      alert('El monto debe ser un número mayor a 0');
       return;
     }
 
@@ -225,7 +227,7 @@ export function DjAdmin() {
           const data = new FormData();
           data.append('nombreArtistico', formData.nombreArtistico.trim());
           data.append('estado', formData.estado);
-          data.append('montoDj', formData.montoDj.toString());
+          data.append('montoDj', Number(formData.montoDj).toString());
           data.append('zona', formData.zonaId.toString());
           data.append('imagen', formData.imagen);
 
@@ -242,8 +244,9 @@ export function DjAdmin() {
         // Para crear nuevo DJ, usar FormData
         const data = new FormData();
         data.append('nombreArtistico', formData.nombreArtistico.trim());
-        data.append('estado', formData.estado);
-        data.append('montoDj', formData.montoDj.toString());
+        // Asegurar estado por defecto al crear
+        data.append('estado', formData.estado || 'disponible');
+        data.append('montoDj', Number(formData.montoDj).toString());
         data.append('zona', formData.zonaId.toString());
 
         // Importante: el nombre del campo debe ser 'imagen' (según el middleware)
@@ -252,18 +255,12 @@ export function DjAdmin() {
         }
 
         console.log('Creando nuevo DJ con FormData');
-        response = await fetch('http://localhost:3000/api/dj', {
-          method: 'POST',
-          credentials: 'include',
-          body: data,
+        response = await axios.post('http://localhost:3000/api/dj', data, {
+          withCredentials: true,
+          headers: { 'Content-Type': 'multipart/form-data' },
         });
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const result = await response.json();
-        console.log('Respuesta de creación:', result);
+        console.log('Respuesta de creación:', response.data);
       }
 
       // Recargar la lista de DJs
@@ -315,6 +312,7 @@ export function DjAdmin() {
 
   return (
     <div className="dj-container">
+      <BackToMenu className="admin-style" />
       <UserBadge />
       {djs.map((dj) => (
         <div className="dj-card" key={dj.id}>
@@ -361,21 +359,23 @@ export function DjAdmin() {
                 />
               </div>
 
-              <div className="form-group">
-                <label htmlFor="estado">Estado:</label>
-                <select
-                  id="estado"
-                  name="estado"
-                  value={formData.estado}
-                  onChange={handleInputChange}
-                  required
-                >
-                  <option value="">Seleccionar estado</option>
-                  <option value="Disponible">Disponible</option>
-                  <option value="Ocupado">Ocupado</option>
-                  <option value="Inactivo">Inactivo</option>
-                </select>
-              </div>
+              {/* Mostrar campo 'estado' sólo cuando se está editando un DJ */}
+              {editingDj && (
+                <div className="form-group">
+                  <label htmlFor="estado">Estado:</label>
+                  <select
+                    id="estado"
+                    name="estado"
+                    value={formData.estado}
+                    onChange={handleInputChange}
+                    required
+                  >
+                    <option value="disponible">Disponible</option>
+                    <option value="ocupado">Ocupado</option>
+                    <option value="inactivo">Inactivo</option>
+                  </select>
+                </div>
+              )}
 
               <div className="form-group">
                 <label htmlFor="montoDj">Monto:</label>

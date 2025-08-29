@@ -118,7 +118,115 @@
   transform: scale(0.95);
 }
 
+/* Botón del carrito */
+.cart-btn-small {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #718096;
+  padding: 6px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  position: relative;
+}
+
+.cart-btn-small:hover {
+  background: #f7fafc;
+  color: #667eea;
+  transform: scale(1.1);
+}
+
+.cart-btn-small:active {
+  transform: scale(0.95);
+}
+
+.cart-count {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background: #e53e3e;
+  color: white;
+  font-size: 8px;
+  font-weight: bold;
+  padding: 1px 4px;
+  border-radius: 8px;
+  min-width: 14px;
+  height: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
 /* Responsive */
+@media (min-width: 1024px) {
+  .user-badge {
+    top: 20px;
+    right: 20px;
+  }
+
+  .user-badge-content {
+    padding: 14px 18px;
+    gap: 14px;
+  }
+
+  .user-avatar-small {
+    width: 44px;
+    height: 44px;
+  }
+
+  .avatar-placeholder-small svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .user-name-small {
+    font-size: 15px;
+    max-width: 130px;
+  }
+
+  .user-role-small {
+    font-size: 12px;
+    padding: 3px 9px;
+  }
+
+  .logout-btn-small {
+    width: 32px;
+    height: 32px;
+    padding: 8px;
+  }
+
+  .logout-btn-small svg {
+    width: 17px;
+    height: 17px;
+  }
+
+  .cart-btn-small {
+    width: 32px;
+    height: 32px;
+    padding: 8px;
+  }
+
+  .cart-btn-small svg {
+    width: 19px;
+    height: 19px;
+  }
+
+  .cart-count {
+    font-size: 10px;
+    min-width: 17px;
+    height: 17px;
+    top: -3px;
+    right: -3px;
+  }
+}
+
 @media (max-width: 768px) {
   .user-badge {
     top: 15px;
@@ -161,6 +269,22 @@
 
   .logout-btn-small svg {
     width: 12px;
+    height: 12px;
+  }
+
+  .cart-btn-small {
+    width: 24px;
+    height: 24px;
+  }
+
+  .cart-btn-small svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .cart-count {
+    font-size: 7px;
+    min-width: 12px;
     height: 12px;
   }
 }
@@ -223,5 +347,14 @@
   .logout-btn-small:hover {
     background: #4a5568;
     color: #fc8181;
+  }
+
+  .cart-btn-small {
+    color: #a0aec0;
+  }
+
+  .cart-btn-small:hover {
+    background: #4a5568;
+    color: #a78bfa;
   }
 }

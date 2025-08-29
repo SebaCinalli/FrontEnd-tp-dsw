@@ -1,16 +1,14 @@
+@import '../../styles/darkTheme.css';
+
 /* Aplica el fondo al body o html para que cubra toda la pantalla */
 body,
 html {
   margin: 0;
   padding: 0;
   height: 100%;
-  background-image: linear-gradient(rgba(0, 72, 255, 0.55), rgba(5, 7, 12, 0.55)),
-    url(/fondo.jpg);
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-size: cover;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
   background-attachment: fixed;
-  font-family: "Arial", sans-serif;
+  font-family: 'Arial', sans-serif;
 }
 
 .menu-body {
@@ -26,11 +24,10 @@ html {
   width: 350px;
   text-align: center;
   padding: 45px 40px 30px 30px;
-  background: rgba(167, 187, 240, 0.164);
+  background: #1e1e2e;
   border-radius: 15px;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 0 10px #1f8fff;
+  border: 1px solid #3a3a5c;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
 @media (max-width: 768px) {
@@ -53,6 +50,15 @@ html {
   grid-template-columns: repeat(2, 1fr);
   gap: 15px;
   margin-bottom: 20px;
+}
+
+.solicitud-item {
+  grid-column: 1 / -1; /* span the two columns */
+  justify-self: center; /* center inside the grid area */
+  /* make the button occupy approximately the combined width of the two columns
+     while staying responsive inside the .container */
+  width: calc(100%);
+  max-width: 280px;
 }
 
 .icon-item {
@@ -109,7 +115,7 @@ html {
 }
 
 .tooltip::before {
-  content: "";
+  content: '';
   position: absolute;
   top: -5px;
   left: 50%;

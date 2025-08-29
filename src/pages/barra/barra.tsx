@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import './barra.css';
 import { UserBadge } from '../../components/userbadge';
+import { BackToMenu } from '../../components/BackToMenu';
+import { useCart } from '../../context/cartcontext';
+import { useUser } from '../../context/usercontext';
 
 interface Barra {
   id: number;
@@ -34,6 +37,51 @@ export function Barra() {
   const [zonas, setZonas] = useState<string[]>([]);
   const [tiposBebida, setTiposBebida] = useState<string[]>([]);
   const [filtrosAbiertos, setFiltrosAbiertos] = useState(false);
+
+  const { addItem, isInCart, removeItem } = useCart();
+  const { user } = useUser();
+
+  const handleAddToCart = (barra: Barra) => {
+    const cartItem = {
+      id: barra.id,
+      type: 'barra' as const,
+      name: barra.nombreB,
+      price: barra.montoB,
+      image: barra.foto,
+      details: {
+        tipoBebida: barra.tipoBebida,
+        zona: barra.zona.nombre,
+      },
+    };
+
+    const added = addItem(cartItem);
+
+    if (!added) return;
+
+    try {
+      const imgEl = document.querySelector(
+        `.barra-card img[alt="${barra.nombreB}"]`
+      ) as HTMLImageElement | null;
+      const img =
+        imgEl ||
+        (document.querySelector(
+          `img[alt="${barra.nombreB}"]`
+        ) as HTMLImageElement | null);
+      const rect = img
+        ? img.getBoundingClientRect()
+        : { left: 0, top: 0, width: 40, height: 40 };
+      const detail = {
+        src: img?.src || '/placeholder-image.svg',
+        x: rect.left,
+        y: rect.top,
+        width: rect.width,
+        height: rect.height,
+      };
+      window.dispatchEvent(new CustomEvent('fly-to-cart', { detail }));
+    } catch (e) {
+      // ignore
+    }
+  };
 
   // Función helper para construir URLs de imagen
   const buildImageUrl = (fileName: string | undefined) => {
@@ -131,127 +179,164 @@ export function Barra() {
 
   return (
     <div className="barra-container">
+      <BackToMenu />
       <UserBadge />
 
-      {/* Panel de filtros */}
-      <div className={`filtros-panel ${filtrosAbiertos ? 'abierto' : ''}`}>
-        <div className="filtros-header">
-          <h3>Filtros</h3>
-          <button
-            className="filtros-toggle"
-            onClick={() => setFiltrosAbiertos(!filtrosAbiertos)}
-            aria-label="Toggle filtros"
-          >
-            <span
-              className={`filtros-arrow ${filtrosAbiertos ? 'rotated' : ''}`}
+      {/* Contenedor layout: filtros + resultados */}
+      <div className="barra-layout">
+        {/* Panel de filtros */}
+        <div className={`filtros-panel ${filtrosAbiertos ? 'abierto' : ''}`}>
+          <div className="filtros-header">
+            <h3>Filtros</h3>
+            <button
+              className="filtros-toggle"
+              onClick={() => setFiltrosAbiertos(!filtrosAbiertos)}
+              aria-label="Toggle filtros"
             >
-              ▼
-            </span>
-          </button>
-        </div>
-        <div
-          className={`filtros-content ${
-            filtrosAbiertos ? 'visible' : 'hidden'
-          }`}
-        >
-          <div className="filtros-grid">
-            <div className="filtro-item">
-              <label htmlFor="zona-filter">Zona:</label>
-              <select
-                id="zona-filter"
-                value={filtros.zona}
-                onChange={(e) => handleFiltroChange('zona', e.target.value)}
+              <span
+                className={`filtros-arrow ${filtrosAbiertos ? 'rotated' : ''}`}
               >
-                <option value="">Todas las zonas</option>
-                {zonas.map((zona) => (
-                  <option key={zona} value={zona}>
-                    {zona}
-                  </option>
-                ))}
-              </select>
-            </div>
+                ▼
+              </span>
+            </button>
+          </div>
+          <div
+            className={`filtros-content ${
+              filtrosAbiertos ? 'visible' : 'hidden'
+            }`}
+          >
+            <div className="filtros-grid">
+              <div className="filtro-item">
+                <label htmlFor="zona-filter">Zona:</label>
+                <select
+                  id="zona-filter"
+                  value={filtros.zona}
+                  onChange={(e) => handleFiltroChange('zona', e.target.value)}
+                >
+                  <option value="">Todas las zonas</option>
+                  {zonas.map((zona) => (
+                    <option key={zona} value={zona}>
+                      {zona}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-            <div className="filtro-item">
-              <label htmlFor="tipo-bebida-filter">Tipo de Bebida:</label>
-              <select
-                id="tipo-bebida-filter"
-                value={filtros.tipoBebida}
-                onChange={(e) =>
-                  handleFiltroChange('tipoBebida', e.target.value)
-                }
-              >
-                <option value="">Todos los tipos</option>
-                {tiposBebida.map((tipo) => (
-                  <option key={tipo} value={tipo}>
-                    {tipo}
-                  </option>
-                ))}
-              </select>
-            </div>
+              <div className="filtro-item">
+                <label htmlFor="tipo-bebida-filter">Tipo de Bebida:</label>
+                <select
+                  id="tipo-bebida-filter"
+                  value={filtros.tipoBebida}
+                  onChange={(e) =>
+                    handleFiltroChange('tipoBebida', e.target.value)
+                  }
+                >
+                  <option value="">Todos los tipos</option>
+                  {tiposBebida.map((tipo) => (
+                    <option key={tipo} value={tipo}>
+                      {tipo}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-            <div className="filtro-item">
-              <label htmlFor="precio-min">Precio mínimo:</label>
-              <input
-                type="number"
-                id="precio-min"
-                value={filtros.precioMin}
-                onChange={(e) =>
-                  handleFiltroChange('precioMin', e.target.value)
-                }
-                placeholder="0"
-              />
-            </div>
+              <div className="filtro-item">
+                <label htmlFor="precio-min">Precio mínimo:</label>
+                <input
+                  type="number"
+                  id="precio-min"
+                  value={filtros.precioMin}
+                  onChange={(e) =>
+                    handleFiltroChange('precioMin', e.target.value)
+                  }
+                  placeholder="0"
+                />
+              </div>
 
-            <div className="filtro-item">
-              <label htmlFor="precio-max">Precio máximo:</label>
-              <input
-                type="number"
-                id="precio-max"
-                value={filtros.precioMax}
-                onChange={(e) =>
-                  handleFiltroChange('precioMax', e.target.value)
-                }
-                placeholder="Sin límite"
-              />
-            </div>
+              <div className="filtro-item">
+                <label htmlFor="precio-max">Precio máximo:</label>
+                <input
+                  type="number"
+                  id="precio-max"
+                  value={filtros.precioMax}
+                  onChange={(e) =>
+                    handleFiltroChange('precioMax', e.target.value)
+                  }
+                  placeholder="Sin límite"
+                />
+              </div>
 
-            <div className="filtro-item">
-              <button onClick={limpiarFiltros} className="limpiar-filtros-btn">
-                Limpiar filtros
-              </button>
+              <div className="filtro-item">
+                <button
+                  onClick={limpiarFiltros}
+                  className="limpiar-filtros-btn"
+                >
+                  Limpiar filtros
+                </button>
+              </div>
+              {/* Resultados - se muestra después de los filtros */}
+              <div className="resultados-count">
+                {barrasFiltradas.length} resultado(s) encontrado(s)
+              </div>
             </div>
           </div>
         </div>
-      </div>
+        <div className="barras-grid">
+          {barrasFiltradas.map((barra) => (
+            <div className="barra-card" key={barra.id}>
+              <div className="barra-img-container">
+                <img
+                  src={buildImageUrl(barra.foto)}
+                  alt={barra.nombreB}
+                  className="barra-img"
+                  onError={(e) => {
+                    e.currentTarget.src = '/placeholder-image.svg';
+                  }}
+                />
+              </div>
+              <div className="barra-info">
+                <h3 className="barra-name">{barra.nombreB}</h3>
+                <p className="barra-bebida">Tipo Bebida: {barra.tipoBebida}</p>
+                <p className="barra-montoB">
+                  ${barra.montoB.toLocaleString('es-AR')}
+                </p>
+                <p className="barra-zona">{barra.zona.nombre}</p>
+              </div>
 
-      {/* Resultados - se muestra después de los filtros */}
-      <div className="resultados-count">
-        {barrasFiltradas.length} resultado(s) encontrado(s)
-      </div>
-
-      <div className="barras-grid">
-        {barrasFiltradas.map((barra) => (
-          <div className="barra-card" key={barra.id}>
-            <div className="barra-img-container">
-              <img
-                src={buildImageUrl(barra.foto)}
-                alt={barra.nombreB}
-                className="barra-img"
-                onError={(e) => {
-                  e.currentTarget.src = '/placeholder-image.svg';
-                }}
-              />
+              {/* Botón Agregar al carrito - solo para clientes */}
+              {user?.rol !== 'administrador' && (
+                <div className="barra-actions">
+                  {isInCart(barra.id, 'barra') ? (
+                    <div className="in-cart-actions">
+                      <button className={`add-to-cart-btn added`} disabled>
+                        <span>✓</span> Agregado
+                      </button>
+                      <button
+                        className="remove-from-cart-btn"
+                        onClick={() => removeItem(barra.id, 'barra')}
+                        aria-label={`Eliminar ${barra.nombreB} del carrito`}
+                      >
+                        🗑️ Eliminar
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      className={`add-to-cart-btn ${
+                        isInCart(barra.id, 'barra') ? 'added' : ''
+                      }`}
+                      onClick={() => handleAddToCart(barra)}
+                      disabled={isInCart(barra.id, 'barra')}
+                    >
+                      <>
+                        <span>🛒</span> Agregar al carrito
+                      </>
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
-            <div className="barra-info">
-              <h3 className="barra-name">{barra.nombreB}</h3>
-              <p className="barra-bebida">Tipo Bebida: {barra.tipoBebida}</p>
-              <p className="barra-montoB">
-                ${barra.montoB.toLocaleString('es-AR')}
-              </p>
-              <p className="barra-zona">{barra.zona.nombre}</p>
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );
