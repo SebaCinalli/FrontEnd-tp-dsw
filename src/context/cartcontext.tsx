@@ -42,11 +42,12 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     setItems((prevItems) => {
       // Verificar si el elemento ya está en el carrito
       const existingItem = prevItems.find(
-        (cartItem) => cartItem.id === item.id && cartItem.type === item.type
+        (cartItem) => cartItem.type === item.type
       );
 
       if (existingItem) {
         // Si ya existe, no lo agregamos de nuevo
+        alert('tipo de servicio ya agregado')
         return prevItems;
       }
 
