@@ -391,3 +391,23 @@
 .add-to-cart-btn span {
   font-size: 1rem;
 }
+
+/* Estilos para cuando el item ya está en el carrito: mostrar botón eliminar al lado */
+.in-cart-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.remove-from-cart-btn {
+  background: transparent;
+  border: 1px solid #e74c3c;
+  color: #e74c3c;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.remove-from-cart-btn:hover {
+  background: rgba(231, 76, 60, 0.06);
+}

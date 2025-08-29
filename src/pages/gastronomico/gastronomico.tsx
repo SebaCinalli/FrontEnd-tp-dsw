@@ -40,7 +40,7 @@ export function Gastronomico() {
   const [tiposComida, setTiposComida] = useState<string[]>([]);
   const [filtrosAbiertos, setFiltrosAbiertos] = useState(false);
 
-  const { addItem, isInCart } = useCart();
+  const { addItem, isInCart, removeItem } = useCart();
   const { user } = useUser();
 
   const handleAddToCart = (gastronomico: Gastronomico) => {
@@ -287,23 +287,34 @@ export function Gastronomico() {
               {/* Botón Agregar al carrito - solo para clientes */}
               {user?.rol !== 'administrador' && (
                 <div className="gastronomico-actions">
-                  <button
-                    className={`add-to-cart-btn ${
-                      isInCart(gastronomico.id, 'gastronomico') ? 'added' : ''
-                    }`}
-                    onClick={() => handleAddToCart(gastronomico)}
-                    disabled={isInCart(gastronomico.id, 'gastronomico')}
-                  >
-                    {isInCart(gastronomico.id, 'gastronomico') ? (
-                      <>
+                  {isInCart(gastronomico.id, 'gastronomico') ? (
+                    <div className="in-cart-actions">
+                      <button className={`add-to-cart-btn added`} disabled>
                         <span>✓</span> Agregado
-                      </>
-                    ) : (
+                      </button>
+                      <button
+                        className="remove-from-cart-btn"
+                        onClick={() =>
+                          removeItem(gastronomico.id, 'gastronomico')
+                        }
+                        aria-label={`Eliminar ${gastronomico.nombreG} del carrito`}
+                      >
+                        🗑️ Eliminar
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      className={`add-to-cart-btn ${
+                        isInCart(gastronomico.id, 'gastronomico') ? 'added' : ''
+                      }`}
+                      onClick={() => handleAddToCart(gastronomico)}
+                      disabled={isInCart(gastronomico.id, 'gastronomico')}
+                    >
                       <>
                         <span>🛒</span> Agregar al carrito
                       </>
-                    )}
-                  </button>
+                    </button>
+                  )}
                 </div>
               )}
             </div>

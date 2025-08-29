@@ -38,7 +38,7 @@ export function Barra() {
   const [tiposBebida, setTiposBebida] = useState<string[]>([]);
   const [filtrosAbiertos, setFiltrosAbiertos] = useState(false);
 
-  const { addItem, isInCart } = useCart();
+  const { addItem, isInCart, removeItem } = useCart();
   const { user } = useUser();
 
   const handleAddToCart = (barra: Barra) => {
@@ -280,23 +280,32 @@ export function Barra() {
               {/* Botón Agregar al carrito - solo para clientes */}
               {user?.rol !== 'administrador' && (
                 <div className="barra-actions">
-                  <button
-                    className={`add-to-cart-btn ${
-                      isInCart(barra.id, 'barra') ? 'added' : ''
-                    }`}
-                    onClick={() => handleAddToCart(barra)}
-                    disabled={isInCart(barra.id, 'barra')}
-                  >
-                    {isInCart(barra.id, 'barra') ? (
-                      <>
+                  {isInCart(barra.id, 'barra') ? (
+                    <div className="in-cart-actions">
+                      <button className={`add-to-cart-btn added`} disabled>
                         <span>✓</span> Agregado
-                      </>
-                    ) : (
+                      </button>
+                      <button
+                        className="remove-from-cart-btn"
+                        onClick={() => removeItem(barra.id, 'barra')}
+                        aria-label={`Eliminar ${barra.nombreB} del carrito`}
+                      >
+                        🗑️ Eliminar
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      className={`add-to-cart-btn ${
+                        isInCart(barra.id, 'barra') ? 'added' : ''
+                      }`}
+                      onClick={() => handleAddToCart(barra)}
+                      disabled={isInCart(barra.id, 'barra')}
+                    >
                       <>
                         <span>🛒</span> Agregar al carrito
                       </>
-                    )}
-                  </button>
+                    </button>
+                  )}
                 </div>
               )}
             </div>
