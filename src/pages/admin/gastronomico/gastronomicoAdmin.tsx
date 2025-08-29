@@ -76,7 +76,7 @@ export function GastronomicoAdmin() {
   const [formData, setFormData] = useState({
     nombreG: '',
     tipoComida: '',
-    montoG: 0,
+    montoG: '',
     zonaId: 0,
     foto: '',
     imagen: null as File | null,
@@ -122,7 +122,7 @@ export function GastronomicoAdmin() {
       setFormData({
         nombreG: gastronomico.nombreG,
         tipoComida: gastronomico.tipoComida,
-        montoG: gastronomico.montoG,
+        montoG: gastronomico.montoG.toString(),
         zonaId: gastronomico.zona.id,
         foto: gastronomico.foto,
         imagen: null as File | null,
@@ -131,7 +131,7 @@ export function GastronomicoAdmin() {
       setFormData({
         nombreG: '',
         tipoComida: '',
-        montoG: 0,
+        montoG: '',
         zonaId: 0,
         foto: '',
         imagen: null as File | null,
@@ -150,8 +150,7 @@ export function GastronomicoAdmin() {
       const { name, value } = e.target;
       setFormData((prev) => ({
         ...prev,
-        [name]:
-          name === 'montoG' || name === 'zonaId' ? parseInt(value) : value,
+        [name]: name === 'zonaId' ? parseInt(value) : value,
       }));
     },
     []
@@ -171,8 +170,9 @@ export function GastronomicoAdmin() {
       return;
     }
 
-    if (formData.montoG <= 0) {
-      alert('El monto debe ser mayor a 0');
+    const montoNumber = Number(formData.montoG);
+    if (isNaN(montoNumber) || montoNumber <= 0) {
+      alert('El monto debe ser un número mayor a 0');
       return;
     }
 
@@ -214,7 +214,7 @@ export function GastronomicoAdmin() {
           const data = new FormData();
           data.append('nombreG', formData.nombreG.trim());
           data.append('tipoComida', formData.tipoComida);
-          data.append('montoG', formData.montoG.toString());
+          data.append('montoG', Number(formData.montoG).toString());
           data.append('zona', formData.zonaId.toString());
           data.append('imagen', formData.imagen);
 
@@ -232,7 +232,7 @@ export function GastronomicoAdmin() {
         const data = new FormData();
         data.append('nombreG', formData.nombreG.trim());
         data.append('tipoComida', formData.tipoComida);
-        data.append('montoG', formData.montoG.toString());
+        data.append('montoG', Number(formData.montoG).toString());
         data.append('zona', formData.zonaId.toString());
 
         if (formData.imagen) {

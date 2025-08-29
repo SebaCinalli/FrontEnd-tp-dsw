@@ -78,7 +78,7 @@ export function DjAdmin() {
   const [formData, setFormData] = useState({
     nombreArtistico: '',
     estado: '',
-    montoDj: 0,
+    montoDj: '',
     zonaId: 0,
     foto: '',
     imagen: null as File | null,
@@ -126,7 +126,7 @@ export function DjAdmin() {
       setFormData({
         nombreArtistico: dj.nombreArtistico,
         estado: dj.estado,
-        montoDj: dj.montoDj,
+        montoDj: dj.montoDj.toString(),
         zonaId: dj.zona.id,
         foto: dj.foto || '',
         imagen: null as File | null,
@@ -135,7 +135,7 @@ export function DjAdmin() {
       setFormData({
         nombreArtistico: '',
         estado: '',
-        montoDj: 0,
+        montoDj: '',
         zonaId: 0,
         foto: '',
         imagen: null as File | null,
@@ -154,8 +154,7 @@ export function DjAdmin() {
       const { name, value } = e.target;
       setFormData((prev) => ({
         ...prev,
-        [name]:
-          name === 'montoDj' || name === 'zonaId' ? parseInt(value) : value,
+        [name]: name === 'zonaId' ? parseInt(value) : value,
       }));
     },
     []
@@ -176,8 +175,9 @@ export function DjAdmin() {
       return;
     }
 
-    if (formData.montoDj <= 0) {
-      alert('El monto debe ser mayor a 0');
+    const montoNumber = Number(formData.montoDj);
+    if (isNaN(montoNumber) || montoNumber <= 0) {
+      alert('El monto debe ser un número mayor a 0');
       return;
     }
 
@@ -226,7 +226,7 @@ export function DjAdmin() {
           const data = new FormData();
           data.append('nombreArtistico', formData.nombreArtistico.trim());
           data.append('estado', formData.estado);
-          data.append('montoDj', formData.montoDj.toString());
+          data.append('montoDj', Number(formData.montoDj).toString());
           data.append('zona', formData.zonaId.toString());
           data.append('imagen', formData.imagen);
 
@@ -244,7 +244,7 @@ export function DjAdmin() {
         const data = new FormData();
         data.append('nombreArtistico', formData.nombreArtistico.trim());
         data.append('estado', formData.estado);
-        data.append('montoDj', formData.montoDj.toString());
+        data.append('montoDj', Number(formData.montoDj).toString());
         data.append('zona', formData.zonaId.toString());
 
         // Importante: el nombre del campo debe ser 'imagen' (según el middleware)
@@ -253,14 +253,10 @@ export function DjAdmin() {
         }
 
         console.log('Creando nuevo DJ con FormData');
-        response = await axios.post(
-          'http://localhost:3000/api/dj',
-          data,
-          {
-            withCredentials: true,
-            headers: { 'Content-Type': 'multipart/form-data' },
-          }
-        );
+        response = await axios.post('http://localhost:3000/api/dj', data, {
+          withCredentials: true,
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
 
         console.log('Respuesta de creación:', response.data);
       }

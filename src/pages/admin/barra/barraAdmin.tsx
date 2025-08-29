@@ -78,7 +78,8 @@ export function BarraAdmin() {
   const [formData, setFormData] = useState({
     nombreB: '',
     tipoBebida: '',
-    montoB: 0,
+    // keep as string while editing so input isn't forced to 0
+    montoB: '',
     zonaId: 0,
     foto: '',
     imagen: null as File | null,
@@ -130,7 +131,7 @@ export function BarraAdmin() {
       const newFormData = {
         nombreB: barra.nombreB,
         tipoBebida: barra.tipoBebida,
-        montoB: barra.montoB,
+        montoB: barra.montoB.toString(),
         zonaId: barra.zona.id,
         foto: barra.foto,
         imagen: null as File | null,
@@ -140,7 +141,7 @@ export function BarraAdmin() {
       const newFormData = {
         nombreB: '',
         tipoBebida: '',
-        montoB: 0,
+        montoB: '',
         zonaId: 0,
         foto: '',
         imagen: null as File | null,
@@ -158,8 +159,7 @@ export function BarraAdmin() {
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
       const { name, value } = e.target;
-      const newValue =
-        name === 'montoB' || name === 'zonaId' ? parseInt(value) || 0 : value;
+      const newValue = name === 'zonaId' ? parseInt(value) || 0 : value;
       setFormData((prev) => ({
         ...prev,
         [name]: newValue,
@@ -183,8 +183,9 @@ export function BarraAdmin() {
       return;
     }
 
-    if (formData.montoB <= 0) {
-      alert('El monto debe ser mayor a 0');
+    const montoNumber = Number(formData.montoB);
+    if (isNaN(montoNumber) || montoNumber <= 0) {
+      alert('El monto debe ser un número mayor a 0');
       return;
     }
 
@@ -233,7 +234,7 @@ export function BarraAdmin() {
           const data = new FormData();
           data.append('nombreB', formData.nombreB.trim());
           data.append('tipoBebida', formData.tipoBebida);
-          data.append('montoB', formData.montoB.toString());
+          data.append('montoB', Number(formData.montoB).toString());
           data.append('zona', formData.zonaId.toString());
           data.append('imagen', formData.imagen);
 
@@ -251,7 +252,7 @@ export function BarraAdmin() {
         const data = new FormData();
         data.append('nombreB', formData.nombreB.trim());
         data.append('tipoBebida', formData.tipoBebida);
-        data.append('montoB', formData.montoB.toString());
+        data.append('montoB', Number(formData.montoB).toString());
         data.append('zona', formData.zonaId.toString());
 
         // Importante: el nombre del campo debe ser 'imagen' (según el middleware)
@@ -260,14 +261,10 @@ export function BarraAdmin() {
         }
 
         console.log('Creando nueva barra con FormData');
-        response = await axios.post(
-          'http://localhost:3000/api/barra',
-          data,
-          {
-            withCredentials: true,
-            headers: { 'Content-Type': 'multipart/form-data' },
-          }
-        );
+        response = await axios.post('http://localhost:3000/api/barra', data, {
+          withCredentials: true,
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
 
         console.log('Respuesta de creación:', response.data);
       }

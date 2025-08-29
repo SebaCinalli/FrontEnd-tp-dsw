@@ -78,8 +78,10 @@ export function SalonAdmin() {
   const [editingSalon, setEditingSalon] = useState<Salon | null>(null);
   const [formData, setFormData] = useState({
     nombre: '',
-    capacidad: 0,
-    montoS: 0,
+    // keep capacidad as string while editing so typing partial values works
+    capacidad: '',
+    // Keep montoS as string while editing so the user can type partial values
+    montoS: '',
     zonaId: 0,
     foto: '',
     estado: 'disponible',
@@ -127,8 +129,8 @@ export function SalonAdmin() {
     if (salon) {
       setFormData({
         nombre: salon.nombre,
-        capacidad: salon.capacidad,
-        montoS: salon.montoS,
+        capacidad: salon.capacidad.toString(),
+        montoS: salon.montoS.toString(),
         zonaId: salon.zona.id,
         foto: salon.foto,
         estado: salon.estado,
@@ -137,8 +139,8 @@ export function SalonAdmin() {
     } else {
       setFormData({
         nombre: '',
-        capacidad: 0,
-        montoS: 0,
+        capacidad: '',
+        montoS: '',
         zonaId: 0,
         foto: '',
         estado: 'disponible',
@@ -158,10 +160,8 @@ export function SalonAdmin() {
       const { name, value } = e.target;
       setFormData((prev) => ({
         ...prev,
-        [name]:
-          name === 'capacidad' || name === 'montoS' || name === 'zonaId'
-            ? parseInt(value) || 0
-            : value,
+        // Keep montoS and capacidad as raw strings while editing
+        [name]: name === 'zonaId' ? parseInt(value) || 0 : value,
       }));
     },
     []
@@ -177,13 +177,16 @@ export function SalonAdmin() {
       return;
     }
 
-    if (formData.capacidad <= 0) {
-      alert('La capacidad debe ser mayor a 0');
+    const capacidadNumber = Number(formData.capacidad);
+    if (isNaN(capacidadNumber) || capacidadNumber <= 0) {
+      alert('La capacidad debe ser un número mayor a 0');
       return;
     }
 
-    if (formData.montoS <= 0) {
-      alert('El monto debe ser mayor a 0');
+    // Convert montoS to number for validation
+    const montoNumber = Number(formData.montoS);
+    if (isNaN(montoNumber) || montoNumber <= 0) {
+      alert('El monto debe ser un número mayor a 0');
       return;
     }
 
@@ -232,8 +235,8 @@ export function SalonAdmin() {
           // Si hay nueva imagen, usar FormData
           const data = new FormData();
           data.append('nombre', formData.nombre.trim());
-          data.append('capacidad', formData.capacidad.toString());
-          data.append('montoS', formData.montoS.toString());
+          data.append('capacidad', Number(formData.capacidad).toString());
+          data.append('montoS', Number(formData.montoS).toString());
           data.append('zona', formData.zonaId.toString());
           data.append('estado', formData.estado);
           data.append('imagen', formData.imagen);
@@ -252,7 +255,7 @@ export function SalonAdmin() {
         const data = new FormData();
         data.append('nombre', formData.nombre.trim());
         data.append('capacidad', formData.capacidad.toString());
-        data.append('montoS', formData.montoS.toString());
+        data.append('montoS', Number(formData.montoS).toString());
         data.append('zona', formData.zonaId.toString());
         data.append('estado', formData.estado);
 
@@ -262,14 +265,10 @@ export function SalonAdmin() {
         }
 
         console.log('Creando nuevo salón con FormData');
-        response = await axios.post(
-          'http://localhost:3000/api/salon',
-          data,
-          {
-            withCredentials: true,
-            headers: { 'Content-Type': 'multipart/form-data' },
-          }
-        );
+        response = await axios.post('http://localhost:3000/api/salon', data, {
+          withCredentials: true,
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
 
         console.log('Respuesta de creación:', response.data);
       }
