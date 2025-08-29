@@ -77,7 +77,7 @@ export function DjAdmin() {
   const [editingDj, setEditingDj] = useState<Dj | null>(null);
   const [formData, setFormData] = useState({
     nombreArtistico: '',
-    estado: '',
+    estado: 'disponible',
     montoDj: '',
     zonaId: 0,
     foto: '',
@@ -134,7 +134,7 @@ export function DjAdmin() {
     } else {
       setFormData({
         nombreArtistico: '',
-        estado: '',
+        estado: 'disponible',
         montoDj: '',
         zonaId: 0,
         foto: '',
@@ -170,7 +170,8 @@ export function DjAdmin() {
       return;
     }
 
-    if (!formData.estado) {
+    // Si estamos creando, no requerimos selección del estado en UI; por defecto será 'disponible'
+    if (editingDj && !formData.estado) {
       alert('El estado es requerido');
       return;
     }
@@ -243,7 +244,8 @@ export function DjAdmin() {
         // Para crear nuevo DJ, usar FormData
         const data = new FormData();
         data.append('nombreArtistico', formData.nombreArtistico.trim());
-        data.append('estado', formData.estado);
+        // Asegurar estado por defecto al crear
+        data.append('estado', formData.estado || 'disponible');
         data.append('montoDj', Number(formData.montoDj).toString());
         data.append('zona', formData.zonaId.toString());
 
@@ -357,21 +359,23 @@ export function DjAdmin() {
                 />
               </div>
 
-              <div className="form-group">
-                <label htmlFor="estado">Estado:</label>
-                <select
-                  id="estado"
-                  name="estado"
-                  value={formData.estado}
-                  onChange={handleInputChange}
-                  required
-                >
-                  <option value="">Seleccionar estado</option>
-                  <option value="Disponible">Disponible</option>
-                  <option value="Ocupado">Ocupado</option>
-                  <option value="Inactivo">Inactivo</option>
-                </select>
-              </div>
+              {/* Mostrar campo 'estado' sólo cuando se está editando un DJ */}
+              {editingDj && (
+                <div className="form-group">
+                  <label htmlFor="estado">Estado:</label>
+                  <select
+                    id="estado"
+                    name="estado"
+                    value={formData.estado}
+                    onChange={handleInputChange}
+                    required
+                  >
+                    <option value="disponible">Disponible</option>
+                    <option value="ocupado">Ocupado</option>
+                    <option value="inactivo">Inactivo</option>
+                  </select>
+                </div>
+              )}
 
               <div className="form-group">
                 <label htmlFor="montoDj">Monto:</label>

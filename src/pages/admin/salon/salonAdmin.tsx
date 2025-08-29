@@ -424,21 +424,24 @@ export function SalonAdmin() {
                 </select>
               </div>
 
-              <div className="form-group">
-                <label htmlFor="estado">Estado:</label>
-                <select
-                  id="estado"
-                  name="estado"
-                  value={formData.estado}
-                  onChange={handleInputChange}
-                  required
-                >
-                  <option value="disponible">Disponible</option>
-                  <option value="ocupado">Ocupado</option>
-                  <option value="mantenimiento">Mantenimiento</option>
-                  <option value="inactivo">Inactivo</option>
-                </select>
-              </div>
+              {/* Mostrar campo 'estado' sólo cuando se está editando un salón. */}
+              {editingSalon && (
+                <div className="form-group">
+                  <label htmlFor="estado">Estado:</label>
+                  <select
+                    id="estado"
+                    name="estado"
+                    value={formData.estado}
+                    onChange={handleInputChange}
+                    required
+                  >
+                    <option value="disponible">Disponible</option>
+                    <option value="ocupado">Ocupado</option>
+                    <option value="mantenimiento">Mantenimiento</option>
+                    <option value="inactivo">Inactivo</option>
+                  </select>
+                </div>
+              )}
 
               {/* Campo para subir archivo de imagen */}
               <div className="form-group">

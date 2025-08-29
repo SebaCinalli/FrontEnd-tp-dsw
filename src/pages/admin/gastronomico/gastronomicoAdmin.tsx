@@ -234,6 +234,8 @@ export function GastronomicoAdmin() {
         data.append('tipoComida', formData.tipoComida);
         data.append('montoG', Number(formData.montoG).toString());
         data.append('zona', formData.zonaId.toString());
+        // Asegurar estado por defecto al crear
+        data.append('estado', 'disponible');
 
         if (formData.imagen) {
           data.append('imagen', formData.imagen);

@@ -254,6 +254,8 @@ export function BarraAdmin() {
         data.append('tipoBebida', formData.tipoBebida);
         data.append('montoB', Number(formData.montoB).toString());
         data.append('zona', formData.zonaId.toString());
+        // Asegurar estado por defecto al crear
+        data.append('estado', 'disponible');
 
         // Importante: el nombre del campo debe ser 'imagen' (según el middleware)
         if (formData.imagen) {
