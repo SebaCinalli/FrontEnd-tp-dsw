@@ -15,6 +15,7 @@ import { SalonAdmin } from '../pages/admin/salon/salonAdmin';
 import { BarraAdmin } from '../pages/admin/barra/barraAdmin';
 import { DjAdmin } from '../pages/admin/dj/djAdmin';
 import { GastronomicoAdmin } from '../pages/admin/gastronomico/gastronomicoAdmin';
+import { Solicitud } from '../pages/solicitud/solicitud';
 
 export default function AppRoutes() {
   const { user } = useUser();
@@ -71,7 +72,15 @@ export default function AppRoutes() {
           </ProtectedRoutes>
         }
       />
-  {/* /solicitud no es pública; ruta admin abajo */}
+      {/* /solicitud no es pública; ruta admin abajo */}
+      <Route
+        path="/solicitud"
+        element={
+          <ProtectedRoutes>
+            <Solicitud />
+          </ProtectedRoutes>
+        }
+      />
       <Route
         path="/carrito"
         element={

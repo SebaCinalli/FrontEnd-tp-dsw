@@ -85,6 +85,34 @@ export function SolicitudAdmin() {
     return <span className={className}>{estado}</span>;
   };
 
+  const handleEliminarSolicitud = async (
+    solicitudId: number,
+    clienteNombre: string
+  ) => {
+    const confirmacion = window.confirm(
+      `¿Estás seguro de que deseas eliminar la solicitud #${solicitudId} de ${clienteNombre}?\n\nEsta acción no se puede deshacer.`
+    );
+
+    if (confirmacion) {
+      try {
+        await axios.delete(
+          `http://localhost:3000/api/solicitud/${solicitudId}`,
+          { withCredentials: true }
+        );
+
+        // Actualizar la lista local eliminando la solicitud
+        setSolicitudes(solicitudes.filter((s) => s.id !== solicitudId));
+        alert('Solicitud eliminada exitosamente');
+      } catch (error: any) {
+        console.error('Error al eliminar solicitud:', error);
+        alert(
+          'Error al eliminar la solicitud: ' +
+            (error.response?.data?.message || 'Error desconocido')
+        );
+      }
+    }
+  };
+
   if (loading) {
     return (
       <div className="solicitud-admin-container">
@@ -227,18 +255,35 @@ export function SolicitudAdmin() {
                           <button
                             className="btn-ver"
                             onClick={() => {
-                              /* TODO: Implementar vista detallada */
+                              alert(
+                                `Detalles de solicitud #${
+                                  solicitud.id
+                                }:\n\nCliente: ${solicitud.usuario.nombre} ${
+                                  solicitud.usuario.apellido
+                                }\nEmail: ${solicitud.usuario.email}\nEstado: ${
+                                  solicitud.estado
+                                }\nFecha: ${formatFecha(
+                                  solicitud.fechaSolicitud
+                                )}\nTotal: $${solicitud.montoTotal.toLocaleString(
+                                  'es-AR'
+                                )}`
+                              );
                             }}
+                            title="Ver detalles de la solicitud"
                           >
-                            Ver
+                            Ver Detalles
                           </button>
                           <button
-                            className="btn-editar"
-                            onClick={() => {
-                              /* TODO: Implementar edición de estado */
-                            }}
+                            className="btn-eliminar"
+                            onClick={() =>
+                              handleEliminarSolicitud(
+                                solicitud.id,
+                                `${solicitud.usuario.nombre} ${solicitud.usuario.apellido}`
+                              )
+                            }
+                            title="Eliminar solicitud permanentemente"
                           >
-                            Editar
+                            Eliminar
                           </button>
                         </div>
                       </td>

@@ -79,6 +79,21 @@ html {
   padding: 20px 8px;
 }
 
+.solicitud-item {
+  grid-column: 1 / -1;
+  justify-self: center;
+  /* Make solicitud item adapt to available space while keeping a readable max width */
+  width: 100%;
+  max-width: 360px;
+  padding: 20px 8px;
+  background: rgba(76, 175, 80, 0.1);
+}
+
+.solicitud-item:hover {
+  background: rgba(76, 175, 80, 0.2);
+  transform: translateY(-5px);
+}
+
 .icon-item i {
   font-size: 28px;
   color: #a7bbf0;
@@ -88,6 +103,12 @@ html {
 .cart-item i {
   font-size: 32px;
   margin-bottom: 10px;
+}
+
+.solicitud-item i {
+  font-size: 32px;
+  margin-bottom: 10px;
+  color: #4caf50;
 }
 
 .tooltip {

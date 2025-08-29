@@ -8,6 +8,7 @@ import {
   faHeadphones,
   faCouch,
   faShoppingCart,
+  faList,
 } from '@fortawesome/free-solid-svg-icons';
 import { UserBadge } from '../../components/userbadge';
 
@@ -66,6 +67,12 @@ const MenuMain: React.FC<MenuMainProps> = ({
       tooltip: 'Mi selección',
       onClick: () => navigate('/carrito'),
     },
+    {
+      id: 'solicitud',
+      icon: faList,
+      tooltip: 'Mis solicitudes',
+      onClick: () => navigate('/solicitud'),
+    },
   ];
 
   return (
@@ -80,7 +87,7 @@ const MenuMain: React.FC<MenuMainProps> = ({
               key={item.id}
               className={`icon-item ${
                 item.id === 'carrito' ? 'cart-item' : ''
-              }`}
+              } ${item.id === 'solicitud' ? 'solicitud-item' : ''}`}
               onClick={() => handleItemClick(item)}
             >
               <FontAwesomeIcon icon={item.icon} />
