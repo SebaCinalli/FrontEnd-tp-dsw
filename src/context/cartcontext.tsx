@@ -19,7 +19,7 @@ export interface CartItem {
 
 interface CartContextType {
   items: CartItem[];
-  addItem: (item: CartItem) => void;
+  addItem: (item: CartItem) => boolean;
   removeItem: (id: number, type: string) => void;
   clearCart: () => void;
   getTotalPrice: () => number;
@@ -67,11 +67,11 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
         lastAlertRef.current.type === item.type &&
         now - lastAlertRef.current.time < 800
       ) {
-        return;
+        return false;
       }
       lastAlertRef.current = { type: item.type, time: now };
       alert('tipo de servicio ya agregado');
-      return;
+      return false;
     }
 
     // Hacemos la actualización usando la función con prev para prevenir duplicados por race
@@ -80,6 +80,8 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
       if (already) return prevItems;
       return [...prevItems, item];
     });
+
+    return true;
   };
 
   const removeItem = (id: number, type: string) => {

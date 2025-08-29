@@ -54,6 +54,10 @@ export function Barra() {
       },
     };
 
+    const added = addItem(cartItem);
+
+    if (!added) return;
+
     try {
       const imgEl = document.querySelector(
         `.barra-card img[alt="${barra.nombreB}"]`
@@ -77,8 +81,6 @@ export function Barra() {
     } catch (e) {
       // ignore
     }
-
-    addItem(cartItem);
   };
 
   // Función helper para construir URLs de imagen

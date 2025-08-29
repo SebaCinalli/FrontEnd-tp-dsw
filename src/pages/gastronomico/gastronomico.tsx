@@ -56,6 +56,10 @@ export function Gastronomico() {
       },
     };
 
+    const added = addItem(cartItem);
+
+    if (!added) return;
+
     try {
       const imgEl = document.querySelector(
         `.gastronomico-card img[alt="${gastronomico.nombreG}"]`
@@ -79,8 +83,6 @@ export function Gastronomico() {
     } catch (e) {
       // ignore
     }
-
-    addItem(cartItem);
   };
 
   // Función helper para construir URLs de imagen

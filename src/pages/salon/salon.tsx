@@ -55,6 +55,10 @@ export function Salon() {
       },
     };
 
+    const added = addItem(cartItem);
+
+    if (!added) return;
+
     // Despachar evento para animación: intentamos obtener la imagen del card
     try {
       const imgEl = document.querySelector(
@@ -80,8 +84,6 @@ export function Salon() {
     } catch (e) {
       // ignore
     }
-
-    addItem(cartItem);
   };
 
   // Función helper para construir URLs de imagen

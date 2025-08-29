@@ -54,6 +54,10 @@ export function Dj() {
       },
     };
 
+    const added = addItem(cartItem);
+
+    if (!added) return;
+
     try {
       const imgEl = document.querySelector(
         `.dj-card img[alt="${dj.nombreArtistico}"]`
@@ -77,8 +81,6 @@ export function Dj() {
     } catch (e) {
       // ignore
     }
-
-    addItem(cartItem);
   };
 
   // Función helper para construir URLs de imagen
