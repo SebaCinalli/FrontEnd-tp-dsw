@@ -71,20 +71,10 @@ html {
 }
 
 .cart-item {
-  grid-column: 1 / -1;
-  justify-self: center;
-  /* Make cart item adapt to available space while keeping a readable max width */
-  width: 100%;
-  max-width: 360px;
   padding: 20px 8px;
 }
 
 .solicitud-item {
-  grid-column: 1 / -1;
-  justify-self: center;
-  /* Make solicitud item adapt to available space while keeping a readable max width */
-  width: 100%;
-  max-width: 360px;
   padding: 20px 8px;
   background: rgba(76, 175, 80, 0.1);
 }
@@ -101,13 +91,13 @@ html {
 }
 
 .cart-item i {
-  font-size: 32px;
-  margin-bottom: 10px;
+  font-size: 28px;
+  margin-bottom: 8px;
 }
 
 .solicitud-item i {
-  font-size: 32px;
-  margin-bottom: 10px;
+  font-size: 28px;
+  margin-bottom: 8px;
   color: #4caf50;
 }
 
@@ -196,4 +186,13 @@ html {
   opacity: 1;
   visibility: visible;
   bottom: -35px;
+}
+
+/* Estilos específicos para el menú cliente - botones lado a lado */
+.menu-client-layout .cart-item,
+.menu-client-layout .solicitud-item {
+  grid-column: auto;
+  width: auto;
+  max-width: none;
+  justify-self: stretch;
 }

@@ -3,7 +3,7 @@
 .gastronomico-container {
   min-height: 100vh;
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-  padding: 20px;
+  padding: 10px; /* Reducir padding superior */
   position: relative;
 }
 
@@ -17,10 +17,10 @@
 
 /* Ajustar posición del UserBadge para evitar superposición */
 .gastronomico-container .user-badge {
-  position: absolute;
-  top: 10px;
-  right: 20px;
-  z-index: 10;
+  position: fixed !important;
+  top: 20px !important;
+  right: 20px !important;
+  z-index: 1000 !important;
 }
 
 /* Estilos para el panel de filtros */
@@ -29,7 +29,7 @@
   border: 1px solid #3a3a5c;
   border-radius: 15px;
   margin-bottom: 20px;
-  margin-top: 60px; /* Espacio para el UserBadge en móvil */
+  margin-top: 30px; /* Espacio para el UserBadge en móvil */
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   overflow: hidden;
 }
@@ -90,12 +90,13 @@
 /* En escritorio, siempre mostrar filtros */
 @media (min-width: 768px) {
   .gastronomico-container {
-    padding-top: 80px; /* Más espacio para UserBadge en desktop */
+    padding-top: 40px; /* Reducir espacio para UserBadge en desktop */
   }
 
   .gastronomico-layout {
     grid-template-columns: 320px 1fr;
     gap: 24px;
+    margin-top: 10px; /* Reducir margen superior en desktop */
   }
 
   .filtros-panel {
@@ -233,7 +234,7 @@
 
 @media (min-width: 1024px) {
   .gastronomicos-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 1fr 1fr 1fr;
     gap: 25px;
   }
 }

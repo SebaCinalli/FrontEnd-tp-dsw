@@ -23,7 +23,7 @@
 .salon-container {
   min-height: 100vh;
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-  padding: 20px;
+  padding: 10px; /* Reducir padding superior */
   position: relative;
   max-width: 100vw;
   width: 100%;
@@ -40,10 +40,10 @@
 
 /* Ajustar posición del UserBadge para evitar superposición */
 .salon-container .user-badge {
-  position: absolute;
-  top: 10px;
-  right: 20px;
-  z-index: 10;
+  position: fixed !important;
+  top: 20px !important;
+  right: 20px !important;
+  z-index: 1000 !important;
 }
 
 /* Estilos para el panel de filtros */
@@ -113,7 +113,7 @@
 /* En escritorio, siempre mostrar filtros */
 @media (min-width: 768px) {
   .salon-container {
-    padding-top: 80px; /* Más espacio para UserBadge en desktop */
+    padding-top: 20px; /* Reducir espacio para UserBadge en desktop */
   }
 
   .salon-layout {
@@ -260,7 +260,7 @@
 
 @media (min-width: 1024px) {
   .salones-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 1fr 1fr 1fr;
     gap: 25px;
   }
 }

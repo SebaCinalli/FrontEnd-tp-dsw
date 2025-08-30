@@ -81,7 +81,7 @@ const MenuMain: React.FC<MenuMainProps> = ({
       <div className="container">
         <h2>{title}</h2>
 
-        <div className="icons-grid">
+        <div className="icons-grid menu-client-layout">
           {menuItems.map((item) => (
             <div
               key={item.id}

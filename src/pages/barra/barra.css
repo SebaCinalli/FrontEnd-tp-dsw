@@ -3,7 +3,7 @@
 .barra-container {
   min-height: 100vh;
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-  padding: 20px;
+  padding: 10px; /* Reducir padding superior */
   position: relative;
 }
 
@@ -17,10 +17,10 @@
 
 /* Ajustar posición del UserBadge para evitar superposición */
 .barra-container .user-badge {
-  position: absolute;
-  top: 10px;
-  right: 20px;
-  z-index: 10;
+  position: fixed !important;
+  top: 20px !important;
+  right: 20px !important;
+  z-index: 1000 !important;
 }
 
 /* Estilos para el panel de filtros */
@@ -30,7 +30,7 @@
   border-radius: 15px;
   /* quitar espacio inferior para que el grid de tarjetas quede pegado al panel de filtros */
   margin-bottom: 0;
-  margin-top: 60px; /* Espacio para el UserBadge en móvil */
+  margin-top: 30px; /* Espacio para el UserBadge en móvil */
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   overflow: hidden;
 }
@@ -40,10 +40,11 @@
   .barra-layout {
     grid-template-columns: 320px 1fr; /* panel fijo + contenido flexible */
     gap: 24px;
+    margin-top: 10px; /* Reducir margen superior en desktop */
   }
 
   .filtros-panel {
-    margin-top: 20px; /* mantener separación del UserBadge */
+    margin-top: 10px; /* Reducir separación del UserBadge */
     margin-bottom: 0; /* no crear espacio extra */
     position: sticky;
     top: 100px; /* se queda visible al hacer scroll */
@@ -238,7 +239,7 @@
 
 @media (min-width: 1024px) {
   .barras-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 1fr 1fr 1fr;
     gap: 25px;
   }
 }
