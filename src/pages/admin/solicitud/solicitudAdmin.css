@@ -160,9 +160,18 @@
 .estado-completado,
 .estado-completada {
   background: #1b2628;
-  color: #22b8cf;
+  color: #293031;
   border: 1px solid #244a4e;
 }
+
+.estado-rechazado,
+.estado-rechazada {
+  background: #5b301f;
+  color: #ff8a65;
+  border: 1px solid #6e3b27;
+}
+
+
 
 .total-amount {
   font-size: 1.1em;
@@ -176,13 +185,19 @@
 
 .btn-ver,
 .btn-editar,
-.btn-eliminar {
+.btn-eliminar,
+.btn-rechazar {
   padding: 6px 12px;
   border: none;
   border-radius: 4px;
   font-size: 0.85em;
   cursor: pointer;
   transition: all 0.2s ease;
+}
+
+.btn-rechazar {
+  background: #ff8a65;
+  color: #ffffff;
 }
 
 .btn-ver {

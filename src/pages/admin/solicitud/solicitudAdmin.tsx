@@ -113,6 +113,37 @@ export function SolicitudAdmin() {
     }
   };
 
+  const handleRechazarSolicitud = async (solicitudId: number, clienteNombre: string, solicitudEstado: string) =>{
+    const confirmacion = window.confirm(`¿Estás seguro de que deseas cambiar el estado de la solicitud # ${solicitudId} de  ${clienteNombre}?`);
+    if (confirmacion){
+        if (solicitudEstado !== 'Rechazada'){
+        try{
+          await axios.put(`http://localhost:3000/api/solicitud/${solicitudId}`,{estado: 'Rechazado'}, {withCredentials: true});
+          setSolicitudes(
+            solicitudes.map((s) =>
+              s.id === solicitudId ? { ...s, estado: 'Rechazada' } : s
+            )
+          );
+        }catch(error: any){
+          console.error(error)
+          alert('error al cambiar el estado de la solicitud'+ (error.response?.data?.message || 'error desconocido'))
+        }
+      }else if (solicitudEstado === 'Rechazada'){
+        try{
+          await axios.put(`http://localhost:3000/api/solicitud/${solicitudId}`,{estado: 'Pendiente de pago'}, {withCredentials: true});
+          setSolicitudes(
+            solicitudes.map((s) =>
+              s.id === solicitudId ? { ...s, estado: 'Pendiente de pago' } : s
+            )
+          );
+        }catch(error: any){
+          console.error(error)
+          alert('error al cambiar el estado de la solicitud'+ (error.response?.data?.message || 'error desconocido'))
+        }
+      }
+    }
+  }
+
   if (loading) {
     return (
       <div className="solicitud-admin-container">
@@ -284,6 +315,19 @@ export function SolicitudAdmin() {
                             title="Eliminar solicitud permanentemente"
                           >
                             Eliminar
+                          </button>
+                          <button
+                            className="btn-rechazar"
+                            onClick={() =>
+                              handleRechazarSolicitud(
+                                solicitud.id,
+                                `${solicitud.usuario.nombre} ${solicitud.usuario.apellido}`,
+                                solicitud.estado
+                              )
+                            }
+                            title="Rechazar Solicitud"
+                          >
+                            {solicitud.estado !== 'Rechazada' ? 'Rechazar' : 'Deshacer'}
                           </button>
                         </div>
                       </td>
