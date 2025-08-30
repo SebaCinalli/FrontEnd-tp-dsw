@@ -4,6 +4,8 @@ import './solicitudAdmin.css';
 import { UserBadge } from '../../../components/userbadge';
 import { BackToMenu } from '../../../components/BackToMenu';
 
+
+// Definir la estructura de una solicitud. crear un nuevo archivo con solo la interfaz
 interface Solicitud {
   id: number;
   usuario: {
@@ -42,6 +44,10 @@ export function SolicitudAdmin() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+
+  //Obtener todas las solicitudes
+  //setear error
+
   useEffect(() => {
     const fetchSolicitudes = async () => {
       try {
@@ -67,6 +73,10 @@ export function SolicitudAdmin() {
     fetchSolicitudes();
   }, []);
 
+
+  // Formatear fecha
+
+
   const formatFecha = (fechaString: string) => {
     const fecha = new Date(fechaString);
     return fecha.toLocaleDateString('es-ES', {
@@ -78,12 +88,17 @@ export function SolicitudAdmin() {
     });
   };
 
+
+  //Obtener esttado y ajustar el estilo 
+
   const getEstadoBadge = (estado: string) => {
     const className = `estado-badge estado-${estado
       .replace(/\s+/g, '-')
       .toLowerCase()}`;
     return <span className={className}>{estado}</span>;
   };
+
+  //Eliminar Solicitud
 
   const handleEliminarSolicitud = async (
     solicitudId: number,
@@ -113,7 +128,10 @@ export function SolicitudAdmin() {
     }
   };
 
+  //Rechazar Solicitud
+
   const handleRechazarSolicitud = async (solicitudId: number, clienteNombre: string, solicitudEstado: string) =>{
+    if(solicitudEstado === 'Cancelada'){alert('No se puede cambiar el estado de una solicitud cancelada'); return;}
     const confirmacion = window.confirm(`¿Estás seguro de que deseas cambiar el estado de la solicitud # ${solicitudId} de  ${clienteNombre}?`);
     if (confirmacion){
         if (solicitudEstado !== 'Rechazada'){
