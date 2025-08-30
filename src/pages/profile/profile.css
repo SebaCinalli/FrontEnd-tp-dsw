@@ -19,7 +19,8 @@
   background: linear-gradient(135deg, #22304a 0%, #2d3a53 100%);
   color: #ffffff;
   padding: 32px 16px;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
+    sans-serif;
 }
 
 .profile-wrapper {
@@ -31,6 +32,33 @@
 .profile-header {
   text-align: center;
   margin-bottom: 48px;
+  position: relative;
+}
+
+.back-to-menu-btn {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: rgba(45, 58, 83, 0.95);
+  color: #e3e8f4;
+  border: 2px solid #3b537a;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.back-to-menu-btn:hover {
+  background: linear-gradient(135deg, #3b82f6 0%, #2d3a53 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 25px -8px rgba(59, 130, 246, 0.4);
 }
 
 .profile-title {
@@ -53,9 +81,9 @@
   border: 2px solid #0062ff;
   border-radius: 20px;
   padding: 48px 32px;
-  box-shadow: 0 0 50px rgba(59, 83, 122, 0.3), 
-              0 25px 50px -12px rgba(0, 0, 0, 0.6), 
-              inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 50px rgba(59, 83, 122, 0.3),
+    0 25px 50px -12px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
   margin-bottom: 32px;
   position: relative;
   animation: slideIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
@@ -104,6 +132,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.profile-image-placeholder svg {
+  color: white;
+  stroke: white;
+  fill: none;
 }
 
 .profile-image-edit-btn {
@@ -179,18 +213,16 @@
   border: 2px solid #3b537a;
   border-radius: 20px;
   padding: 24px;
-  box-shadow: 0 0 20px rgba(59, 83, 122, 0.2), 
-              0 8px 16px -4px rgba(0, 0, 0, 0.4), 
-              inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 20px rgba(59, 83, 122, 0.2),
+    0 8px 16px -4px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08);
   position: relative;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   animation: slideIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .field-card:hover {
-  box-shadow: 0 0 30px rgba(59, 83, 122, 0.3), 
-              0 12px 24px -8px rgba(0, 0, 0, 0.5), 
-              inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 30px rgba(59, 83, 122, 0.3),
+    0 12px 24px -8px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .field-header {
@@ -271,8 +303,8 @@
 .field-input:focus {
   background: rgba(45, 58, 83, 1);
   border-color: #3b82f6;
-  box-shadow: 0 0 0 4px rgba(59, 83, 122, 0.15), 
-              inset 0 2px 4px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 0 0 4px rgba(59, 83, 122, 0.15),
+    inset 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .field-edit-buttons {
@@ -321,9 +353,8 @@
   border: 2px solid #3b537a;
   border-radius: 20px;
   padding: 24px;
-  box-shadow: 0 0 20px rgba(59, 83, 122, 0.2), 
-              0 8px 16px -4px rgba(0, 0, 0, 0.4), 
-              inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 20px rgba(59, 83, 122, 0.2),
+    0 8px 16px -4px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08);
   animation: slideIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -371,12 +402,47 @@
   background: rgba(75, 85, 99, 0.5);
 }
 
-/* Save All Button */
-.save-all-wrapper {
-  text-align: center;
+/* Action Buttons */
+.profile-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.cancel-changes-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  padding: 16px 24px;
+  border: 2px solid rgba(239, 68, 68, 0.3);
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.cancel-changes-btn:hover {
+  background: rgba(239, 68, 68, 0.3);
+  border-color: rgba(239, 68, 68, 0.5);
+  transform: translateY(-1px);
+}
+
+.cancel-changes-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .save-all-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   background: linear-gradient(135deg, #26ff72 0%, #3b537a 100%);
   color: #ffffff;
   padding: 16px 32px;
@@ -386,16 +452,29 @@
   border: none;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 
-              0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
   animation: slideIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.save-all-btn:hover {
+.save-all-btn:hover:not(.disabled):not(:disabled) {
   background: linear-gradient(135deg, #22304a 0%, #26ff72 100%);
   transform: translateY(-1px);
-  box-shadow: 0 8px 25px -8px rgba(38, 255, 114, 0.4), 
-              0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 25px -8px rgba(38, 255, 114, 0.4),
+    0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.save-all-btn.disabled,
+.save-all-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  background: rgba(75, 85, 99, 0.3);
+}
+
+/* Remove old save-all-wrapper styles */
+.save-all-wrapper {
+  display: none;
 }
 
 /* Responsive */
@@ -403,43 +482,56 @@
   .profile-container {
     padding: 24px 12px;
   }
-  
+
   .profile-title {
     font-size: 2rem;
   }
-  
+
   .profile-subtitle {
     font-size: 1rem;
   }
-  
+
+  .back-to-menu-btn {
+    position: relative;
+    margin-bottom: 24px;
+  }
+
   .profile-image-section {
     padding: 32px 24px;
   }
-  
+
   .profile-name {
     font-size: 1.75rem;
   }
-  
+
   .profile-username {
     font-size: 1rem;
   }
-  
+
   .field-card {
     padding: 20px;
   }
-  
+
   .profile-fields-grid {
     grid-template-columns: 1fr;
     gap: 20px;
   }
-  
+
   .field-input {
     padding: 14px;
   }
-  
-  .save-all-btn {
+
+  .profile-actions {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .save-all-btn,
+  .cancel-changes-btn {
+    width: 100%;
     padding: 14px 28px;
     font-size: 1rem;
+    justify-content: center;
   }
 }
 
@@ -447,29 +539,38 @@
   .profile-header {
     margin-bottom: 32px;
   }
-  
+
   .profile-title {
     font-size: 1.75rem;
   }
-  
+
+  .back-to-menu-btn {
+    font-size: 0.85rem;
+    padding: 10px 16px;
+  }
+
   .profile-image-section {
     padding: 24px 16px;
   }
-  
+
   .profile-image {
     width: 100px;
     height: 100px;
   }
-  
+
   .field-card {
     padding: 16px;
   }
-  
+
   .field-edit-buttons {
     flex-direction: column;
   }
-  
+
   .role-buttons {
     flex-direction: column;
+  }
+
+  .profile-actions {
+    padding: 0 16px;
   }
 }

@@ -33,6 +33,13 @@
   justify-content: center;
   background: #f0f0f0;
   flex-shrink: 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.user-avatar-small:hover {
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .user-avatar-small img {
@@ -78,6 +85,16 @@
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 1px 2px;
+  border-radius: 4px;
+}
+
+.user-name-small:hover {
+  background: rgba(102, 126, 234, 0.1);
+  color: #667eea;
+  transform: translateY(-1px);
 }
 
 .user-role-small {
@@ -338,6 +355,11 @@
   .user-role-small {
     background: #4a5568;
     color: #cbd5e0;
+  }
+
+  .user-name-small:hover {
+    background: rgba(160, 174, 192, 0.1);
+    color: #a78bfa;
   }
 
   .logout-btn-small {
