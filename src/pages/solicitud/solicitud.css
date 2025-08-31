@@ -456,12 +456,12 @@
 }
 
 .edicion-servicios {
-  background: #2a2a2a;
-  border: 1px solid #404040;
+  background: #1e1e1e;
+  border: 2px solid #4dabf7;
   border-radius: 12px;
-  padding: 20px;
+  padding: 25px;
   margin-top: 15px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 25px rgba(77, 171, 247, 0.15);
 }
 
 .edicion-servicios h4 {
@@ -484,47 +484,74 @@
 .servicio-edicion {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 12px;
-  background: #333333;
-  border: 1px solid #404040;
-  border-radius: 8px;
+  justify-content: flex-start;
+  /* Etiqueta más cerca del borde izquierdo */
+  padding: 4px 10px 4px 4px;
+  gap: 6px;
+  background: #2a2a2a;
+  border: 1px solid #555555;
+  border-radius: 10px;
   transition: all 0.3s ease;
 }
 
 .servicio-edicion:hover {
-  background: #3a3a3a;
+  background: #333333;
   border-color: #4dabf7;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(77, 171, 247, 0.2);
 }
 
 .servicio-edicion label {
-  color: #4dabf7;
-  font-weight: 600;
-  min-width: 100px;
-  font-size: 0.95rem;
+  color: #ffffff;
+  font-weight: 700;
+  /* Fijamos un ancho pequeño y constante para que el select tenga más espacio */
+  flex: 0 0 70px;
+  width: 70px;
+  font-size: 1rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .servicio-edicion select {
-  flex: 1;
-  padding: 8px 12px;
-  border: 2px solid #404040;
-  border-radius: 6px;
-  background: #2d2d2d;
-  color: #e0e0e0;
-  font-size: 0.9rem;
+  /* El selector ocupa todo el espacio restante */
+  flex: 1 1 100%;
+  width: 100%;
+  min-width: 0;
+  max-width: none;
+  padding: 5px 5px;
+  border: 2px solid #555555;
+  border-radius: 8px;
+  background: #1a1a1a;
+  color: #ffffff;
+  font-size: 0.95rem;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-left: 10px;
+  margin-left: 0;
+  margin-right: -7px;
+  min-height: 40px;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 10px center;
+  background-repeat: no-repeat;
+  background-size: 16px;
+  padding-right: 25px;
 }
 
 .servicio-edicion select:focus {
   outline: none;
   border-color: #4dabf7;
-  box-shadow: 0 0 0 3px rgba(77, 171, 247, 0.2);
+  box-shadow: 0 0 0 3px rgba(77, 171, 247, 0.3);
+  background: #0f0f0f;
 }
 
 .servicio-edicion select:hover {
   border-color: #22b8cf;
+  background: #222222;
+}
+
+.servicio-edicion select option {
+  background: #1a1a1a;
+  color: #ffffff;
+  padding: 8px;
 }
 
 .edicion-servicios .edicion-botones {
