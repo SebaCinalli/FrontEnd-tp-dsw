@@ -16,6 +16,8 @@ import { BarraAdmin } from '../pages/admin/barra/barraAdmin';
 import { DjAdmin } from '../pages/admin/dj/djAdmin';
 import { GastronomicoAdmin } from '../pages/admin/gastronomico/gastronomicoAdmin';
 import { Solicitud } from '../pages/solicitud/solicitud';
+import { Profile } from '../pages/profile/profile';
+
 
 export default function AppRoutes() {
   const { user } = useUser();
@@ -89,6 +91,20 @@ export default function AppRoutes() {
           </ProtectedRoutes>
         }
       />
+
+
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoutes>
+            <Profile />
+          </ProtectedRoutes>
+        }
+      />
+
+
+
+
       {/* RUTAS PROTEGIDAS PARA ADMINISTRADORES */}
       <Route
         path="/barraAdmin"

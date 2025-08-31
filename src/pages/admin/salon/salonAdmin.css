@@ -6,10 +6,19 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 15px;
-  padding: 80px 15px 20px 15px; /* Espacio superior para el botón Volver */
-  max-width: 1400px;
-  margin: 0 auto;
-  align-items: start; /* Alinea las tarjetas desde arriba */
+  padding: 10px 15px 20px 15px !important; /* Reducir espacio superior */
+  width: 100vw !important;
+  max-width: none !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+  align-items: start;
+}
+
+/* Desktop styles */
+@media (min-width: 1024px) {
+  .salon-container {
+    padding: 10px 160px 20px 15px !important; /* Margen derecho para UserBadge */
+  }
 }
 
 .salon-card {

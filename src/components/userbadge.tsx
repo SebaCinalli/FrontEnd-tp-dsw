@@ -20,13 +20,18 @@ export const UserBadge = () => {
     navigate('/carrito');
   };
 
+  //Desplegar menu usuario al hacer click en el avatar sin redirigir
+  const handleIconClick = () => {
+    navigate('/profile');
+  };
+
   const hasValidImage = user.img && user.img.trim() !== '' && !imageError;
   const cartItemCount = getItemCount();
 
   return (
     <div className="user-badge" data-role={user.rol?.toLowerCase()}>
       <div className="user-badge-content">
-        <div className="user-avatar-small">
+        <div className="user-avatar-small" onClick={handleIconClick}>
           {hasValidImage ? (
             <img
               src={user.img}
@@ -63,7 +68,7 @@ export const UserBadge = () => {
           )}
         </div>
         <div className="user-info-small">
-          <span className="user-name-small">
+          <span className="user-name-small" onClick={handleIconClick}>
             {user.nombre} {user.apellido}
           </span>
           <span className="user-role-small">{user.rol}</span>

@@ -28,7 +28,7 @@ export const BackToMenu: React.FC<BackToMenuProps> = ({ className = '' }) => {
       title="Volver al menú"
     >
       <FontAwesomeIcon icon={faArrowLeft} />
-      Volver al Menú
+      <span>Volver</span>
     </button>
   );
 };

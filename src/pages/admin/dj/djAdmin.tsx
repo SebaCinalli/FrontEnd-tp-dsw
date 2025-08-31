@@ -39,13 +39,13 @@ const DjImage = memo(
         setImageUrl(urlWithTimestamp);
         setImageError(false);
       } else {
-        setImageUrl('https://via.placeholder.com/200x200?text=Sin+Imagen');
+        setImageUrl('/placeholder-image.svg');
       }
     }, [foto]);
 
     const handleImageError = useCallback(() => {
       setImageError(true);
-      setImageUrl('https://via.placeholder.com/200x200?text=Error+Cargando');
+      setImageUrl('/placeholder-image.svg');
     }, []);
 
     const handleImageLoad = useCallback(() => {
@@ -423,7 +423,7 @@ export function DjAdmin() {
 
               {/* Campo para subir archivo de imagen */}
               <div className="form-group">
-                <label htmlFor="imagen">Subir imagen:</label>
+                <label htmlFor="imagen">Subir imagen (opcional):</label>
                 <input
                   type="file"
                   id="imagen"
@@ -526,8 +526,7 @@ export function DjAdmin() {
                           buildImageUrl(formData.foto)
                         );
                         // Imagen por defecto si falla
-                        e.currentTarget.src =
-                          'https://via.placeholder.com/200x200?text=Error+Cargando';
+                        e.currentTarget.src = '/placeholder-image.svg';
                       }}
                     />
                     <p
