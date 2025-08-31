@@ -27,6 +27,41 @@ body {
   padding: 0;
   min-height: 100vh;
   box-sizing: border-box;
+  width: 100vw;
+  overflow-x: hidden;
+}
+
+html {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Reset para contenedores de servicios - Cliente y Admin */
+.barra-container,
+.dj-container,
+.gastronomico-container,
+.salon-container,
+.solicitud-admin-container {
+  width: 100vw !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 10px !important;
+  box-sizing: border-box !important;
+}
+
+/* Override para desktop - Cliente y Admin */
+@media (min-width: 1024px) {
+  .barra-container,
+  .dj-container,
+  .gastronomico-container,
+  .salon-container,
+  .solicitud-admin-container {
+    padding-right: 160px !important;
+    padding-top: 10px !important; /* Reducir aún más el espacio superior */
+  }
 }
 
 h1 {
