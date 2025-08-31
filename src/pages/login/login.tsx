@@ -5,10 +5,12 @@ import axios from 'axios';
 import './login.css';
 import { validateFormMail } from '../../validateFunctions/validateFormMail';
 import { validateFormPass } from '../../validateFunctions/validateFormPass';
+import { useEventDate } from '../../context/eventdatecontext';
 
 const Login = () => {
   const { login } = useUser();
   const navigate = useNavigate();
+  const { clearEventDate } = useEventDate();
   const [email, setMail] = useState('');
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');
@@ -47,6 +49,9 @@ const Login = () => {
         rol: usuario.rol,
         img: usuario.img || '',
       });
+
+      // Al iniciar sesión, borrar la fecha del evento previa
+      clearEventDate();
 
       navigate('/');
     } catch (error: any) {

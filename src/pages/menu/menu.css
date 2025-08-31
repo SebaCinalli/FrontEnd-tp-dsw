@@ -25,9 +25,9 @@ html {
   text-align: center;
   padding: 45px 40px 30px 30px;
   background: #1e1e2e;
-  border-radius: 15px;
-  border: 1px solid #3a3a5c;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  border-radius: 16px;
+  border: 2px solid #3b82f6 !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 30px rgba(59, 130, 246, 0.6) !important;
 }
 
 @media (max-width: 768px) {
@@ -43,6 +43,19 @@ html {
   margin-bottom: 30px;
   font-size: 24px;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.event-date-picker input[type='date']::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
+.date-input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #3a3a5c;
+  background: #111827;
+  color: #e5e7eb;
 }
 
 .icons-grid {
@@ -195,4 +208,143 @@ html {
   width: auto;
   max-width: none;
   justify-self: stretch;
+}
+
+/* ===== Calendario mejorado con esquema azul ===== */
+.react-datepicker {
+  background: #1e1e2e !important;
+  border: 2px solid #3b82f6 !important;
+  border-radius: 16px !important;
+  box-shadow: 0 20px 40px rgba(59, 130, 246, 0.3) !important;
+  color: #ffffff !important;
+  font-family: inherit !important;
+  overflow: hidden !important;
+}
+
+.react-datepicker__triangle {
+  fill: #1e1e2e !important;
+  stroke: #3b82f6 !important;
+  stroke-width: 2px !important;
+}
+
+.react-datepicker__header {
+  background: #3b82f6 !important;
+  border-bottom: none !important;
+  padding: 16px !important;
+  border-radius: 14px 14px 0 0 !important;
+}
+
+.react-datepicker__current-month {
+  color: #ffffff !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  margin-bottom: 8px !important;
+}
+
+.react-datepicker__day-names {
+  background: #1e40af !important;
+  margin: 0 !important;
+  padding: 8px 0 !important;
+}
+
+.react-datepicker__day-name {
+  color: #bfdbfe !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+}
+
+.react-datepicker__month {
+  background: #1e1e2e !important;
+  padding: 8px !important;
+}
+
+.react-datepicker__day {
+  color: #ffffff !important;
+  border-radius: 10px !important;
+  margin: 2px !important;
+  width: 32px !important;
+  height: 32px !important;
+  line-height: 32px !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+  transition: all 0.2s ease !important;
+}
+
+.react-datepicker__day:hover {
+  background: #3b82f6 !important;
+  color: #ffffff !important;
+  transform: scale(1.1) !important;
+}
+
+.react-datepicker__day--selected,
+.react-datepicker__day--keyboard-selected {
+  background: #60a5fa !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 12px rgba(96, 165, 250, 0.4) !important;
+}
+
+.react-datepicker__day--today {
+  background: #374151 !important;
+  color: #fbbf24 !important;
+  font-weight: 700 !important;
+}
+
+.react-datepicker__day--disabled {
+  color: #6b7280 !important;
+  opacity: 0.4 !important;
+  cursor: not-allowed !important;
+}
+
+.react-datepicker__day--outside-month {
+  color: #6b7280 !important;
+  opacity: 0.5 !important;
+}
+
+.react-datepicker__navigation {
+  background: #3b82f6 !important;
+  border-radius: 50% !important;
+  width: 32px !important;
+  height: 32px !important;
+  line-height: 32px !important;
+  top: 16px !important;
+}
+
+.react-datepicker__navigation:hover {
+  background: #60a5fa !important;
+  transform: scale(1.1) !important;
+}
+
+.react-datepicker__navigation-icon::before {
+  border-color: #ffffff !important;
+  border-width: 2px 2px 0 0 !important;
+  width: 8px !important;
+  height: 8px !important;
+}
+
+.react-datepicker__month-container {
+  background: #1e1e2e !important;
+}
+
+/* Input del DatePicker mejorado */
+.date-input {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 2px solid #3a3a5c;
+  background: #111827;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  caret-color: transparent; /* Oculta el cursor parpadeante */
+}
+
+.date-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+  background: #1e1e2e;
+  caret-color: transparent; /* Mantiene el cursor oculto al hacer focus */
 }

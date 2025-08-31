@@ -128,7 +128,7 @@
 .profile-image-placeholder {
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -187,9 +187,9 @@
 }
 
 .profile-role-badge.admin {
-  background: rgba(139, 92, 246, 0.2);
-  color: #a855f7;
-  border: 1px solid rgba(139, 92, 246, 0.3);
+  background: rgba(59, 130, 246, 0.2);
+  color: #3b82f6;
+  border: 1px solid rgba(59, 130, 246, 0.3);
 }
 
 .profile-role-badge.user {
@@ -360,9 +360,9 @@
 
 .role-icon {
   padding: 10px;
-  background: rgba(139, 92, 246, 0.2);
+  background: rgba(59, 130, 246, 0.2);
   border-radius: 10px;
-  color: #a855f7;
+  color: #3b82f6;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -389,7 +389,7 @@
 }
 
 .role-btn.active.admin {
-  background: linear-gradient(135deg, #a855f7 0%, #3b537a 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #3b537a 100%);
   color: #ffffff;
 }
 

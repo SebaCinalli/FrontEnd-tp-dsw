@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import './menu.css';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -11,6 +11,9 @@ import {
   faList,
 } from '@fortawesome/free-solid-svg-icons';
 import { UserBadge } from '../../components/userbadge';
+import { useEventDate } from '../../context/eventdatecontext';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 interface MenuItem {
   id: string;
@@ -29,8 +32,34 @@ const MenuMain: React.FC<MenuMainProps> = ({
   onItemClick,
 }) => {
   const navigate = useNavigate();
+  const { eventDate, setEventDate } = useEventDate();
+  const [localDate, setLocalDate] = useState<string>('');
+  const selectedDateObj = useMemo(
+    () => (localDate ? new Date(localDate + 'T00:00:00') : null),
+    [localDate]
+  );
+
+  // Sincronizar campo local con contexto
+  useEffect(() => {
+    setLocalDate(eventDate || '');
+  }, [eventDate]);
 
   const handleItemClick = (item: MenuItem) => {
+    // Requerir fecha seleccionada para navegar a servicios o carrito
+    const needsDate = [
+      'barra',
+      'gastronomico',
+      'dj',
+      'salon',
+      'carrito',
+    ].includes(item.id);
+    if (needsDate && !localDate) {
+      alert('Seleccioná una fecha para tu evento antes de continuar.');
+      return;
+    }
+    if (needsDate && localDate && localDate !== eventDate) {
+      setEventDate(localDate);
+    }
     if (onItemClick) {
       onItemClick(item);
     }
@@ -81,6 +110,40 @@ const MenuMain: React.FC<MenuMainProps> = ({
       <div className="container">
         <h2>{title}</h2>
 
+        {/* Selector de fecha del evento */}
+        <div className="event-date-picker" style={{ marginBottom: 16 }}>
+          <label
+            htmlFor="event-date"
+            style={{ color: '#fff', display: 'block', marginBottom: 6 }}
+          >
+            Fecha del evento
+          </label>
+          <DatePicker
+            id="event-date"
+            selected={selectedDateObj}
+            onChange={(date: Date | null) => {
+              if (!date) {
+                setLocalDate('');
+                setEventDate(null);
+                return;
+              }
+              const yyyy = date.getFullYear();
+              const mm = String(date.getMonth() + 1).padStart(2, '0');
+              const dd = String(date.getDate()).padStart(2, '0');
+              const iso = `${yyyy}-${mm}-${dd}`;
+              setLocalDate(iso);
+              setEventDate(iso);
+            }}
+            minDate={new Date()}
+            dateFormat="dd/MM/yyyy"
+            className="date-input"
+            placeholderText="Seleccioná una fecha"
+            popperPlacement="bottom"
+            showPopperArrow
+          />
+          {/* Texto de fecha seleccionada removido por requerimiento */}
+        </div>
+
         <div className="icons-grid menu-client-layout">
           {menuItems.map((item) => (
             <div
@@ -89,6 +152,20 @@ const MenuMain: React.FC<MenuMainProps> = ({
                 item.id === 'carrito' ? 'cart-item' : ''
               } ${item.id === 'solicitud' ? 'solicitud-item' : ''}`}
               onClick={() => handleItemClick(item)}
+              style={{
+                opacity:
+                  ['barra', 'gastronomico', 'dj', 'salon', 'carrito'].includes(
+                    item.id
+                  ) && !localDate
+                    ? 0.5
+                    : 1,
+                pointerEvents:
+                  ['barra', 'gastronomico', 'dj', 'salon', 'carrito'].includes(
+                    item.id
+                  ) && !localDate
+                    ? ('none' as const)
+                    : 'auto',
+              }}
             >
               <FontAwesomeIcon icon={item.icon} />
               <div className="tooltip">{item.tooltip}</div>

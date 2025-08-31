@@ -2,11 +2,13 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/usercontext';
 import { useCart } from '../context/cartcontext';
+import { useEventDate } from '../context/eventdatecontext';
 import './userbadge.css';
 
 export const UserBadge = () => {
   const { user, logout } = useUser();
   const { getItemCount } = useCart();
+  const { clearEventDate } = useEventDate();
   const navigate = useNavigate();
   const [imageError, setImageError] = useState(false);
 
@@ -14,6 +16,8 @@ export const UserBadge = () => {
 
   const handleLogout = () => {
     logout();
+    // Limpiar también la fecha persistida para no arrastrarla a otro login
+    clearEventDate();
   };
 
   const handleCartClick = () => {

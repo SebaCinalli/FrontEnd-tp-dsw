@@ -1,10 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 import './barra.css';
 import { UserBadge } from '../../components/userbadge';
 import { BackToMenu } from '../../components/BackToMenu';
 import { useCart } from '../../context/cartcontext';
 import { useUser } from '../../context/usercontext';
+import { useEventDate } from '../../context/eventdatecontext';
+import { useNavigate } from 'react-router-dom';
 
 interface Barra {
   id: number;
@@ -40,6 +42,14 @@ export function Barra() {
 
   const { addItem, isInCart, removeItem } = useCart();
   const { user } = useUser();
+  const { eventDate } = useEventDate();
+  const navigate = useNavigate();
+  const eventDateParam = useMemo(() => eventDate ?? '', [eventDate]);
+  const fechaDMY = useMemo(() => {
+    if (!eventDateParam) return '';
+    const [y, m, d] = eventDateParam.split('-');
+    return `${d}/${m}/${y}`;
+  }, [eventDateParam]);
 
   const handleAddToCart = (barra: Barra) => {
     const cartItem = {
@@ -95,7 +105,12 @@ export function Barra() {
   useEffect(() => {
     const fetchBarras = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/barra', {
+        const url = fechaDMY
+          ? `http://localhost:3000/api/barra?fecha=${encodeURIComponent(
+              fechaDMY
+            )}`
+          : 'http://localhost:3000/api/barra';
+        const response = await axios.get(url, {
           withCredentials: true,
         });
         const data = response.data.data;
@@ -128,7 +143,7 @@ export function Barra() {
 
     fetchBarras();
     fetchZonas();
-  }, []);
+  }, [fechaDMY]);
 
   // Efecto para aplicar filtros
   useEffect(() => {
@@ -181,6 +196,25 @@ export function Barra() {
     <div className="barra-container">
       <BackToMenu />
       <UserBadge />
+
+      {!eventDate && (
+        <div
+          className="warning"
+          style={{
+            background: '#fde68a',
+            color: '#92400e',
+            padding: 12,
+            borderRadius: 8,
+            marginBottom: 12,
+          }}
+        >
+          Seleccioná una fecha en el menú principal para ver disponibilidad por
+          fecha.
+          <button style={{ marginLeft: 12 }} onClick={() => navigate('/')}>
+            Ir al menú
+          </button>
+        </div>
+      )}
 
       {/* Contenedor layout: filtros + resultados */}
       <div className="barra-layout">
@@ -277,6 +311,11 @@ export function Barra() {
               {/* Resultados - se muestra después de los filtros */}
               <div className="resultados-count">
                 {barrasFiltradas.length} resultado(s) encontrado(s)
+                {eventDate && (
+                  <div style={{ color: '#94a3b8' }}>
+                    Fecha seleccionada: {fechaDMY}
+                  </div>
+                )}
               </div>
             </div>
           </div>

@@ -1,4 +1,5 @@
 import { createContext, useState, useContext, type ReactElement } from 'react';
+// Nota: evitamos dependencia circular con EventDateContext aquí.
 import axios from 'axios';
 
 type User = {
@@ -43,6 +44,7 @@ export const UserProvider = ({ children }: { children: ReactElement }) => {
       // Siempre limpiar el estado local, incluso si falla la llamada al servidor
       setUser(null);
       setExistsToken(false);
+      // No limpiamos aquí eventDate para evitar acoplamiento; se hace en UI al invocar logout
     }
   };
 
