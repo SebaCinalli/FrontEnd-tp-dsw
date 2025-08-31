@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, memo } from 'react';
+import React, { useState, useEffect, useCallback} from 'react';
 import {
   Edit2,
   User,
@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useUser } from '../../context/usercontext';
 import './profile.css';
+import { ProfileField } from './profilefield';
 
 interface UserProfile {
   nombre: string;
@@ -23,78 +24,6 @@ interface UserProfile {
   img?: string;
 }
 
-// Mover ProfileField fuera del componente principal para evitar re-renderizados
-const ProfileField: React.FC<{
-  label: string;
-  value: string;
-  field: keyof UserProfile;
-  icon: React.ReactNode;
-  type?: string;
-  isEditing: boolean;
-  tempValue: string;
-  onEditStart: (field: keyof UserProfile, value: string) => void;
-  onEditSave: (field: keyof UserProfile) => void;
-  onEditCancel: () => void;
-  onTempValueChange: (value: string) => void;
-  onKeyPress: (e: React.KeyboardEvent, field: keyof UserProfile) => void;
-}> = memo(
-  ({
-    label,
-    value,
-    field,
-    icon,
-    type = 'text',
-    isEditing,
-    tempValue,
-    onEditStart,
-    onEditSave,
-    onEditCancel,
-    onTempValueChange,
-    onKeyPress,
-  }) => (
-    <div className="field-card">
-      <div className="field-header">
-        <div className="field-label-wrapper">
-          <div className="field-icon">{icon}</div>
-          <span className="field-label">{label}</span>
-        </div>
-        <button
-          onClick={() => onEditStart(field, value)}
-          className="field-edit-btn"
-          title={`Editar ${label.toLowerCase()}`}
-        >
-          <Edit2 size={16} />
-        </button>
-      </div>
-
-      {isEditing ? (
-        <div className="field-edit-wrapper">
-          <input
-            type={type}
-            value={tempValue}
-            onChange={(e) => onTempValueChange(e.target.value)}
-            onKeyDown={(e) => onKeyPress(e, field)}
-            className="field-input"
-            autoFocus
-          />
-          <div className="field-edit-buttons">
-            <button
-              onClick={() => onEditSave(field)}
-              className="field-save-btn"
-            >
-              Guardar
-            </button>
-            <button onClick={onEditCancel} className="field-cancel-btn">
-              Cancelar
-            </button>
-          </div>
-        </div>
-      ) : (
-        <p className="field-value">{value}</p>
-      )}
-    </div>
-  )
-);
 
 export const Profile: React.FC = () => {
   const navigate = useNavigate();
