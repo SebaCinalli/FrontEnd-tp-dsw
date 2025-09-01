@@ -1,6 +1,7 @@
 import { createContext, useState, useContext, type ReactElement } from 'react';
 // Nota: evitamos dependencia circular con EventDateContext aquí.
 import axios from 'axios';
+import { processUserImageUrl } from '../utils/imageUpload';
 
 type User = {
   email: string;
@@ -55,6 +56,11 @@ export const UserProvider = ({ children }: { children: ReactElement }) => {
       { withCredentials: true }
     );
     if (response.status === 200 && response.data) {
+      console.log('Datos del usuario desde checkToken:', response.data.user);
+
+      const processedImageUrl = processUserImageUrl(response.data.user.img);
+      console.log('URL de imagen procesada en checkToken:', processedImageUrl);
+
       setExistsToken(true);
       setUser({
         email: response.data.user.email,
@@ -63,7 +69,7 @@ export const UserProvider = ({ children }: { children: ReactElement }) => {
         nombre: response.data.user.nombre,
         apellido: response.data.user.apellido,
         rol: response.data.user.rol,
-        img: response.data.user.img || '',
+        img: processedImageUrl,
       });
     }
   };
