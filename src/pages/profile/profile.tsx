@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useCallback} from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
-  Edit2,
   User,
   Mail,
   Phone,
@@ -8,12 +7,19 @@ import {
   ArrowLeft,
   Save,
   X,
+  Camera,
+  Upload,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useUser } from '../../context/usercontext';
 import './profile.css';
 import { ProfileField } from './profilefield';
+import {
+  uploadUsuarioImage,
+  isValidImageFile,
+  isValidFileSize,
+} from '../../utils/imageUpload';
 
 interface UserProfile {
   nombre: string;
@@ -24,10 +30,10 @@ interface UserProfile {
   img?: string;
 }
 
-
 export const Profile: React.FC = () => {
   const navigate = useNavigate();
   const { user: contextUser, login } = useUser();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [user, setUser] = useState<UserProfile>({
     nombre: '',
@@ -50,8 +56,11 @@ export const Profile: React.FC = () => {
   const [editingField, setEditingField] = useState<string | null>(null);
   const [tempValue, setTempValue] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isUploadingImage, setIsUploadingImage] = useState<boolean>(false);
   const [hasChanges, setHasChanges] = useState<boolean>(false);
-  const [imageError, setImageError] = useState(false); // Cargar datos del usuario del contexto
+  const [imageError, setImageError] = useState(false);
+
+  // Cargar datos del usuario del contexto
   useEffect(() => {
     if (contextUser) {
       const userData = {
@@ -71,6 +80,13 @@ export const Profile: React.FC = () => {
       setImageError(false);
     }
   }, [contextUser]);
+
+  // Resetear el error de imagen cuando cambia la URL de la imagen
+  useEffect(() => {
+    if (user.img && user.img.trim() !== '') {
+      setImageError(false);
+    }
+  }, [user.img]);
 
   // Verificar si hay cambios
   useEffect(() => {
@@ -178,8 +194,108 @@ export const Profile: React.FC = () => {
     [handleEditSave, handleEditCancel]
   );
 
+  // Funciones para manejar la carga de imágenes
+  const handleImageUploadClick = useCallback(() => {
+    fileInputRef.current?.click();
+  }, []);
+
+  const handleImageChange = useCallback(
+    async (event: React.ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      if (!file || !contextUser) return;
+
+      // Validar tipo de archivo
+      if (!isValidImageFile(file)) {
+        alert(
+          'Por favor selecciona un archivo de imagen válido (JPEG, PNG, GIF, WebP)'
+        );
+        return;
+      }
+
+      // Validar tamaño de archivo (máximo 5MB)
+      if (!isValidFileSize(file, 5)) {
+        alert(
+          'La imagen es demasiado grande. El tamaño máximo permitido es 5MB'
+        );
+        return;
+      }
+
+      setIsUploadingImage(true);
+
+      try {
+        const result = await uploadUsuarioImage(contextUser.id, file);
+
+        if (result.success) {
+          if (result.imageUrl && result.imageUrl.trim() !== '') {
+            console.log('Nueva imagen cargada, URL:', result.imageUrl);
+
+            // Actualizar el estado local
+            const updatedUser = { ...user, img: result.imageUrl };
+            setUser(updatedUser);
+
+            // Actualizar el contexto de usuario
+            const updatedContextUser = { ...contextUser, img: result.imageUrl };
+            login(updatedContextUser);
+
+            // Resetear el error de imagen explícitamente
+            setImageError(false);
+
+            alert('Imagen cargada exitosamente');
+          } else {
+            // La subida fue exitosa pero no se obtuvo la URL de la imagen
+            console.warn('Subida exitosa pero sin URL de imagen:', result);
+            alert(
+              'Imagen subida exitosamente, pero hubo un problema al obtener la URL. Actualiza la página para ver los cambios.'
+            );
+          }
+        } else {
+          throw new Error(result.message || 'Error al cargar la imagen');
+        }
+      } catch (error: any) {
+        console.error('Error al cargar imagen:', error);
+        alert(
+          error.message ||
+            'Error al cargar la imagen. Por favor, intenta nuevamente.'
+        );
+      } finally {
+        setIsUploadingImage(false);
+        // Limpiar el input de archivo
+        if (event.target) {
+          event.target.value = '';
+        }
+      }
+    },
+    [contextUser, user, login]
+  );
+
   // Verificar si tiene imagen válida (igual que en UserBadge)
   const hasValidImage = user.img && user.img.trim() !== '' && !imageError;
+
+  // Función para manejar el error de carga de imagen
+  const handleImageError = () => {
+    console.error('Error al cargar imagen:', user.img);
+    setImageError(true);
+  };
+
+  // Función para manejar cuando la imagen se carga correctamente
+  const handleImageLoad = () => {
+    console.log('Imagen cargada correctamente:', user.img);
+    if (imageError) {
+      setImageError(false);
+    }
+  };
+
+  // Debug: Log para verificar el estado de la imagen
+  useEffect(() => {
+    console.log(
+      'Estado de imagen - URL:',
+      user.img,
+      'Error:',
+      imageError,
+      'HasValidImage:',
+      hasValidImage
+    );
+  }, [user.img, imageError, hasValidImage]);
 
   return (
     <div className="profile-container">
@@ -208,7 +324,8 @@ export const Profile: React.FC = () => {
                   <img
                     src={user.img}
                     alt="Foto de perfil"
-                    onError={() => setImageError(true)}
+                    onError={handleImageError}
+                    onLoad={handleImageLoad}
                   />
                 ) : (
                   <div className="profile-image-placeholder">
@@ -238,11 +355,30 @@ export const Profile: React.FC = () => {
                     </svg>
                   </div>
                 )}
+                {isUploadingImage && (
+                  <div className="profile-image-loading">
+                    <div className="spinner"></div>
+                  </div>
+                )}
               </div>
-              <button className="profile-image-edit-btn">
-                <Edit2 size={16} />
+              <button
+                className="profile-image-edit-btn"
+                onClick={handleImageUploadClick}
+                disabled={isUploadingImage}
+                title="Cambiar foto de perfil"
+              >
+                {isUploadingImage ? <Upload size={16} /> : <Camera size={16} />}
               </button>
             </div>
+
+            {/* Input de archivo oculto */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              style={{ display: 'none' }}
+            />
 
             <h2 className="profile-name">
               {user.nombre} {user.apellido}

@@ -5,12 +5,14 @@ import { useNavigate } from 'react-router-dom';
 import { useUser } from '../../context/usercontext';
 import axios from 'axios';
 import './carrito.css';
+import { useEventDate } from '../../context/eventdatecontext';
 
 export const Carrito: React.FC = () => {
   const { items, removeItem, clearCart, getTotalPrice, getItemCount } =
     useCart();
   const { user } = useUser();
   const navigate = useNavigate();
+  const { eventDate } = useEventDate();
 
   const buildImageUrl = (fileName: string | undefined, type: string) => {
     if (!fileName) return '/placeholder-image.svg';
@@ -44,7 +46,26 @@ export const Carrito: React.FC = () => {
       return;
     }
 
+    if (!eventDate) {
+      alert(
+        'Seleccioná una fecha para tu evento desde el menú principal antes de continuar.'
+      );
+      navigate('/');
+      return;
+    }
+
     try {
+      // Helpers para formatear fechas a DD/MM/YYYY
+      const formatIsoToDMY = (iso: string) => {
+        const [y, m, d] = iso.split('-');
+        return `${d}/${m}/${y}`;
+      };
+      const formatDateToDMY = (date: Date) => {
+        const dd = String(date.getDate()).padStart(2, '0');
+        const mm = String(date.getMonth() + 1).padStart(2, '0');
+        const yyyy = date.getFullYear();
+        return `${dd}/${mm}/${yyyy}`;
+      };
       // Separar servicios por tipo
       const serviciosPorTipo = {
         dj: items.find((item) => item.type === 'dj'),
@@ -53,11 +74,13 @@ export const Carrito: React.FC = () => {
         gastronomico: items.find((item) => item.type === 'gastronomico'),
       };
 
-      // Preparar los datos de la solicitud - solo incluir servicios que estén en el carrito
       const solicitudData: any = {
         usuario: user.id,
         estado: 'pendiente de pago',
-        fechaSolicitud: new Date().toLocaleDateString('es-ES'), // Formato DD/MM/YYYY para el backend
+        // fecha de registro (hoy) en formato DD/MM/YYYY
+        fechaSolicitud: formatDateToDMY(new Date()),
+        // fecha del evento elegida en el menú en formato DD/MM/YYYY
+        fechaEvento: formatIsoToDMY(eventDate),
       };
 
       // Agregar solo los servicios que están en el carrito

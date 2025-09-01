@@ -29,12 +29,23 @@ export const uploadImage = async (
     const result = response.data;
     console.log('Response data completa:', result);
 
+    // Intentar extraer el nombre del archivo de diferentes posibles ubicaciones
     const fileName =
-      result.data?.foto || result.foto || result.imageUrl || result.url;
-    console.log('Nombre del archivo:', fileName);
+      result.data?.foto ||
+      result.data?.imagen ||
+      result.data?.img ||
+      result.foto ||
+      result.imagen ||
+      result.img ||
+      result.imageUrl ||
+      result.url ||
+      result.fileName ||
+      result.filename;
+
+    console.log('Nombre del archivo extraído:', fileName);
 
     let finalImageUrl = '';
-    if (fileName) {
+    if (fileName && fileName.trim() !== '') {
       const baseUrls: { [key: string]: string } = {
         usuario: 'http://localhost:3000/uploads/usuarios/',
         dj: 'http://localhost:3000/uploads/djs/',
@@ -44,8 +55,18 @@ export const uploadImage = async (
       };
 
       const baseUrl = baseUrls[entityType];
-      finalImageUrl = baseUrl ? `${baseUrl}${fileName}` : fileName;
+      if (baseUrl) {
+        finalImageUrl = `${baseUrl}${fileName}`;
+      } else {
+        // Si no hay baseUrl definida, usar el fileName tal como viene
+        finalImageUrl = fileName;
+      }
       console.log('URL completa construida:', finalImageUrl);
+    } else {
+      console.warn(
+        'No se pudo extraer el nombre del archivo de la respuesta:',
+        result
+      );
     }
 
     return {
@@ -85,6 +106,33 @@ export const isValidImageFile = (file: File): boolean => {
 export const isValidFileSize = (file: File, maxSizeMB: number = 5): boolean => {
   const maxSizeBytes = maxSizeMB * 1024 * 1024;
   return file.size <= maxSizeBytes;
+};
+
+// Función para procesar la URL de imagen del usuario
+export const processUserImageUrl = (
+  imageData: string | null | undefined
+): string => {
+  if (!imageData || imageData.trim() === '') {
+    return '';
+  }
+
+  // Si ya es una URL completa, devolverla tal como está
+  if (imageData.startsWith('http://') || imageData.startsWith('https://')) {
+    return imageData;
+  }
+
+  // Si es solo el nombre del archivo, construir la URL completa
+  if (imageData && !imageData.includes('/')) {
+    return `http://localhost:3000/uploads/usuarios/${imageData}`;
+  }
+
+  // Si ya tiene una ruta relativa, agregarle el dominio
+  if (imageData.startsWith('/uploads/')) {
+    return `http://localhost:3000${imageData}`;
+  }
+
+  // En cualquier otro caso, asumir que es un nombre de archivo
+  return `http://localhost:3000/uploads/usuarios/${imageData}`;
 };
 
 // Funciones específicas para cada entidad
