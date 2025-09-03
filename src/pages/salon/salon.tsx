@@ -130,8 +130,16 @@ export function Salon() {
           withCredentials: true,
         });
         const data = response.data.data;
-        // Extraer todas las zonas disponibles del sistema
-        const todasLasZonas = data.map((zona: any) => zona.nombre);
+
+        // Extraer todas las zonas disponibles del sistema con validación
+        const todasLasZonas = data
+          .map((zona: any) => zona.nombre?.trim())
+          .filter((nombre: string) => nombre && nombre.length > 0)
+          .filter(
+            (nombre: string, index: number, array: string[]) =>
+              array.indexOf(nombre) === index
+          ); // Eliminar duplicados
+
         setZonas(todasLasZonas);
       } catch (error) {
         console.error('Error al cargar zonas:', error);
@@ -147,9 +155,20 @@ export function Salon() {
     let resultado = [...salones];
 
     if (filtros.zona) {
-      resultado = resultado.filter(
-        (salon) => salon.zona.nombre === filtros.zona
-      );
+      // Filtrado robusto que maneja comparación exacta y normalizada
+      resultado = resultado.filter((salon) => {
+        if (!salon.zona?.nombre) return false;
+
+        // Primero intentamos comparación exacta
+        if (salon.zona.nombre === filtros.zona) {
+          return true;
+        }
+
+        // Como fallback, comparación normalizada (sin espacios y en minúsculas)
+        const zonaSalon = salon.zona.nombre.trim().toLowerCase();
+        const zonaBuscada = filtros.zona.trim().toLowerCase();
+        return zonaSalon === zonaBuscada;
+      });
     }
 
     if (filtros.capacidadMin) {

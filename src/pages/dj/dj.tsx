@@ -131,8 +131,14 @@ export function Dj() {
           withCredentials: true,
         });
         const data = response.data.data;
-        // Extraer todas las zonas disponibles del sistema
-        const todasLasZonas = data.map((zona: any) => zona.nombre);
+        // Extraer todas las zonas disponibles del sistema con validación
+        const todasLasZonas = data
+          .map((zona: any) => zona.nombre?.trim())
+          .filter((nombre: string) => nombre && nombre.length > 0)
+          .filter(
+            (nombre: string, index: number, array: string[]) =>
+              array.indexOf(nombre) === index
+          );
         setZonas(todasLasZonas);
       } catch (error) {
         console.error('Error al cargar zonas:', error);
@@ -148,7 +154,20 @@ export function Dj() {
     let resultado = [...djs];
 
     if (filtros.zona) {
-      resultado = resultado.filter((dj) => dj.zona.nombre === filtros.zona);
+      // Filtrado robusto que maneja comparación exacta y normalizada
+      resultado = resultado.filter((dj) => {
+        if (!dj.zona?.nombre) return false;
+
+        // Primero intentamos comparación exacta
+        if (dj.zona.nombre === filtros.zona) {
+          return true;
+        }
+
+        // Como fallback, comparación normalizada (sin espacios y en minúsculas)
+        const zonaDj = dj.zona.nombre.trim().toLowerCase();
+        const zonaBuscada = filtros.zona.trim().toLowerCase();
+        return zonaDj === zonaBuscada;
+      });
     }
 
     if (filtros.estado) {
