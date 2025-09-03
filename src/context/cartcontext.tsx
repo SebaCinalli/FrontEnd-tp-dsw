@@ -83,6 +83,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     } catch (error) {
       console.error('Error al guardar items del carrito en localStorage:', error);
     }
+    localStorage.removeItem('cartItems');
   }, [items]);
 
 
