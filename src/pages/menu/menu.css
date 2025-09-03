@@ -348,3 +348,16 @@ html {
   background: #1e1e2e;
   caret-color: transparent; /* Mantiene el cursor oculto al hacer focus */
 }
+
+.date-input.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #0f0f0f;
+  border-color: #2a2a2a;
+}
+
+.date-input.disabled:focus {
+  border-color: #2a2a2a;
+  box-shadow: none;
+  background: #0f0f0f;
+}

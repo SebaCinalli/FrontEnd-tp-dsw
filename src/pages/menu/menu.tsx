@@ -12,6 +12,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { UserBadge } from '../../components/userbadge';
 import { useEventDate } from '../../context/eventdatecontext';
+import { useCart } from '../../context/cartcontext';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -33,11 +34,13 @@ const MenuMain: React.FC<MenuMainProps> = ({
 }) => {
   const navigate = useNavigate();
   const { eventDate, setEventDate } = useEventDate();
+  const { isEmpty } = useCart();
   const [localDate, setLocalDate] = useState<string>('');
   const selectedDateObj = useMemo(
     () => (localDate ? new Date(localDate + 'T00:00:00') : null),
     [localDate]
   );
+  const isCartEmpty = isEmpty();
 
   // Sincronizar campo local con contexto
   useEffect(() => {
@@ -117,11 +120,24 @@ const MenuMain: React.FC<MenuMainProps> = ({
             style={{ color: '#fff', display: 'block', marginBottom: 6 }}
           >
             Fecha del evento
+            {!isCartEmpty && (
+              <span
+                style={{ fontSize: '0.8em', marginLeft: '8px', opacity: 0.7 }}
+              >
+                (No se puede modificar con servicios en el carrito)
+              </span>
+            )}
           </label>
           <DatePicker
             id="event-date"
             selected={selectedDateObj}
             onChange={(date: Date | null) => {
+              if (!isCartEmpty) {
+                alert(
+                  'No podés cambiar la fecha mientras tengas servicios en el carrito. Vaciá el carrito primero.'
+                );
+                return;
+              }
               if (!date) {
                 setLocalDate('');
                 setEventDate(null);
@@ -136,10 +152,11 @@ const MenuMain: React.FC<MenuMainProps> = ({
             }}
             minDate={new Date()}
             dateFormat="dd/MM/yyyy"
-            className="date-input"
+            className={`date-input ${!isCartEmpty ? 'disabled' : ''}`}
             placeholderText="Seleccioná una fecha"
             popperPlacement="bottom"
             showPopperArrow
+            disabled={!isCartEmpty}
           />
           {/* Texto de fecha seleccionada removido por requerimiento */}
         </div>

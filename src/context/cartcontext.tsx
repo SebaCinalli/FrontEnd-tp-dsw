@@ -25,6 +25,7 @@ interface CartContextType {
   getTotalPrice: () => number;
   getItemCount: () => number;
   isInCart: (id: number, type: string) => boolean;
+  isEmpty: () => boolean;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -106,6 +107,10 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     return items.some((item) => item.id === id && item.type === type);
   };
 
+  const isEmpty = () => {
+    return items.length === 0;
+  };
+
   const value: CartContextType = {
     items,
     addItem,
@@ -114,6 +119,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     getTotalPrice,
     getItemCount,
     isInCart,
+    isEmpty,
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
