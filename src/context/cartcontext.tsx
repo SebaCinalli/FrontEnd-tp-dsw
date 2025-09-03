@@ -56,6 +56,37 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     time: 0,
   });
 
+  //recuperar items de localStorage
+  useEffect(()=>{
+    try{
+    const storedItems = localStorage.getItem('cartItems');
+    if(storedItems){
+      const parsedItems = JSON.parse(storedItems) as CartItem[];
+        setItems(parsedItems);
+    }
+    }catch(err:any){
+      console.error(err.message)
+    }
+    localStorage.removeItem('cartItems');
+  })
+
+
+
+  //cargar items en localStorage cada vez que cambien
+  useEffect(() => {
+    try {
+      if (items.length > 0) {
+        localStorage.setItem('cartItems', JSON.stringify(items));
+      } else {
+        localStorage.removeItem('cartItems');
+      }
+    } catch (error) {
+      console.error('Error al guardar items del carrito en localStorage:', error);
+    }
+  }, [items]);
+
+
+
   const addItem = (item: CartItem) => {
     // Primera verificación rápida contra el estado actual (sin entrar al updater)
     const existsNow = itemsRef.current.find(
@@ -93,6 +124,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
 
   const clearCart = () => {
     setItems([]);
+    localStorage.removeItem('cartItems');
   };
 
   const getTotalPrice = () => {
