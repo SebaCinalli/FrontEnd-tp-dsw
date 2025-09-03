@@ -6,7 +6,7 @@ import {
   faCocktail,
   faUtensils,
   faHeadphones,
-  faCouch,
+  faHouse,
   faList,
   faMapMarkerAlt,
 } from '@fortawesome/free-solid-svg-icons';
@@ -59,7 +59,7 @@ const MenuAdmin: React.FC<MenuProps> = ({
     },
     {
       id: 'salon',
-      icon: faCouch,
+      icon: faHouse,
       tooltip: 'Gestionar Salones',
       onClick: () => navigate('/salonAdmin'),
     },

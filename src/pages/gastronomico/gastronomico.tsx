@@ -135,8 +135,14 @@ export function Gastronomico() {
           withCredentials: true,
         });
         const data = response.data.data;
-        // Extraer todas las zonas disponibles del sistema
-        const todasLasZonas = data.map((zona: any) => zona.nombre);
+        // Extraer todas las zonas disponibles del sistema con validación
+        const todasLasZonas = data
+          .map((zona: any) => zona.nombre?.trim())
+          .filter((nombre: string) => nombre && nombre.length > 0)
+          .filter(
+            (nombre: string, index: number, array: string[]) =>
+              array.indexOf(nombre) === index
+          );
         setZonas(todasLasZonas);
       } catch (error) {
         console.error('Error al cargar zonas:', error);
@@ -152,9 +158,20 @@ export function Gastronomico() {
     let resultado = [...gastronomicos];
 
     if (filtros.zona) {
-      resultado = resultado.filter(
-        (gastronomico) => gastronomico.zona.nombre === filtros.zona
-      );
+      // Filtrado robusto que maneja comparación exacta y normalizada
+      resultado = resultado.filter((gastronomico) => {
+        if (!gastronomico.zona?.nombre) return false;
+
+        // Primero intentamos comparación exacta
+        if (gastronomico.zona.nombre === filtros.zona) {
+          return true;
+        }
+
+        // Como fallback, comparación normalizada (sin espacios y en minúsculas)
+        const zonaGastronomico = gastronomico.zona.nombre.trim().toLowerCase();
+        const zonaBuscada = filtros.zona.trim().toLowerCase();
+        return zonaGastronomico === zonaBuscada;
+      });
     }
 
     if (filtros.tipoComida) {

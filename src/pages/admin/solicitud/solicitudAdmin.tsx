@@ -4,7 +4,6 @@ import './solicitudAdmin.css';
 import { UserBadge } from '../../../components/userbadge';
 import { BackToMenu } from '../../../components/BackToMenu';
 
-
 // Definir la estructura de una solicitud. crear un nuevo archivo con solo la interfaz
 interface Solicitud {
   id: number;
@@ -32,6 +31,7 @@ interface Solicitud {
   };
   estado: string;
   fechaSolicitud: string;
+  fechaEvento: string;
   montoDj?: number;
   montoSalon?: number;
   montoBarra?: number;
@@ -43,7 +43,6 @@ export function SolicitudAdmin() {
   const [solicitudes, setSolicitudes] = useState<Solicitud[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
 
   //Obtener todas las solicitudes
   //setear error
@@ -73,9 +72,7 @@ export function SolicitudAdmin() {
     fetchSolicitudes();
   }, []);
 
-
   // Formatear fecha
-
 
   const formatFecha = (fechaString: string) => {
     const fecha = new Date(fechaString);
@@ -83,13 +80,10 @@ export function SolicitudAdmin() {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
     });
   };
 
-
-  //Obtener esttado y ajustar el estilo 
+  //Obtener esttado y ajustar el estilo
 
   const getEstadoBadge = (estado: string) => {
     const className = `estado-badge estado-${estado
@@ -130,37 +124,60 @@ export function SolicitudAdmin() {
 
   //Rechazar Solicitud
 
-  const handleRechazarSolicitud = async (solicitudId: number, clienteNombre: string, solicitudEstado: string) =>{
-    if(solicitudEstado === 'Cancelada'){alert('No se puede cambiar el estado de una solicitud cancelada'); return;}
-    const confirmacion = window.confirm(`¿Estás seguro de que deseas cambiar el estado de la solicitud # ${solicitudId} de  ${clienteNombre}?`);
-    if (confirmacion){
-        if (solicitudEstado !== 'Rechazada'){
-        try{
-          await axios.put(`http://localhost:3000/api/solicitud/${solicitudId}`,{estado: 'Rechazado'}, {withCredentials: true});
+  const handleRechazarSolicitud = async (
+    solicitudId: number,
+    clienteNombre: string,
+    solicitudEstado: string
+  ) => {
+    if (solicitudEstado === 'Cancelada') {
+      alert('No se puede cambiar el estado de una solicitud cancelada');
+      return;
+    }
+    const confirmacion = window.confirm(
+      `¿Estás seguro de que deseas cambiar el estado de la solicitud # ${solicitudId} de  ${clienteNombre}?`
+    );
+    if (confirmacion) {
+      if (solicitudEstado !== 'Rechazada') {
+        try {
+          await axios.put(
+            `http://localhost:3000/api/solicitud/${solicitudId}`,
+            { estado: 'Rechazado' },
+            { withCredentials: true }
+          );
           setSolicitudes(
             solicitudes.map((s) =>
               s.id === solicitudId ? { ...s, estado: 'Rechazada' } : s
             )
           );
-        }catch(error: any){
-          console.error(error)
-          alert('error al cambiar el estado de la solicitud'+ (error.response?.data?.message || 'error desconocido'))
+        } catch (error: any) {
+          console.error(error);
+          alert(
+            'error al cambiar el estado de la solicitud' +
+              (error.response?.data?.message || 'error desconocido')
+          );
         }
-      }else if (solicitudEstado === 'Rechazada'){
-        try{
-          await axios.put(`http://localhost:3000/api/solicitud/${solicitudId}`,{estado: 'Pendiente de pago'}, {withCredentials: true});
+      } else if (solicitudEstado === 'Rechazada') {
+        try {
+          await axios.put(
+            `http://localhost:3000/api/solicitud/${solicitudId}`,
+            { estado: 'Pendiente de pago' },
+            { withCredentials: true }
+          );
           setSolicitudes(
             solicitudes.map((s) =>
               s.id === solicitudId ? { ...s, estado: 'Pendiente de pago' } : s
             )
           );
-        }catch(error: any){
-          console.error(error)
-          alert('error al cambiar el estado de la solicitud'+ (error.response?.data?.message || 'error desconocido'))
+        } catch (error: any) {
+          console.error(error);
+          alert(
+            'error al cambiar el estado de la solicitud' +
+              (error.response?.data?.message || 'error desconocido')
+          );
         }
       }
     }
-  }
+  };
 
   if (loading) {
     return (
@@ -216,7 +233,8 @@ export function SolicitudAdmin() {
                     <th>Cliente</th>
                     <th>Servicios</th>
                     <th>Estado</th>
-                    <th>Fecha</th>
+                    <th>Fecha Solicitud</th>
+                    <th>Fecha Evento</th>
                     <th>Total</th>
                     <th>Acciones</th>
                   </tr>
@@ -293,7 +311,18 @@ export function SolicitudAdmin() {
                         </div>
                       </td>
                       <td>{getEstadoBadge(solicitud.estado)}</td>
-                      <td>{formatFecha(solicitud.fechaSolicitud)}</td>
+                      <td>
+                        <div className="fecha-admin">
+                          <small>Creada:</small>
+                          <div>{formatFecha(solicitud.fechaSolicitud)}</div>
+                        </div>
+                      </td>
+                      <td>
+                        <div className="fecha-admin">
+                          <small>Evento:</small>
+                          <div>{formatFecha(solicitud.fechaEvento)}</div>
+                        </div>
+                      </td>
                       <td className="total-amount">
                         <strong>
                           ${solicitud.montoTotal.toLocaleString('es-AR')}
@@ -311,8 +340,10 @@ export function SolicitudAdmin() {
                                   solicitud.usuario.apellido
                                 }\nEmail: ${solicitud.usuario.email}\nEstado: ${
                                   solicitud.estado
-                                }\nFecha: ${formatFecha(
+                                }\nFecha de solicitud: ${formatFecha(
                                   solicitud.fechaSolicitud
+                                )}\nFecha del evento: ${formatFecha(
+                                  solicitud.fechaEvento
                                 )}\nTotal: $${solicitud.montoTotal.toLocaleString(
                                   'es-AR'
                                 )}`
@@ -345,7 +376,9 @@ export function SolicitudAdmin() {
                             }
                             title="Rechazar Solicitud"
                           >
-                            {solicitud.estado !== 'Rechazada' ? 'Rechazar' : 'Deshacer'}
+                            {solicitud.estado !== 'Rechazada'
+                              ? 'Rechazar'
+                              : 'Deshacer'}
                           </button>
                         </div>
                       </td>

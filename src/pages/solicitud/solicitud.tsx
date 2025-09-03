@@ -31,6 +31,7 @@ interface Solicitud {
   };
   estado: string;
   fechaSolicitud: string;
+  fechaEvento: string;
   montoDj?: number;
   montoSalon?: number;
   montoBarra?: number;
@@ -138,8 +139,6 @@ export function Solicitud() {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
     });
   };
 
@@ -363,8 +362,8 @@ export function Solicitud() {
 
                   <div className="solicitud-info">
                     <div className="fecha">
-                      <strong>Fecha:</strong>{' '}
-                      {formatFecha(solicitud.fechaSolicitud)}
+                      <strong>Fecha del evento:</strong>{' '}
+                      {formatFecha(solicitud.fechaEvento)}
                     </div>
 
                     <div className="servicios">
