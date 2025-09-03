@@ -15,9 +15,9 @@ import { SalonAdmin } from '../pages/admin/salon/salonAdmin';
 import { BarraAdmin } from '../pages/admin/barra/barraAdmin';
 import { DjAdmin } from '../pages/admin/dj/djAdmin';
 import { GastronomicoAdmin } from '../pages/admin/gastronomico/gastronomicoAdmin';
+import { ZonaAdmin } from '../pages/admin/zona/zonaAdmin';
 import { Solicitud } from '../pages/solicitud/solicitud';
 import { Profile } from '../pages/profile/profile';
-
 
 export default function AppRoutes() {
   const { user } = useUser();
@@ -92,7 +92,6 @@ export default function AppRoutes() {
         }
       />
 
-
       <Route
         path="/profile"
         element={
@@ -101,9 +100,6 @@ export default function AppRoutes() {
           </ProtectedRoutes>
         }
       />
-
-
-
 
       {/* RUTAS PROTEGIDAS PARA ADMINISTRADORES */}
       <Route
@@ -135,6 +131,14 @@ export default function AppRoutes() {
         element={
           <ProtectedRoutes>
             <DjAdmin />
+          </ProtectedRoutes>
+        }
+      />
+      <Route
+        path="/zonaAdmin"
+        element={
+          <ProtectedRoutes>
+            <ZonaAdmin />
           </ProtectedRoutes>
         }
       />

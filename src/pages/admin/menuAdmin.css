@@ -52,15 +52,6 @@ html {
   margin-bottom: 20px;
 }
 
-.solicitud-item {
-  grid-column: 1 / -1; /* span the two columns */
-  justify-self: center; /* center inside the grid area */
-  /* make the button occupy approximately the combined width of the two columns
-     while staying responsive inside the .container */
-  width: calc(100%);
-  max-width: 280px;
-}
-
 .icon-item {
   display: flex;
   flex-direction: column;

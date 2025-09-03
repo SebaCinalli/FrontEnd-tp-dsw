@@ -8,6 +8,7 @@ import {
   faHeadphones,
   faCouch,
   faList,
+  faMapMarkerAlt,
 } from '@fortawesome/free-solid-svg-icons';
 
 import { UserBadge } from '../../components/userbadge';
@@ -41,31 +42,37 @@ const MenuAdmin: React.FC<MenuProps> = ({
     {
       id: 'barra',
       icon: faCocktail,
-      tooltip: 'Reservar servicio de coctelería',
+      tooltip: 'Gestionar servicios de coctelería',
       onClick: () => navigate('/barraAdmin'),
     },
     {
       id: 'gastronomico',
       icon: faUtensils,
-      tooltip: 'Reservar servicio Gastronómico',
+      tooltip: 'Gestionar servicios Gastronómicos',
       onClick: () => navigate('/gastronomicoAdmin'),
     },
     {
       id: 'dj',
       icon: faHeadphones,
-      tooltip: 'Reservar DJ',
+      tooltip: 'Gestionar DJs',
       onClick: () => navigate('/djAdmin'),
     },
     {
       id: 'salon',
       icon: faCouch,
-      tooltip: 'Reservar Salón',
+      tooltip: 'Gestionar Salones',
       onClick: () => navigate('/salonAdmin'),
+    },
+    {
+      id: 'zona',
+      icon: faMapMarkerAlt,
+      tooltip: 'Gestionar Zonas',
+      onClick: () => navigate('/zonaAdmin'),
     },
     {
       id: 'solicitud',
       icon: faList,
-      tooltip: 'Ver Solicitudes',
+      tooltip: 'Gestionar Solicitudes',
       onClick: () => navigate('/solicitudAdmin'),
     },
   ];
