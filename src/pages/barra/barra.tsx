@@ -384,7 +384,7 @@ export function Barra() {
                       disabled={isInCart(barra.id, 'barra')}
                     >
                       <>
-                        <span>🛒</span> Agregar al carrito
+                        <span>🛒</span> Agregar
                       </>
                     </button>
                   )}

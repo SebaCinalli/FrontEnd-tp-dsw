@@ -37,7 +37,7 @@
   border: 1px solid #3a3a5c;
   border-radius: 15px;
   margin-bottom: 20px;
-  margin-top: 30px; /* Espacio para el UserBadge en móvil */
+  margin-top: 80px; /* Espacio para el UserBadge agrandado en móvil */
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   overflow: hidden;
 }
@@ -167,6 +167,69 @@
     font-size: 0.9rem;
   }
 }
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  .dj-container {
+    padding: 8px !important;
+  }
+
+  .djs-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)) !important;
+    gap: 8px !important;
+  }
+
+  .dj-card {
+    padding: 10px;
+    border-radius: 12px;
+    max-width: none;
+  }
+
+  .dj-img-container {
+    height: 100px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+  }
+
+  .dj-name {
+    font-size: 0.9rem !important;
+    margin-bottom: 6px;
+  }
+
+  .dj-montoS {
+    font-size: 1rem !important;
+    margin-bottom: 6px;
+  }
+
+  .dj-zona {
+    font-size: 0.8rem !important;
+  }
+
+  .filtros-panel {
+    margin-bottom: 15px;
+  }
+
+  .add-to-cart-btn {
+    padding: 8px 12px !important;
+    font-size: 0.75rem !important;
+    border-radius: 15px !important;
+  }
+
+  .add-to-cart-btn span {
+    font-size: 0.8rem !important;
+  }
+
+  .remove-from-cart-btn {
+    padding: 4px 6px !important;
+    font-size: 0.7rem !important;
+    border-radius: 4px !important;
+  }
+
+  .in-cart-actions {
+    gap: 4px !important;
+  }
+}
+
 .filtros-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));

@@ -319,7 +319,6 @@ export function DjAdmin() {
           <DjImage foto={dj.foto} nombreArtistico={dj.nombreArtistico} />
           <div className="dj-info">
             <h3 className="dj-name">{dj.nombreArtistico}</h3>
-            <p className="dj-estado">Estado: {dj.estado}</p>
             <p className="dj-montoS">${dj.montoDj.toLocaleString('es-AR')}</p>
             <p className="dj-zona">{dj.zona.nombre}</p>
           </div>

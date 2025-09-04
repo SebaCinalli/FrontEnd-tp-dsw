@@ -348,7 +348,7 @@ export function Dj() {
                       disabled={isInCart(dj.id, 'dj')}
                     >
                       <>
-                        <span>🛒</span> Agregar al carrito
+                        <span>🛒</span> Agregar
                       </>
                     </button>
                   )}

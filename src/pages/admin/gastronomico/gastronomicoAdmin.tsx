@@ -344,7 +344,7 @@ export function GastronomicoAdmin() {
         </div>
       ))}
       <div className="gastronomico-card edit-card" onClick={handleEditClick}>
-        <div className="edit-icon">✏️</div>
+        <div className="edit-icon">+</div>
         <div className="gastronomico-info">
           <h3 className="gastronomico-name">Agregar Gastronómico</h3>
           <p className="gastronomico-tipoComida">

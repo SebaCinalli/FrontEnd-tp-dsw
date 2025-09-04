@@ -339,7 +339,6 @@ export function SalonAdmin() {
             <p className="salon-montoS">
               ${salon.montoS.toLocaleString('es-AR')}
             </p>
-            <p className="salon-estado">Estado: {salon.estado}</p>
             <p className="salon-zona">{salon.zona.nombre}</p>
           </div>
           <div className="card-actions">
@@ -356,7 +355,7 @@ export function SalonAdmin() {
         </div>
       ))}
       <div className="salon-card edit-card" onClick={handleEditClick}>
-        <div className="edit-icon">✏️</div>
+        <div className="edit-icon">+</div>
         <div className="salon-info">
           <h3 className="salon-name">Agregar Salón</h3>
           <p className="salon-capacidad">Crear nuevo salón</p>

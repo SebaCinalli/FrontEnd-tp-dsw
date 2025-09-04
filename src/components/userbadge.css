@@ -302,62 +302,63 @@
   .user-badge {
     top: 15px;
     right: 15px;
+    transform: scale(1.1);
   }
 
   .user-badge-content {
-    padding: 6px 10px;
-    gap: 6px;
+    padding: 8px 12px;
+    gap: 8px;
   }
 
   .user-avatar-small {
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
   }
 
   .avatar-placeholder-small {
-    font-size: 11px;
+    font-size: 12px;
   }
 
   .avatar-placeholder-small svg {
-    width: 14px;
-    height: 14px;
-  }
-
-  .user-name-small {
-    font-size: 11px;
-    max-width: 70px;
-  }
-
-  .user-role-small {
-    font-size: 9px;
-    color: #3b82f6;
-    padding: 1px 5px;
-  }
-
-  .logout-btn-small {
-    width: 24px;
-    height: 24px;
-  }
-
-  .logout-btn-small svg {
-    width: 12px;
-    height: 12px;
-  }
-
-  .cart-btn-small {
-    width: 24px;
-    height: 24px;
-  }
-
-  .cart-btn-small svg {
     width: 16px;
     height: 16px;
   }
 
+  .user-name-small {
+    font-size: 12px;
+    max-width: 80px;
+  }
+
+  .user-role-small {
+    font-size: 10px;
+    color: #3b82f6;
+    padding: 2px 6px;
+  }
+
+  .logout-btn-small {
+    width: 28px;
+    height: 28px;
+  }
+
+  .logout-btn-small svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .cart-btn-small {
+    width: 28px;
+    height: 28px;
+  }
+
+  .cart-btn-small svg {
+    width: 18px;
+    height: 18px;
+  }
+
   .cart-count {
-    font-size: 7px;
-    min-width: 12px;
-    height: 12px;
+    font-size: 8px;
+    min-width: 14px;
+    height: 14px;
   }
 }
 

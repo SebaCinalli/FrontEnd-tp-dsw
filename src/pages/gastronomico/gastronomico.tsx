@@ -390,7 +390,7 @@ export function Gastronomico() {
                       disabled={isInCart(gastronomico.id, 'gastronomico')}
                     >
                       <>
-                        <span>🛒</span> Agregar al carrito
+                        <span>🛒</span> Agregar
                       </>
                     </button>
                   )}

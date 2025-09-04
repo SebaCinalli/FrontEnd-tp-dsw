@@ -38,7 +38,7 @@
   border-radius: 15px;
   /* quitar espacio inferior para que el grid de tarjetas quede pegado al panel de filtros */
   margin-bottom: 0;
-  margin-top: 30px; /* Espacio para el UserBadge en móvil */
+  margin-top: 80px; /* Espacio para el UserBadge agrandado en móvil */
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   overflow: hidden;
 }
@@ -71,6 +71,73 @@
   .barras-grid {
     margin-top: 20px;
     width: 100% !important;
+  }
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  .barra-container {
+    padding: 8px !important;
+  }
+
+  .barras-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)) !important;
+    gap: 8px !important;
+  }
+
+  .barra-card {
+    padding: 10px;
+    border-radius: 12px;
+    max-width: none;
+  }
+
+  .barra-img-container {
+    height: 100px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+  }
+
+  .barra-name {
+    font-size: 0.9rem !important;
+    margin-bottom: 6px;
+  }
+
+  .barra-bebida {
+    font-size: 0.75rem !important;
+    margin-bottom: 4px;
+  }
+
+  .barra-montoB {
+    font-size: 1rem !important;
+    margin-bottom: 6px;
+  }
+
+  .barra-zona {
+    font-size: 0.8rem !important;
+  }
+
+  .filtros-panel {
+    margin-bottom: 15px;
+  }
+
+  .add-to-cart-btn {
+    padding: 8px 12px !important;
+    font-size: 0.75rem !important;
+    border-radius: 15px !important;
+  }
+
+  .add-to-cart-btn span {
+    font-size: 0.8rem !important;
+  }
+
+  .remove-from-cart-btn {
+    padding: 4px 6px !important;
+    font-size: 0.7rem !important;
+    border-radius: 4px !important;
+  }
+
+  .in-cart-actions {
+    gap: 4px !important;
   }
 }
 

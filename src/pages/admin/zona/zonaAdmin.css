@@ -21,6 +21,42 @@
   }
 }
 
+/* Mobile styles */
+@media (max-width: 768px) {
+  .zona-container {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+    padding: 8px 10px 15px 10px !important;
+  }
+
+  .zona-card {
+    padding: 15px;
+    border-radius: 8px;
+  }
+
+  .zona-nombre {
+    font-size: 1rem !important;
+  }
+
+  .edit-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+  }
+
+  .card-actions {
+    gap: 6px;
+    margin-top: 12px;
+  }
+
+  .edit-btn,
+  .delete-btn {
+    padding: 8px 12px;
+    font-size: 0.75rem;
+  }
+}
+
 .zona-card {
   background: linear-gradient(135deg, #252541, #2a2a47);
   border-radius: 12px;

@@ -400,7 +400,7 @@ export function Salon() {
                       disabled={isInCart(salon.id, 'salon')}
                     >
                       <>
-                        <span>🛒</span> Agregar al carrito
+                        <span>🛒</span> Agregar
                       </>
                     </button>
                   )}

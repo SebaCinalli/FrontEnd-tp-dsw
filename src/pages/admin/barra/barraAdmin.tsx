@@ -352,7 +352,7 @@ export function BarraAdmin() {
         </div>
       ))}
       <div className="barra-card edit-card" onClick={handleEditClick}>
-        <div className="edit-icon">✏️</div>
+        <div className="edit-icon">+</div>
         <div className="barra-info">
           <h3 className="barra-name">Agregar Barra</h3>
           <p className="barra-bebida">Crear nueva barra</p>
