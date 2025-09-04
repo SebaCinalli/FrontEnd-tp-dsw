@@ -44,7 +44,8 @@ interface CartProviderProps {
 
 export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   const [items, setItems] = useState<CartItem[]>([]);
-  // Ref para leer el estado actual sin depender de closures (evita race conditions)
+
+  // Ref para leer el estado actual sin depender de closures
   const itemsRef = useRef<CartItem[]>(items);
   useEffect(() => {
     itemsRef.current = items;
@@ -56,23 +57,20 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     time: 0,
   });
 
-  //recuperar items de localStorage
-  useEffect(()=>{
-    try{
-    const storedItems = localStorage.getItem('cartItems');
-    if(storedItems){
-      const parsedItems = JSON.parse(storedItems) as CartItem[];
+  // Recuperar items de localStorage al montar
+  useEffect(() => {
+    try {
+      const storedItems = localStorage.getItem('cartItems');
+      if (storedItems) {
+        const parsedItems = JSON.parse(storedItems) as CartItem[];
         setItems(parsedItems);
+      }
+    } catch (err: any) {
+      console.error(err.message);
     }
-    }catch(err:any){
-      console.error(err.message)
-    }
-    localStorage.removeItem('cartItems');
-  })
+  }, []);
 
-
-
-  //cargar items en localStorage cada vez que cambien
+  // Guardar items en localStorage cada vez que cambien
   useEffect(() => {
     try {
       if (items.length > 0) {
@@ -83,19 +81,14 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     } catch (error) {
       console.error('Error al guardar items del carrito en localStorage:', error);
     }
-    localStorage.removeItem('cartItems');
   }, [items]);
 
-
-
   const addItem = (item: CartItem) => {
-    // Primera verificación rápida contra el estado actual (sin entrar al updater)
     const existsNow = itemsRef.current.find(
       (cartItem) => cartItem.type === item.type
     );
     if (existsNow) {
       const now = Date.now();
-      // Evitar alert duplicado en llamadas inmediatas (p. ej. StrictMode double-invoke)
       if (
         lastAlertRef.current.type === item.type &&
         now - lastAlertRef.current.time < 800
@@ -107,7 +100,6 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
       return false;
     }
 
-    // Hacemos la actualización usando la función con prev para prevenir duplicados por race
     setItems((prevItems) => {
       const already = prevItems.find((cartItem) => cartItem.type === item.type);
       if (already) return prevItems;

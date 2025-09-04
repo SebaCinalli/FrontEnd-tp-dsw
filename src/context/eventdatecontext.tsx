@@ -1,30 +1,32 @@
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 
-type EventDateContextValue = {
+interface EventDateContextType {
   eventDate: string | null;
   setEventDate: (date: string | null) => void;
-  clearEventDate: () => void;
+}
+
+const EventDateContext = createContext<EventDateContextType | undefined>(undefined);
+
+export const useEventDate = () => {
+  const context = useContext(EventDateContext);
+  if (!context) throw new Error('useEventDate debe usarse dentro de EventDateProvider');
+  return context;
 };
 
-const EventDateContext = createContext<EventDateContextValue | undefined>(
-  undefined
-);
+interface Props {
+  children: ReactNode;
+}
 
-export function EventDateProvider({ children }: { children: React.ReactNode }) {
+export const EventDateProvider: React.FC<Props> = ({ children }) => {
   const [eventDate, setEventDateState] = useState<string | null>(null);
 
-  // Cargar desde localStorage al montar
+  // Cargar fecha del localStorage al inicio
   useEffect(() => {
-    const stored = localStorage.getItem('eventDate');
-    if (stored) setEventDateState(stored);
+    const storedDate = localStorage.getItem('eventDate');
+    if (storedDate) setEventDateState(storedDate);
   }, []);
 
+  // Guardar fecha en localStorage cuando cambie
   const setEventDate = (date: string | null) => {
     setEventDateState(date);
     if (date) {
@@ -34,23 +36,9 @@ export function EventDateProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const clearEventDate = () => setEventDate(null);
-
-  const value = useMemo(
-    () => ({ eventDate, setEventDate, clearEventDate }),
-    [eventDate]
-  );
-
   return (
-    <EventDateContext.Provider value={value}>
+    <EventDateContext.Provider value={{ eventDate, setEventDate }}>
       {children}
     </EventDateContext.Provider>
   );
-}
-
-export function useEventDate() {
-  const ctx = useContext(EventDateContext);
-  if (!ctx)
-    throw new Error('useEventDate debe usarse dentro de EventDateProvider');
-  return ctx;
-}
+};
