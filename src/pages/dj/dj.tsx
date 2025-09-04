@@ -22,7 +22,6 @@ interface Dj {
 
 interface FilterState {
   zona: string;
-  estado: string;
   precioMin: string;
   precioMax: string;
 }
@@ -32,12 +31,10 @@ export function Dj() {
   const [djsFiltrados, setDjsFiltrados] = useState<Dj[]>([]);
   const [filtros, setFiltros] = useState<FilterState>({
     zona: '',
-    estado: '',
     precioMin: '',
     precioMax: '',
   });
   const [zonas, setZonas] = useState<string[]>([]);
-  const [estados, setEstados] = useState<string[]>([]);
   const [filtrosAbiertos, setFiltrosAbiertos] = useState(false);
 
   const { addItem, isInCart, removeItem } = useCart();
@@ -114,12 +111,6 @@ export function Dj() {
         const data = response.data.data;
         setDjs(data);
         setDjsFiltrados(data);
-
-        // Extraer estados únicos
-        const estadosUnicos = [
-          ...new Set(data.map((dj: Dj) => dj.estado)),
-        ] as string[];
-        setEstados(estadosUnicos);
       } catch (error) {
         console.error('Error al cargar djs:', error);
       }
@@ -170,10 +161,6 @@ export function Dj() {
       });
     }
 
-    if (filtros.estado) {
-      resultado = resultado.filter((dj) => dj.estado === filtros.estado);
-    }
-
     if (filtros.precioMin) {
       resultado = resultado.filter(
         (dj) => dj.montoDj >= parseInt(filtros.precioMin)
@@ -199,7 +186,6 @@ export function Dj() {
   const limpiarFiltros = () => {
     setFiltros({
       zona: '',
-      estado: '',
       precioMin: '',
       precioMax: '',
     });
@@ -264,22 +250,6 @@ export function Dj() {
                   {zonas.map((zona) => (
                     <option key={zona} value={zona}>
                       {zona}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="filtro-item">
-                <label htmlFor="estado-filter">Estado:</label>
-                <select
-                  id="estado-filter"
-                  value={filtros.estado}
-                  onChange={(e) => handleFiltroChange('estado', e.target.value)}
-                >
-                  <option value="">Todos los estados</option>
-                  {estados.map((estado) => (
-                    <option key={estado} value={estado}>
-                      {estado}
                     </option>
                   ))}
                 </select>
