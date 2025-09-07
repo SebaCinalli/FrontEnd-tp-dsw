@@ -78,21 +78,53 @@
 @media (max-width: 768px) {
   .barra-container {
     padding: 8px !important;
+    width: 100% !important;
+    max-width: none !important;
   }
 
   .barras-grid {
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)) !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     gap: 8px !important;
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+  .barras-grid .barra-card {
+    padding: 10px !important;
+    border-radius: 12px !important;
+    max-width: none !important;
+    width: 100% !important;
+    margin: 0 !important;
+    min-width: 0 !important;
+    flex: 1 !important;
+  }
+  .barra-container {
+    padding: 8px 8px !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    box-sizing: border-box;
+  }
+
+  .barras-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    box-sizing: border-box;
   }
 
   .barra-card {
-    padding: 10px;
-    border-radius: 12px;
-    max-width: none;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 8px !important;
+    border-radius: 10px !important;
   }
 
   .barra-img-container {
-    height: 100px;
+    height: 120px !important;
     margin-bottom: 8px;
     border-radius: 8px;
   }
@@ -310,22 +342,31 @@
 /* Grid para las tarjetas - base móvil */
 .barras-grid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 20px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
 }
 
 /* Responsive grid */
 @media (min-width: 640px) {
   .barras-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
   }
 }
 
 @media (min-width: 1024px) {
   .barras-grid {
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 25px;
+    grid-template-columns: repeat(3, 280px);
+    gap: 20px;
+    justify-content: start;
+  }
+}
+
+@media (min-width: 1400px) {
+  .barras-grid {
+    grid-template-columns: repeat(4, 280px);
+    gap: 20px;
+    justify-content: start;
   }
 }
 
@@ -336,6 +377,13 @@
   padding: 15px;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   cursor: pointer;
+}
+
+/* Solo en desktop, fijar el ancho de las cards */
+@media (min-width: 1024px) {
+  .barra-card {
+    width: 280px;
+  }
 }
 
 .barra-card:hover {
