@@ -1,3 +1,99 @@
+/* Eliminar usuario */
+.delete-user-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #ef4444 0%, #3b537a 100%);
+  color: #fff;
+  padding: 16px 24px;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+.delete-user-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #b91c1c 0%, #3b537a 100%);
+  transform: translateY(-1px);
+}
+.delete-user-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Modal de confirmación de eliminación */
+.delete-confirm-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(34, 48, 74, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+.delete-confirm-content {
+  background: #232f45;
+  border-radius: 18px;
+  padding: 40px 32px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  text-align: center;
+  max-width: 90vw;
+  min-width: 320px;
+}
+.delete-confirm-content h3 {
+  color: #ef4444;
+  font-size: 1.5rem;
+  margin-bottom: 12px;
+}
+.delete-confirm-content p {
+  color: #e3e8f4;
+  margin-bottom: 24px;
+}
+.delete-confirm-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+}
+.delete-confirm-btn {
+  background: linear-gradient(135deg, #ef4444 0%, #3b537a 100%);
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.delete-confirm-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #b91c1c 0%, #3b537a 100%);
+}
+.delete-confirm-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.delete-cancel-btn {
+  background: rgba(75, 85, 99, 0.3);
+  color: #e3e8f4;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.delete-cancel-btn:hover:not(:disabled) {
+  background: rgba(75, 85, 99, 0.5);
+}
+.delete-cancel-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 /* profile.css */
 
 /* Animaciones */

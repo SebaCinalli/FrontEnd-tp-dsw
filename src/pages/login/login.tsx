@@ -5,13 +5,13 @@ import axios from 'axios';
 import './login.css';
 import { validateFormMail } from '../../validateFunctions/validateFormMail';
 import { validateFormPass } from '../../validateFunctions/validateFormPass';
-import { useEventDate } from '../../context/eventdatecontext';
+
 import { processUserImageUrl } from '../../utils/imageUpload';
 
 const Login = () => {
   const { login } = useUser();
   const navigate = useNavigate();
-  const { clearEventDate } = useEventDate();
+  // const { clearEventDate } = useEventDate();
   const [email, setMail] = useState('');
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');
@@ -55,9 +55,6 @@ const Login = () => {
         rol: usuario.rol,
         img: processedImageUrl,
       });
-
-      // Al iniciar sesión, borrar la fecha del evento previa
-      clearEventDate();
 
       navigate('/');
     } catch (error: any) {
@@ -164,6 +161,17 @@ const Login = () => {
               onClick={() => navigate('/signup')}
             >
               Crear usuario
+            </button>
+            <button
+              type="button"
+              className="forgot-password-link"
+              onClick={() =>
+                alert(
+                  'No se puede hacer nada, la proxima no seas tan boludo.'
+                )
+              }
+            >
+              Olvidaste tu contraseña?
             </button>
           </div>
         </form>

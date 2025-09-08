@@ -32,7 +32,34 @@ interface UserProfile {
 
 export const Profile: React.FC = () => {
   const navigate = useNavigate();
-  const { user: contextUser, login } = useUser();
+  const { user: contextUser, login, logout } = useUser();
+  // Estado para controlar el modal de confirmación de eliminación
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  // Manejar eliminación de usuario
+  const handleDeleteUser = useCallback(async () => {
+    if (!contextUser) return;
+    setIsDeleting(true);
+    try {
+      const response = await axios.delete(
+        `http://localhost:3000/api/usuario/${contextUser.id}`,
+        { withCredentials: true }
+      );
+      if (response.status === 200) {
+        await logout();
+        alert('Usuario eliminado correctamente.');
+        navigate('/login');
+      } else {
+        alert('No se pudo eliminar el usuario.');
+      }
+    } catch (error) {
+      console.error('Error al eliminar usuario:', error);
+      alert('Error al eliminar el usuario.');
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteConfirm(false);
+    }
+  }, [contextUser, logout, navigate]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [user, setUser] = useState<UserProfile>({
@@ -484,7 +511,45 @@ export const Profile: React.FC = () => {
             <Save size={20} />
             {isLoading ? 'Guardando...' : 'Guardar Cambios'}
           </button>
+
+          {/* Botón eliminar usuario solo si NO es admin */}
+          {contextUser?.rol !== 'administrador' && (
+            <button
+              className="delete-user-btn"
+              style={{ marginLeft: 16 }}
+              onClick={() => setShowDeleteConfirm(true)}
+              disabled={isDeleting}
+            >
+              {isDeleting ? 'Eliminando...' : 'Eliminar cuenta'}
+            </button>
+          )}
         </div>
+
+        {/* Modal de confirmación de eliminación */}
+        {showDeleteConfirm && (
+          <div className="delete-confirm-modal">
+            <div className="delete-confirm-content">
+              <h3>¿Estás seguro que deseas eliminar tu cuenta?</h3>
+              <p>Esta acción es irreversible. Todos tus datos se perderán.</p>
+              <div className="delete-confirm-actions">
+                <button
+                  className="delete-confirm-btn"
+                  onClick={handleDeleteUser}
+                  disabled={isDeleting}
+                >
+                  Sí, eliminar
+                </button>
+                <button
+                  className="delete-cancel-btn"
+                  onClick={() => setShowDeleteConfirm(false)}
+                  disabled={isDeleting}
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
