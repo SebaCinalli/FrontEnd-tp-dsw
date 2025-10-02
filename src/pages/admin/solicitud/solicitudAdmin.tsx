@@ -3,6 +3,8 @@ import axios from 'axios';
 import './solicitudAdmin.css';
 import { UserBadge } from '../../../components/userbadge';
 import { BackToMenu } from '../../../components/BackToMenu';
+import { useAlert } from '../../../context/alertcontext';
+import { useConfirm } from '../../../context/confirmcontext';
 
 // Definir la estructura de una solicitud. crear un nuevo archivo con solo la interfaz
 interface Solicitud {
@@ -40,6 +42,8 @@ interface Solicitud {
 }
 
 export function SolicitudAdmin() {
+  const { showAlert } = useAlert();
+  const { showConfirm } = useConfirm();
   const [solicitudes, setSolicitudes] = useState<Solicitud[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -98,7 +102,7 @@ export function SolicitudAdmin() {
     solicitudId: number,
     clienteNombre: string
   ) => {
-    const confirmacion = window.confirm(
+    const confirmacion = await showConfirm(
       `¿Estás seguro de que deseas eliminar la solicitud #${solicitudId} de ${clienteNombre}?\n\nEsta acción no se puede deshacer.`
     );
 
@@ -111,12 +115,13 @@ export function SolicitudAdmin() {
 
         // Actualizar la lista local eliminando la solicitud
         setSolicitudes(solicitudes.filter((s) => s.id !== solicitudId));
-        alert('Solicitud eliminada exitosamente');
+        showAlert('Solicitud eliminada exitosamente', 'success');
       } catch (error: any) {
         console.error('Error al eliminar solicitud:', error);
-        alert(
+        showAlert(
           'Error al eliminar la solicitud: ' +
-            (error.response?.data?.message || 'Error desconocido')
+            (error.response?.data?.message || 'Error desconocido'),
+          'error'
         );
       }
     }
@@ -130,10 +135,10 @@ export function SolicitudAdmin() {
     solicitudEstado: string
   ) => {
     if (solicitudEstado === 'Cancelada') {
-      alert('No se puede cambiar el estado de una solicitud cancelada');
+      showAlert('No se puede cambiar el estado de una solicitud cancelada', 'warning');
       return;
     }
-    const confirmacion = window.confirm(
+    const confirmacion = await showConfirm(
       `¿Estás seguro de que deseas cambiar el estado de la solicitud # ${solicitudId} de  ${clienteNombre}?`
     );
     if (confirmacion) {
@@ -170,9 +175,10 @@ export function SolicitudAdmin() {
           );
         } catch (error: any) {
           console.error(error);
-          alert(
+          showAlert(
             'error al cambiar el estado de la solicitud' +
-              (error.response?.data?.message || 'error desconocido')
+              (error.response?.data?.message || 'error desconocido'),
+            'error'
           );
         }
       }
@@ -333,7 +339,7 @@ export function SolicitudAdmin() {
                           <button
                             className="btn-ver"
                             onClick={() => {
-                              alert(
+                              showAlert(
                                 `Detalles de solicitud #${
                                   solicitud.id
                                 }:\n\nCliente: ${solicitud.usuario.nombre} ${
@@ -346,7 +352,8 @@ export function SolicitudAdmin() {
                                   solicitud.fechaEvento
                                 )}\nTotal: $${solicitud.montoTotal.toLocaleString(
                                   'es-AR'
-                                )}`
+                                )}`,
+                                'info'
                               );
                             }}
                             title="Ver detalles de la solicitud"

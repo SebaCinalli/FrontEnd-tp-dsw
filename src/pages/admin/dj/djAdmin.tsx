@@ -3,6 +3,8 @@ import axios from 'axios';
 import './djAdmin.css';
 import { UserBadge } from '../../../components/userbadge';
 import { BackToMenu } from '../../../components/BackToMenu';
+import { useAlert } from '../../../context/alertcontext';
+import { useConfirm } from '../../../context/confirmcontext';
 
 interface Dj {
   id: number;
@@ -71,6 +73,8 @@ const DjImage = memo(
 DjImage.displayName = 'DjImage';
 
 export function DjAdmin() {
+  const { showAlert } = useAlert();
+  const { showConfirm } = useConfirm();
   const [djs, setDjs] = useState<Dj[]>([]);
   const [zonas, setZonas] = useState<Zona[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -289,7 +293,7 @@ export function DjAdmin() {
   };
 
   const handleDelete = async (id: number) => {
-    if (window.confirm('¿Estás seguro de que quieres eliminar este DJ?')) {
+    if (await showConfirm('¿Estás seguro de que quieres eliminar este DJ?')) {
       try {
         await axios.delete(`http://localhost:3000/api/dj/${id}`, {
           withCredentials: true,

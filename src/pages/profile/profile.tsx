@@ -13,6 +13,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useUser } from '../../context/usercontext';
+import { useAlert } from '../../context/alertcontext';
 import './profile.css';
 import { ProfileField } from './profilefield';
 import {
@@ -33,6 +34,7 @@ interface UserProfile {
 export const Profile: React.FC = () => {
   const navigate = useNavigate();
   const { user: contextUser, login, logout } = useUser();
+  const { showAlert } = useAlert();
   // Estado para controlar el modal de confirmación de eliminación
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -47,14 +49,14 @@ export const Profile: React.FC = () => {
       );
       if (response.status === 200) {
         await logout();
-        alert('Usuario eliminado correctamente.');
+        showAlert('Usuario eliminado correctamente.', 'success');
         navigate('/login');
       } else {
-        alert('No se pudo eliminar el usuario.');
+        showAlert('No se pudo eliminar el usuario.', 'error');
       }
     } catch (error) {
       console.error('Error al eliminar usuario:', error);
-      alert('Error al eliminar el usuario.');
+      showAlert('Error al eliminar el usuario.', 'error');
     } finally {
       setIsDeleting(false);
       setShowDeleteConfirm(false);
@@ -200,11 +202,11 @@ export const Profile: React.FC = () => {
         setOriginalUser(user);
 
         // Mostrar mensaje de éxito (puedes agregar un toast aquí)
-        alert('Perfil actualizado correctamente');
+        showAlert('Perfil actualizado correctamente', 'success');
       }
     } catch (error) {
       console.error('Error al actualizar el perfil:', error);
-      alert('Error al actualizar el perfil. Por favor, intenta nuevamente.');
+      showAlert('Error al actualizar el perfil. Por favor, intenta nuevamente.', 'error');
     } finally {
       setIsLoading(false);
     }
@@ -233,16 +235,18 @@ export const Profile: React.FC = () => {
 
       // Validar tipo de archivo
       if (!isValidImageFile(file)) {
-        alert(
-          'Por favor selecciona un archivo de imagen válido (JPEG, PNG, GIF, WebP)'
+        showAlert(
+          'Por favor selecciona un archivo de imagen válido (JPEG, PNG, GIF, WebP)',
+          'warning'
         );
         return;
       }
 
       // Validar tamaño de archivo (máximo 5MB)
       if (!isValidFileSize(file, 5)) {
-        alert(
-          'La imagen es demasiado grande. El tamaño máximo permitido es 5MB'
+        showAlert(
+          'La imagen es demasiado grande. El tamaño máximo permitido es 5MB',
+          'warning'
         );
         return;
       }
@@ -267,12 +271,13 @@ export const Profile: React.FC = () => {
             // Resetear el error de imagen explícitamente
             setImageError(false);
 
-            alert('Imagen cargada exitosamente');
+            showAlert('Imagen cargada exitosamente', 'success');
           } else {
             // La subida fue exitosa pero no se obtuvo la URL de la imagen
             console.warn('Subida exitosa pero sin URL de imagen:', result);
-            alert(
-              'Imagen subida exitosamente, pero hubo un problema al obtener la URL. Actualiza la página para ver los cambios.'
+            showAlert(
+              'Imagen subida exitosamente, pero hubo un problema al obtener la URL. Actualiza la página para ver los cambios.',
+              'warning'
             );
           }
         } else {
@@ -280,9 +285,10 @@ export const Profile: React.FC = () => {
         }
       } catch (error: any) {
         console.error('Error al cargar imagen:', error);
-        alert(
+        showAlert(
           error.message ||
-            'Error al cargar la imagen. Por favor, intenta nuevamente.'
+            'Error al cargar la imagen. Por favor, intenta nuevamente.',
+          'error'
         );
       } finally {
         setIsUploadingImage(false);

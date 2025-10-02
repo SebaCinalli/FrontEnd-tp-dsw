@@ -5,12 +5,14 @@ import axios from 'axios';
 import './login.css';
 import { validateFormMail } from '../../validateFunctions/validateFormMail';
 import { validateFormPass } from '../../validateFunctions/validateFormPass';
+import { useAlert } from '../../context/alertcontext';
 
 import { processUserImageUrl } from '../../utils/imageUpload';
 
 const Login = () => {
   const { login } = useUser();
   const navigate = useNavigate();
+  const { showAlert } = useAlert();
   // const { clearEventDate } = useEventDate();
   const [email, setMail] = useState('');
   const [password, setPassword] = useState('');
@@ -166,8 +168,9 @@ const Login = () => {
               type="button"
               className="forgot-password-link"
               onClick={() =>
-                alert(
-                  'No se puede hacer nada, la proxima no seas tan boludo.'
+                showAlert(
+                  'No se puede hacer nada, la proxima no seas tan boludo.',
+                  'info'
                 )
               }
             >

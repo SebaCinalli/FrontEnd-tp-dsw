@@ -3,6 +3,8 @@ import axios from 'axios';
 import './gastronomicoAdmin.css';
 import { UserBadge } from '../../../components/userbadge';
 import { BackToMenu } from '../../../components/BackToMenu';
+import { useAlert } from '../../../context/alertcontext';
+import { useConfirm } from '../../../context/confirmcontext';
 
 interface Gastronomico {
   id: number;
@@ -68,6 +70,8 @@ const GastronomicoImage = memo(
 GastronomicoImage.displayName = 'GastronomicoImage';
 
 export function GastronomicoAdmin() {
+  const { showAlert } = useAlert();
+  const { showConfirm } = useConfirm();
   const [gastronomicos, setGastronomicos] = useState<Gastronomico[]>([]);
   const [zonas, setZonas] = useState<Zona[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -283,7 +287,7 @@ export function GastronomicoAdmin() {
 
   const handleDelete = async (id: number) => {
     if (
-      window.confirm(
+      await showConfirm(
         '¿Estás seguro de que quieres eliminar este servicio gastronómico?'
       )
     ) {

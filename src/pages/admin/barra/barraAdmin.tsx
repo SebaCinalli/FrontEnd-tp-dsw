@@ -3,6 +3,8 @@ import axios from 'axios';
 import './barraAdmin.css';
 import { UserBadge } from '../../../components/userbadge';
 import { BackToMenu } from '../../../components/BackToMenu';
+import { useAlert } from '../../../context/alertcontext';
+import { useConfirm } from '../../../context/confirmcontext';
 
 interface Barra {
   id: number;
@@ -71,6 +73,8 @@ const BarraImage = memo(
 BarraImage.displayName = 'BarraImage';
 
 export function BarraAdmin() {
+  const { showAlert } = useAlert();
+  const { showConfirm } = useConfirm();
   const [barras, setBarras] = useState<Barra[]>([]);
   const [zonas, setZonas] = useState<Zona[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -301,7 +305,7 @@ export function BarraAdmin() {
   };
 
   const handleDelete = async (id: number) => {
-    if (window.confirm('¿Estás seguro de que quieres eliminar esta barra?')) {
+    if (await showConfirm('¿Estás seguro de que quieres eliminar esta barra?')) {
       try {
         await axios.delete(`http://localhost:3000/api/barra/${id}`, {
           withCredentials: true,

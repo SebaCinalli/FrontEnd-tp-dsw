@@ -6,6 +6,7 @@ import React, {
   useEffect,
 } from 'react';
 import type { ReactNode } from 'react';
+import { useAlert } from './alertcontext';
 
 // Tipos para los elementos del carrito
 export interface CartItem {
@@ -43,6 +44,16 @@ interface CartProviderProps {
 }
 
 export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
+  // Hacer useAlert opcional para evitar problemas de inicialización
+  let showAlert: ((message: string, type?: any) => void) | undefined;
+  try {
+    const alert = useAlert();
+    showAlert = alert.showAlert;
+  } catch (e) {
+    // Si AlertProvider no está disponible, usar alert nativo como fallback
+    showAlert = (message: string) => alert(message);
+  }
+  
   const [items, setItems] = useState<CartItem[]>([]);
 
   // Ref para leer el estado actual sin depender de closures
@@ -96,7 +107,9 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
         return false;
       }
       lastAlertRef.current = { type: item.type, time: now };
-      alert('tipo de servicio ya agregado');
+      if (showAlert) {
+        showAlert('tipo de servicio ya agregado', 'warning');
+      }
       return false;
     }
 
