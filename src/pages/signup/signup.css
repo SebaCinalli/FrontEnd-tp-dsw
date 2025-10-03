@@ -336,12 +336,26 @@ body {
   font-weight: 500;
 }
 
-.form-input:invalid:not(:focus):not(:placeholder-shown) {
-  border-color: #ef4444;
-  background: rgba(239, 68, 68, 0.1);
+/* Reemplazamos los estilos basados en :invalid / :valid por clases controladas desde React
+   para evitar falsos negativos (borde rojo cuando el dato es correcto) */
+.input-error {
+  border-color: #ef4444 !important;
+  background: rgba(239, 68, 68, 0.1) !important;
 }
 
-.form-input:valid:not(:focus):not(:placeholder-shown) {
-  border-color: #10b981;
-  background: rgba(16, 185, 129, 0.1);
+.input-success {
+  border-color: #10b981 !important;
+  background: rgba(16, 185, 129, 0.1) !important;
+}
+
+/* Transición suave al cambiar de estado */
+.form-input,
+.input-error,
+.input-success {
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Neutralizamos estilos del user agent / validación nativa que podrían meter borde rojo */
+input:required:invalid {
+  box-shadow: none;
 }

@@ -14,6 +14,7 @@ import {
 import { UserBadge } from '../../components/userbadge';
 import { useEventDate } from '../../context/eventdatecontext';
 import { useCart } from '../../context/cartcontext';
+import { useAlert } from '../../context/alertcontext';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -29,6 +30,7 @@ const MenuMain: React.FC = () => {
   const { user } = useUser();
   const { isEmpty, items } = useCart();
   const { eventDate, setEventDate } = useEventDate();
+  const { showAlert } = useAlert();
   const [localDate, setLocalDate] = useState<string>('');
 
   const selectedDateObj = useMemo(
@@ -48,7 +50,7 @@ const MenuMain: React.FC = () => {
 
     // Permitir avanzar si hay carrito aunque no haya fecha
     if (needsDate && !localDate && !hasCart) {
-      alert('Seleccioná una fecha para tu evento antes de continuar.');
+      showAlert('Seleccioná una fecha para tu evento antes de continuar.', 'warning');
       return;
     }
 
@@ -87,7 +89,7 @@ const MenuMain: React.FC = () => {
             selected={selectedDateObj}
             onChange={(date: Date | null) => {
               if (!isCartEmpty) {
-                alert('No podés cambiar la fecha mientras tengas servicios en el carrito. Vaciá el carrito primero.');
+                showAlert('No podés cambiar la fecha mientras tengas servicios en el carrito. Vaciá el carrito primero.', 'warning');
                 return;
               }
               if (!date) {

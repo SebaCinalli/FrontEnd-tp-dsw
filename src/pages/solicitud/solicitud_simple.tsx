@@ -4,6 +4,8 @@ import './solicitud.css';
 import { UserBadge } from '../../components/userbadge';
 import { BackToMenu } from '../../components/BackToMenu';
 import { useUser } from '../../context/usercontext';
+import { useAlert } from '../../context/alertcontext';
+import { useConfirm } from '../../context/confirmcontext';
 
 interface Solicitud {
   id: number;
@@ -47,6 +49,8 @@ export function Solicitud() {
   );
   const [nuevoEstado, setNuevoEstado] = useState<string>('');
   const { user } = useUser();
+  const { showAlert } = useAlert();
+  const { showConfirm } = useConfirm();
 
   useEffect(() => {
     const fetchSolicitudes = async () => {
@@ -107,8 +111,9 @@ export function Solicitud() {
       setSolicitudEditando(solicitudId);
       setNuevoEstado(estadoActual);
     } else {
-      alert(
-        'Solo puedes editar solicitudes en estado "Pendiente de pago" o "Pendiente"'
+      showAlert(
+        'Solo puedes editar solicitudes en estado "Pendiente de pago" o "Pendiente"',
+        'warning'
       );
     }
   };
@@ -130,12 +135,13 @@ export function Solicitud() {
 
       setSolicitudEditando(null);
       setNuevoEstado('');
-      alert('Solicitud actualizada exitosamente');
+      showAlert('Solicitud actualizada exitosamente', 'success');
     } catch (error: any) {
       console.error('Error al actualizar solicitud:', error);
-      alert(
+      showAlert(
         'Error al actualizar la solicitud: ' +
-          (error.response?.data?.message || 'Error desconocido')
+          (error.response?.data?.message || 'Error desconocido'),
+        'error'
       );
     }
   };
@@ -150,7 +156,7 @@ export function Solicitud() {
   };
 
   const handleCancelarSolicitud = async (solicitudId: number) => {
-    const confirmacion = window.confirm(
+    const confirmacion = await showConfirm(
       '¿Estás seguro de que deseas cancelar esta solicitud?\n\nEsta acción cambiará el estado a "Cancelada".'
     );
 
@@ -169,12 +175,13 @@ export function Solicitud() {
           )
         );
 
-        alert('Solicitud cancelada exitosamente');
+        showAlert('Solicitud cancelada exitosamente', 'success');
       } catch (error: any) {
         console.error('Error al cancelar solicitud:', error);
-        alert(
+        showAlert(
           'Error al cancelar la solicitud: ' +
-            (error.response?.data?.message || 'Error desconocido')
+            (error.response?.data?.message || 'Error desconocido'),
+          'error'
         );
       }
     }

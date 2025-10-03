@@ -3,6 +3,8 @@ import axios from 'axios';
 import './zonaAdmin.css';
 import { UserBadge } from '../../../components/userbadge';
 import { BackToMenu } from '../../../components/BackToMenu';
+import { useAlert } from '../../../context/alertcontext';
+import { useConfirm } from '../../../context/confirmcontext';
 
 interface Zona {
   id: number;
@@ -10,6 +12,8 @@ interface Zona {
 }
 
 export function ZonaAdmin() {
+  const { showAlert } = useAlert();
+  const { showConfirm } = useConfirm();
   const [zonas, setZonas] = useState<Zona[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingZona, setEditingZona] = useState<Zona | null>(null);
@@ -68,7 +72,7 @@ export function ZonaAdmin() {
 
     // Validaciones previas
     if (!formData.nombre.trim()) {
-      alert('El nombre de la zona es requerido');
+      showAlert('El nombre de la zona es requerido', 'warning');
       return;
     }
 
@@ -115,10 +119,11 @@ export function ZonaAdmin() {
       closeModal();
 
       // Mostrar mensaje de éxito
-      alert(
+      showAlert(
         editingZona
           ? 'Zona actualizada exitosamente!'
-          : 'Zona creada exitosamente!'
+          : 'Zona creada exitosamente!',
+        'success'
       );
     } catch (error: any) {
       console.error('Error al guardar zona:', error);
@@ -128,16 +133,17 @@ export function ZonaAdmin() {
       // Mostrar mensaje de error más específico
       const errorMessage =
         error.response?.data?.message || error.message || 'Error desconocido';
-      alert(
+      showAlert(
         `Error al ${
           editingZona ? 'actualizar' : 'crear'
-        } la zona: ${errorMessage}`
+        } la zona: ${errorMessage}`,
+        'error'
       );
     }
   };
 
   const handleDelete = async (id: number) => {
-    if (window.confirm('¿Estás seguro de que quieres eliminar esta zona?')) {
+    if (await showConfirm('¿Estás seguro de que quieres eliminar esta zona?')) {
       try {
         await axios.delete(`http://localhost:3000/api/zona/${id}`, {
           withCredentials: true,
@@ -149,12 +155,12 @@ export function ZonaAdmin() {
         });
         setZonas(response.data.data);
 
-        alert('Zona eliminada exitosamente!');
+        showAlert('Zona eliminada exitosamente!', 'success');
       } catch (error: any) {
         console.error('Error al eliminar zona:', error);
         const errorMessage =
           error.response?.data?.message || error.message || 'Error desconocido';
-        alert(`Error al eliminar la zona: ${errorMessage}`);
+        showAlert(`Error al eliminar la zona: ${errorMessage}`, 'error');
       }
     }
   };

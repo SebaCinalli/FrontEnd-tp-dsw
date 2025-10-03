@@ -6,6 +6,7 @@ import { useUser } from '../../context/usercontext';
 import axios from 'axios';
 import './carrito.css';
 import { useEventDate } from '../../context/eventdatecontext';
+import { useAlert } from '../../context/alertcontext';
 
 export const Carrito: React.FC = () => {
   const { items, removeItem, clearCart, getTotalPrice, getItemCount } =
@@ -13,6 +14,7 @@ export const Carrito: React.FC = () => {
   const { user } = useUser();
   const navigate = useNavigate();
   const { eventDate } = useEventDate();
+  const { showAlert } = useAlert();
 
   const buildImageUrl = (fileName: string | undefined, type: string) => {
     if (!fileName) return '/placeholder-image.svg';
@@ -37,18 +39,19 @@ export const Carrito: React.FC = () => {
 
   const handleProceedToCheckout = async () => {
     if (items.length === 0) {
-      alert('Tu carrito está vacío');
+      showAlert('Tu carrito está vacío', 'warning');
       return;
     }
 
     if (!user) {
-      alert('Debes estar logueado para realizar una solicitud');
+      showAlert('Debes estar logueado para realizar una solicitud', 'warning');
       return;
     }
 
     if (!eventDate) {
-      alert(
-        'Seleccioná una fecha para tu evento desde el menú principal antes de continuar.'
+      showAlert(
+        'Seleccioná una fecha para tu evento desde el menú principal antes de continuar.',
+        'warning'
       );
       navigate('/');
       return;
@@ -107,7 +110,7 @@ export const Carrito: React.FC = () => {
       );
 
       if (response.status === 201 || response.status === 200) {
-        alert('¡Solicitud creada exitosamente! Estado: Pendiente de pago');
+        showAlert('¡Solicitud creada exitosamente! Estado: Pendiente de pago', 'success');
         clearCart(); // Limpiar el carrito después de crear la solicitud
         navigate('/'); // Redirigir al menú principal
       }
@@ -119,7 +122,7 @@ export const Carrito: React.FC = () => {
         error.message ||
         'Error al crear la solicitud';
 
-      alert(`Error: ${errorMessage}`);
+      showAlert(`Error: ${errorMessage}`, 'error');
     }
   };
 

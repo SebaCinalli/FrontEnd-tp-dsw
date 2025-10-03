@@ -3,6 +3,8 @@ import axios from 'axios';
 import './salonAdmin.css';
 import { UserBadge } from '../../../components/userbadge';
 import { BackToMenu } from '../../../components/BackToMenu';
+import { useAlert } from '../../../context/alertcontext';
+import { useConfirm } from '../../../context/confirmcontext';
 
 interface Salon {
   id: number;
@@ -72,6 +74,8 @@ const SalonImage = memo(
 SalonImage.displayName = 'SalonImage';
 
 export function SalonAdmin() {
+  const { showAlert } = useAlert();
+  const { showConfirm } = useConfirm();
   const [salones, setSalones] = useState<Salon[]>([]);
   const [zonas, setZonas] = useState<Zona[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -173,25 +177,25 @@ export function SalonAdmin() {
 
     // Validaciones previas
     if (!formData.nombre.trim()) {
-      alert('El nombre del salón es requerido');
+      showAlert('El nombre del salón es requerido', 'warning');
       return;
     }
 
     const capacidadNumber = Number(formData.capacidad);
     if (isNaN(capacidadNumber) || capacidadNumber <= 0) {
-      alert('La capacidad debe ser un número mayor a 0');
+      showAlert('La capacidad debe ser un número mayor a 0', 'warning');
       return;
     }
 
     // Convert montoS to number for validation
     const montoNumber = Number(formData.montoS);
     if (isNaN(montoNumber) || montoNumber <= 0) {
-      alert('El monto debe ser un número mayor a 0');
+      showAlert('El monto debe ser un número mayor a 0', 'warning');
       return;
     }
 
     if (formData.zonaId <= 0) {
-      alert('Debe seleccionar una zona');
+      showAlert('Debe seleccionar una zona', 'warning');
       return;
     }
 
@@ -281,10 +285,11 @@ export function SalonAdmin() {
       closeModal();
 
       // Mostrar mensaje de éxito
-      alert(
+      showAlert(
         editingSalon
           ? 'Salón actualizado exitosamente!'
-          : 'Salón creado exitosamente!'
+          : 'Salón creado exitosamente!',
+        'success'
       );
     } catch (error: any) {
       console.error('Error al guardar Salón:', error);
@@ -294,16 +299,17 @@ export function SalonAdmin() {
       // Mostrar mensaje de error más específico
       const errorMessage =
         error.response?.data?.message || error.message || 'Error desconocido';
-      alert(
+      showAlert(
         `Error al ${
           editingSalon ? 'actualizar' : 'crear'
-        } el salón: ${errorMessage}`
+        } el salón: ${errorMessage}`,
+        'error'
       );
     }
   };
 
   const handleDelete = async (id: number) => {
-    if (window.confirm('¿Estás seguro de que quieres eliminar este salón?')) {
+    if (await showConfirm('¿Estás seguro de que quieres eliminar este salón?')) {
       try {
         await axios.delete(`http://localhost:3000/api/salon/${id}`, {
           withCredentials: true,
@@ -461,8 +467,9 @@ export function SalonAdmin() {
                       'image/webp',
                     ];
                     if (!validTypes.includes(file.type)) {
-                      alert(
-                        'Por favor selecciona un archivo de imagen válido (JPEG, PNG, GIF, WebP)'
+                      showAlert(
+                        'Por favor selecciona un archivo de imagen válido (JPEG, PNG, GIF, WebP)',
+                        'warning'
                       );
                       e.target.value = '';
                       return;
@@ -470,8 +477,9 @@ export function SalonAdmin() {
 
                     if (file.size > 5 * 1024 * 1024) {
                       // 5MB
-                      alert(
-                        'El archivo es demasiado grande. Máximo 5MB permitido.'
+                      showAlert(
+                        'El archivo es demasiado grande. Máximo 5MB permitido.',
+                        'warning'
                       );
                       e.target.value = '';
                       return;
