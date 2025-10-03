@@ -108,7 +108,7 @@ export function BarraAdmin() {
       } catch (error: any) {
         console.error('Error al cargar barras:', error);
         if (error.response?.status === 401) {
-          alert('No estás autenticado. Por favor, inicia sesión nuevamente.');
+          showAlert('No estás autenticado. Por favor, inicia sesión nuevamente.', 'warning');
         }
       }
     };
@@ -178,23 +178,23 @@ export function BarraAdmin() {
 
     // Validaciones previas
     if (!formData.nombreB.trim()) {
-      alert('El nombre de la barra es requerido');
+      showAlert('El nombre de la barra es requerido', 'warning');
       return;
     }
 
     if (!formData.tipoBebida) {
-      alert('El tipo de bebida es requerido');
+      showAlert('El tipo de bebida es requerido', 'warning');
       return;
     }
 
     const montoNumber = Number(formData.montoB);
     if (isNaN(montoNumber) || montoNumber <= 0) {
-      alert('El monto debe ser un número mayor a 0');
+      showAlert('El monto debe ser un número mayor a 0', 'warning');
       return;
     }
 
     if (formData.zonaId <= 0) {
-      alert('Debe seleccionar una zona');
+      showAlert('Debe seleccionar una zona', 'warning');
       return;
     }
 
@@ -283,11 +283,8 @@ export function BarraAdmin() {
       closeModal();
 
       // Mostrar mensaje de éxito
-      alert(
-        editingBarra
-          ? 'Barra actualizada exitosamente!'
-          : 'Barra creada exitosamente!'
-      );
+      showAlert(
+        editingBarra ? 'Barra actualizada exitosamente!' : 'Barra creada exitosamente!', 'success');
     } catch (error: any) {
       console.error('Error al guardar Barra:', error);
       console.error('Detalles del error:', error.response?.data);
@@ -296,10 +293,10 @@ export function BarraAdmin() {
       // Mostrar mensaje de error más específico
       const errorMessage =
         error.response?.data?.message || error.message || 'Error desconocido';
-      alert(
+      showAlert(
         `Error al ${
           editingBarra ? 'actualizar' : 'crear'
-        } la barra: ${errorMessage}`
+        } la barra: ${errorMessage}`, 'error'
       );
     }
   };
@@ -447,8 +444,8 @@ export function BarraAdmin() {
                       'image/webp',
                     ];
                     if (!validTypes.includes(file.type)) {
-                      alert(
-                        'Por favor selecciona un archivo de imagen válido (JPEG, PNG, GIF, WebP)'
+                      showAlert(
+                        'Por favor selecciona un archivo de imagen válido (JPEG, PNG, GIF, WebP)', 'info'
                       );
                       e.target.value = '';
                       return;
@@ -456,8 +453,8 @@ export function BarraAdmin() {
 
                     if (file.size > 5 * 1024 * 1024) {
                       // 5MB
-                      alert(
-                        'El archivo es demasiado grande. Máximo 5MB permitido.'
+                      showAlert(
+                        'El archivo es demasiado grande. Máximo 5MB permitido.', 'warning'
                       );
                       e.target.value = '';
                       return;

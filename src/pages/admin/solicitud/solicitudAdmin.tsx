@@ -156,9 +156,10 @@ export function SolicitudAdmin() {
           );
         } catch (error: any) {
           console.error(error);
-          alert(
+          showAlert(
             'error al cambiar el estado de la solicitud' +
-              (error.response?.data?.message || 'error desconocido')
+              (error.response?.data?.message || 'error desconocido'),
+            'error'
           );
         }
       } else if (solicitudEstado === 'Rechazada') {

@@ -170,24 +170,24 @@ export function DjAdmin() {
 
     // Validaciones previas
     if (!formData.nombreArtistico.trim()) {
-      alert('El nombre artístico es requerido');
+      showAlert('El nombre artístico es requerido', 'warning');
       return;
     }
 
     // Si estamos creando, no requerimos selección del estado en UI; por defecto será 'disponible'
     if (editingDj && !formData.estado) {
-      alert('El estado es requerido');
+      showAlert('El estado es requerido', 'warning');
       return;
     }
 
     const montoNumber = Number(formData.montoDj);
     if (isNaN(montoNumber) || montoNumber <= 0) {
-      alert('El monto debe ser un número mayor a 0');
+      showAlert('El monto debe ser un número mayor a 0', 'warning');
       return;
     }
 
     if (formData.zonaId <= 0) {
-      alert('Debe seleccionar una zona');
+      showAlert('Debe seleccionar una zona', 'warning');
       return;
     }
 
@@ -275,8 +275,8 @@ export function DjAdmin() {
       closeModal();
 
       // Mostrar mensaje de éxito
-      alert(
-        editingDj ? 'DJ actualizado exitosamente!' : 'DJ creado exitosamente!'
+      showAlert(
+        editingDj ? 'DJ actualizado exitosamente!' : 'DJ creado exitosamente!', 'success'
       );
     } catch (error: any) {
       console.error('Error al guardar DJ:', error);
@@ -286,8 +286,8 @@ export function DjAdmin() {
       // Mostrar mensaje de error más específico
       const errorMessage =
         error.response?.data?.message || error.message || 'Error desconocido';
-      alert(
-        `Error al ${editingDj ? 'actualizar' : 'crear'} el DJ: ${errorMessage}`
+      showAlert(
+        `Error al ${editingDj ? 'actualizar' : 'crear'} el DJ: ${errorMessage}`, 'error'
       );
     }
   };
@@ -443,8 +443,8 @@ export function DjAdmin() {
                       'image/webp',
                     ];
                     if (!validTypes.includes(file.type)) {
-                      alert(
-                        'Por favor selecciona un archivo de imagen válido (JPEG, PNG, GIF, WebP)'
+                      showAlert(
+                        'Por favor selecciona un archivo de imagen válido (JPEG, PNG, GIF, WebP)', 'info'
                       );
                       e.target.value = '';
                       return;
@@ -452,8 +452,8 @@ export function DjAdmin() {
 
                     if (file.size > 5 * 1024 * 1024) {
                       // 5MB
-                      alert(
-                        'El archivo es demasiado grande. Máximo 5MB permitido.'
+                      showAlert(
+                        'El archivo es demasiado grande. Máximo 5MB permitido.','warning'
                       );
                       e.target.value = '';
                       return;

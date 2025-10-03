@@ -165,23 +165,26 @@ export function GastronomicoAdmin() {
     console.log('Enviando datos del formulario:', formData);
 
     if (!formData.nombreG.trim()) {
-      alert('El nombre del servicio gastronómico es requerido');
+      showAlert('El nombre del servicio gastronómico es requerido', 'warning');
       return;
     }
 
     if (!formData.tipoComida) {
-      alert('El tipo de comida es requerido');
+      showAlert('El tipo de comida es requerido', 'warning');
       return;
     }
 
     const montoNumber = Number(formData.montoG);
     if (isNaN(montoNumber) || montoNumber <= 0) {
-      alert('El monto debe ser un número mayor a 0');
+      showAlert('El monto debe ser un número mayor a 0', 'warning'
+
+      );
       return;
     }
 
     if (formData.zonaId <= 0) {
-      alert('Debe seleccionar una zona');
+      showAlert('Debe seleccionar una zona', 'warning'
+      );
       return;
     }
 
@@ -265,10 +268,10 @@ export function GastronomicoAdmin() {
       setGastronomicos(listResponse.data.data);
       closeModal();
 
-      alert(
+      showAlert(
         editingGastronomico
           ? 'Servicio gastronómico actualizado exitosamente!'
-          : 'Servicio gastronómico creado exitosamente!'
+          : 'Servicio gastronómico creado exitosamente!', 'success'
       );
     } catch (error: any) {
       console.error('Error al guardar Gastronómico:', error);
@@ -277,10 +280,10 @@ export function GastronomicoAdmin() {
 
       const errorMessage =
         error.response?.data?.message || error.message || 'Error desconocido';
-      alert(
+      showAlert(
         `Error al ${
           editingGastronomico ? 'actualizar' : 'crear'
-        } el servicio gastronómico: ${errorMessage}`
+        } el servicio gastronómico: ${errorMessage}`, 'error'
       );
     }
   };
@@ -445,15 +448,15 @@ export function GastronomicoAdmin() {
                       'image/webp',
                     ];
                     if (!validTypes.includes(file.type)) {
-                      alert(
-                        'Por favor selecciona un archivo de imagen válido (JPEG, PNG, GIF, WebP)'
+                      showAlert(
+                        'Por favor selecciona un archivo de imagen válido (JPEG, PNG, GIF, WebP)','info'
                       );
                       e.target.value = '';
                       return;
                     }
 
                     if (file.size > 5 * 1024 * 1024) {
-                      alert('El archivo es demasiado grande. Máximo 5MB');
+                      showAlert('El archivo es demasiado grande. Máximo 5MB','warning');
                       e.target.value = '';
                       return;
                     }
