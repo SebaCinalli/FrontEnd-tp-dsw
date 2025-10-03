@@ -144,6 +144,10 @@ const Login = () => {
                 type="button"
                 className="toggle-password"
                 onClick={togglePasswordVisibility}
+                tabIndex={-1}
+                aria-label={
+                  showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'
+                }
               >
                 {showPassword ? '🙈' : '👁️'}
               </button>
